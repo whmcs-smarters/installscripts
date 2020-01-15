@@ -69,7 +69,7 @@ sudo service apache2 restart
 
 
 #cd $DIRPATH
-cat /dev/null > index.html
+cat /dev/null > $DIRPATH/index.html
 echo "Installing ..... Please wait! It will take a few minutes" >> $DIRPATH/index.html
 
 if [ -d "$repoName" ];then
