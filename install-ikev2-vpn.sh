@@ -124,7 +124,7 @@ fi
 cat >> /etc/ipsec.conf <<EOF
 config setup
     charondebug="ike 1, knl 1, cfg 0"
-    uniqueids=no
+    uniqueids=never
 
 conn ikev2-vpn
     auto=add
@@ -147,7 +147,7 @@ conn ikev2-vpn
     rightsourceip=10.10.10.0/24
     rightdns=8.8.8.8,8.8.4.4
     rightsendcert=never
-    eap_identity=%identity
+    eap_identity=%any
     ike=aes256-sha1-modp1024,aes256gcm16-sha256-ecp521,aes256-sha256-ecp384,aes256-aes128-sha1-modp1024-3des!
     esp=aes256-sha1,aes128-sha256-modp3072,aes256gcm16-sha256,aes256gcm16-ecp384,aes256-sha256-sha1-3des!
 EOF
