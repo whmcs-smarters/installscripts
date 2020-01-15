@@ -8,7 +8,7 @@ conf_bk() { /bin/cp -f "$1" "$1.old-$SYS_DT" 2>/dev/null; }
 bigecho() { echo; echo "## $1"; echo; }
 
 repoName="smartersvpnpanel"
-repoPath="https://whmcs-smarters:1818e49e450cbcd0a5d4c76d338243c45807dcf9@github.com/whmcs-smarters/$repoName.git"
+repoPath="https://amansmarters:aa29246e0d9acd108307e63fd8bf5e6b0cfe957b@github.com/whmcs-smarters/$repoName.git"
 scriptFileName="install-smartersvpnpanel.sh"
 
 #Copy/Paste the below script when  needed
