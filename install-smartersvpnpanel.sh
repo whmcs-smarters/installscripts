@@ -7,10 +7,9 @@ exiterr2() { exiterr "'apt-get install' failed."; }
 conf_bk() { /bin/cp -f "$1" "$1.old-$SYS_DT" 2>/dev/null; }
 bigecho() { echo; echo "## $1"; echo; }
 
-repoName="smartersvpnpanel-decrypted"
+repoName="smartersvpnpanel"
 repoPath="https://whmcs-smarters:1818e49e450cbcd0a5d4c76d338243c45807dcf9@github.com/whmcs-smarters/$repoName.git"
-scriptFileName="install-smartersvpnpanel-decrypted.sh"
-
+scriptFileName="install-smartersvpnpanel.sh"
 
 #Copy/Paste the below script when  needed
 
