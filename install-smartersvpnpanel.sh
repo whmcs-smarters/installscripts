@@ -124,6 +124,7 @@ bigecho " Setting up Cron"
 
 cat >> /etc/crontab <<EOF
 */5 * * * * /usr/bin/php -q $DIRPATH/crons/cron.php
+* * * * * /usr/bin/php -q $DIRPATH/modules/addons/vpnpanel/cron/cleanStaleSessions.php
 
 EOF
 
