@@ -2,6 +2,9 @@
 #!/bin/sh
 # Created by WHMCS-Smarters www.whmcssmarters.com
 
+export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+SYS_DT=$(date +%F-%T)
+
 exiterr()  { echo "Error: $1" >&2; exit 1; }
 exiterr2() { exiterr "'apt-get install' failed."; }
 conf_bk() { /bin/cp -f "$1" "$1.old-$SYS_DT" 2>/dev/null; }
@@ -318,6 +321,14 @@ EOF
 #/etc/freeradius/3.0/mods-enabled/sql
 
 
+if [ -f "$DIRPATH/radiusconf/default" ];then
+conf_bk "/etc/freeradius/3.0/sites-enabled/default"
+rm /etc/freeradius/3.0/sites-enabled/default
+cp $DIRPATH/radiusconf/default /etc/freeradius/3.0/sites-enabled/
+sudo chgrp -h freerad /etc/freeradius/3.0/sites-enabled/default
+sudo chown -R freerad:freerad /etc/freeradius/3.0/sites-enabled/default
+if
+ 
 sudo chgrp -h freerad /etc/freeradius/3.0/mods-available/sql
 sudo chown -R freerad:freerad /etc/freeradius/3.0/mods-enabled/sql
 sudo systemctl restart freeradius.service

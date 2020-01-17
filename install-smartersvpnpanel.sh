@@ -1,6 +1,8 @@
 
 #!/bin/sh
 # Created by WHMCS-Smarters www.whmcssmarters.com
+export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+SYS_DT=$(date +%F-%T)
 
 exiterr()  { echo "Error: $1" >&2; exit 1; }
 exiterr2() { exiterr "'apt-get install' failed."; }
@@ -10,6 +12,7 @@ bigecho() { echo; echo "## $1"; echo; }
 repoName="smartersvpnpanel"
 repoPath="https://amansmarters:aa29246e0d9acd108307e63fd8bf5e6b0cfe957b@github.com/whmcs-smarters/$repoName.git"
 scriptFileName="install-smartersvpnpanel.sh"
+
 
 #Copy/Paste the below script when  needed
 
@@ -317,6 +320,14 @@ EOF
 #/etc/freeradius/3.0/mods-enabled/sql
 
 
+if [ -f "$DIRPATH/radiusconf/default" ];then
+conf_bk "/etc/freeradius/3.0/sites-enabled/default"
+rm /etc/freeradius/3.0/sites-enabled/default
+cp $DIRPATH/radiusconf/default /etc/freeradius/3.0/sites-enabled/
+sudo chgrp -h freerad /etc/freeradius/3.0/sites-enabled/default
+sudo chown -R freerad:freerad /etc/freeradius/3.0/sites-enabled/default
+if
+ 
 sudo chgrp -h freerad /etc/freeradius/3.0/mods-available/sql
 sudo chown -R freerad:freerad /etc/freeradius/3.0/mods-enabled/sql
 sudo systemctl restart freeradius.service
