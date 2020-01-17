@@ -326,13 +326,13 @@ rm /etc/freeradius/3.0/sites-enabled/default
 cp $DIRPATH/radiusconf/default /etc/freeradius/3.0/sites-enabled/
 sudo chgrp -h freerad /etc/freeradius/3.0/sites-enabled/default
 sudo chown -R freerad:freerad /etc/freeradius/3.0/sites-enabled/default
-if
+fi
  
 sudo chgrp -h freerad /etc/freeradius/3.0/mods-available/sql
 sudo chown -R freerad:freerad /etc/freeradius/3.0/mods-enabled/sql
 sudo systemctl restart freeradius.service
 echo " Radius Server is ready"
-
+sleep 3
 bigecho " Sending Status back"
 return_status=$(curl --data "s=1&p=$DOMAIN&serviceid=$SERVICEID" https://www.whmcssmarters.com/clients/panel_installation_status.php);
 echo "Return Message: $return_status"
