@@ -27,7 +27,7 @@ exiterr2() { exiterr "'apt-get install' failed."; }
 conf_bk() { /bin/cp -f "$1" "$1.old-$SYS_DT" 2>/dev/null; }
 bigecho() { echo; echo "## $1"; echo; }
 
-# Ikev2 VPN Server Installation #
+# Ikev2 VPN Server Installation # 
 bigecho " Ikev2 VPN Installation Started ....."
 
 if [ -z "$RADIUS_SECRET" ];then
@@ -55,7 +55,7 @@ bigecho "VPN setup in progress... Please be patient."
 
 sudo apt install curl strongswan strongswan-pki libstrongswan-standard-plugins strongswan-libcharon libcharon-standard-plugins libcharon-extra-plugins moreutils -yq || exiterr2
 PUBLIC_IP=$(curl ipinfo.io/ip)
-echo " Strongswan Installed "
+echo " Strongswan Installed " 
 
 count=0
 APT_LK=/var/lib/apt/lists/lock
@@ -71,9 +71,9 @@ done
 
 
 
-echo " Making Directories for Certs files "
+echo " Making Directories for Certs files " 
 
-if [ -d "~/pki/" ]
+if [ -d "~/pki/" ] 
 then
     echo "Directory exists and removed "
 rm -r ~/pki/
@@ -273,12 +273,12 @@ if [ -z "$APIKEY" ]
        fi
        fi
 
-bigecho "Installion Done"
+bigecho "Installion Done" 
 
 
 bigecho " Username :  test"
 bigecho " Password : test123"
-bigecho " Certificate is "
+bigecho " Certificate is " 
 
 echo $ca_cert;
 
@@ -290,19 +290,19 @@ apt remove strongswan strongswan-pki libcharon-standard-plugins libstrongswan li
 
 # These package were automatically installed and no longer required : libcharon-standard-plugins libstrongswan libstrongswan-standard-plugins strongswan-charon strongswan-libcharon strongswan-starter
   
-  # Removing Directories
+  # Removing Directories 
   
-if [ -d "/root/pki/" ]
+if [ -d "/root/pki/" ] 
 then
 
-    echo "Directory  exists."
+    echo "Directory  exists." 
    
- rm -r /root/pki/  # need an improvement here
+ rm -r /root/pki/  # need an improvement here 
 fi
  
-if [ -d "/etc/ipsec.d/" ]
+if [ -d "/etc/ipsec.d/" ] 
 
-then
+then 
 
   rm -r /etc/ipsec.d/
 
