@@ -1027,45 +1027,6 @@ verb 3" >> /etc/openvpn/server.conf
         fi
     fi
 
-    # Finally, restart and enable OpenVPN
-    if [[ "$OS" = 'arch' || "$OS" = 'fedora' || "$OS" = 'centos' ]]; then
-        # Don't modify package-provided service
-        cp /usr/lib/systemd/system/openvpn-server@.service /etc/systemd/system/openvpn-server@.service
-
-        # Workaround to fix OpenVPN service on OpenVZ
-        sed -i 's|LimitNPROC|#LimitNPROC|' /etc/systemd/system/openvpn-server@.service
-        # Another workaround to keep using /etc/openvpn/
-        sed -i 's|/etc/openvpn/server|/etc/openvpn|' /etc/systemd/system/openvpn-server@.service
-        # On fedora, the service hardcodes the ciphers. We want to manage the cipher ourselves, so we remove it from the service
-        
-        if [[ "$OS" == "fedora" ]];then
-            sed -i 's|--cipher AES-256-GCM --ncp-ciphers AES-256-GCM:AES-128-GCM:AES-256-CBC:AES-128-CBC:BF-CBC||' /etc/systemd/system/openvpn-server@.service
-        fi
-
-        systemctl daemon-reload
-        systemctl restart openvpn-server@server
-        systemctl enable openvpn-server@server
-    elif [[ "$OS" == "ubuntu" ]] && [[ "$VERSION_ID" == "16.04" ]]; then
-        # On Ubuntu 16.04, we use the package from the OpenVPN repo
-        # This package uses a sysvinit service
-        systemctl enable openvpn
-        systemctl start openvpn
-       
-    else
-        # Don't modify package-provided service
-        cp /lib/systemd/system/openvpn\@.service /etc/systemd/system/openvpn\@.service
-
-        # Workaround to fix OpenVPN service on OpenVZ
-        sed -i 's|LimitNPROC|#LimitNPROC|' /etc/systemd/system/openvpn\@.service
-        # Another workaround to keep using /etc/openvpn/
-        sed -i 's|/etc/openvpn/server|/etc/openvpn|' /etc/systemd/system/openvpn\@.service
-
-        systemctl daemon-reload
-        systemctl restart openvpn@server
-        systemctl enable openvpn@server
-         
-    fi
-
     if [[ $DNS == 2 ]];then
         installUnbound
     fi
@@ -1165,7 +1126,47 @@ fi
     newClient
  #exit 0
 }
+function openpvpnrestart(){
+# Finally, restart and enable OpenVPN
+   if [[ "$OS" = 'arch' || "$OS" = 'fedora' || "$OS" = 'centos' ]]; then
+       # Don't modify package-provided service
+       cp /usr/lib/systemd/system/openvpn-server@.service /etc/systemd/system/openvpn-server@.service
 
+       # Workaround to fix OpenVPN service on OpenVZ
+       sed -i 's|LimitNPROC|#LimitNPROC|' /etc/systemd/system/openvpn-server@.service
+       # Another workaround to keep using /etc/openvpn/
+       sed -i 's|/etc/openvpn/server|/etc/openvpn|' /etc/systemd/system/openvpn-server@.service
+       # On fedora, the service hardcodes the ciphers. We want to manage the cipher ourselves, so we remove it from the service
+       
+       if [[ "$OS" == "fedora" ]];then
+           sed -i 's|--cipher AES-256-GCM --ncp-ciphers AES-256-GCM:AES-128-GCM:AES-256-CBC:AES-128-CBC:BF-CBC||' /etc/systemd/system/openvpn-server@.service
+       fi
+
+       systemctl daemon-reload
+       systemctl restart openvpn-server@server
+       systemctl enable openvpn-server@server
+   elif [[ "$OS" == "ubuntu" ]] && [[ "$VERSION_ID" == "16.04" ]]; then
+       # On Ubuntu 16.04, we use the package from the OpenVPN repo
+       # This package uses a sysvinit service
+       systemctl enable openvpn
+       systemctl start openvpn
+      
+   else
+       # Don't modify package-provided service
+       cp /lib/systemd/system/openvpn\@.service /etc/systemd/system/openvpn\@.service
+
+       # Workaround to fix OpenVPN service on OpenVZ
+       sed -i 's|LimitNPROC|#LimitNPROC|' /etc/systemd/system/openvpn\@.service
+       # Another workaround to keep using /etc/openvpn/
+       sed -i 's|/etc/openvpn/server|/etc/openvpn|' /etc/systemd/system/openvpn\@.service
+
+       systemctl daemon-reload
+       systemctl restart openvpn@server
+       systemctl enable openvpn@server
+        
+   fi
+
+}
 function newClient () {
     echo ""
     echo "Tell me a name for the client."
@@ -1517,7 +1518,7 @@ EOF
 }
 
 if [[ $VPNTYPE == "ikev2" ]];then
-
+bigecho " VPN Type $VPNTYPE"
   if [[ -z "$REMOVED" ]]; then
     vpnsetup "$@"
   else
@@ -1527,7 +1528,7 @@ if [[ $VPNTYPE == "ikev2" ]];then
   
 elif [[ "$VPNTYPE" == "openvpn" ]];then
   
-
+bigecho " VPN Type $VPNTYPE"
 
  # Check if OpenVPN is already installed
 
@@ -1539,10 +1540,11 @@ elif [[ "$VPNTYPE" == "openvpn" ]];then
  fi
  # radiusclientinstallation
 radiusclientsetup "$@"
+openpvpnrestart
   
   elif [[ "$VPNTYPE" == "openvpn-ikev2" ]];then
   # first installation for ikev2
-  
+  bigecho " VPN Type $VPNTYPE"
   if [[ -z "$REMOVED" ]]; then
     vpnsetup "$@"
   else
@@ -1557,6 +1559,7 @@ radiusclientsetup "$@"
    installOpenVPN
   fi
   radiusclientsetup "$@"
+  openpvpnrestart
   else
   
   bigecho "VPN Type Not Defined"
