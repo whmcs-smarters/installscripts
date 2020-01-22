@@ -214,10 +214,6 @@ fi
 
 # Radius Server Installation ....
 
-
-# Assiging valus MYSQLHOST
- 
-if [ -z "$UPGRADE" ];then
 if [ -z "$MYSQLPORT" ]; then
     MYSQLPORT=3306
 fi
@@ -375,8 +371,7 @@ TempMessageDisplayed
 cloneGitFiles
 SettingPermission
 installFreeradius
- 
-fi
+ fi
 scriptRemove
 
 bigecho " Installation/Upgradation  Done"
@@ -391,4 +386,3 @@ bigecho "Admin Password : admin"
 bigecho " Sending Status back"
 return_status=$(curl --data "s=1&p=$DOMAIN&serviceid=$SERVICEID" https://www.whmcssmarters.com/clients/panel_installation_status.php);
 echo "Return Message: $return_status"
- 

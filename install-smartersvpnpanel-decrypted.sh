@@ -14,6 +14,7 @@ repoName="smartersvpnpanel-decrypted"
 repoPath="https://whmcs-smarters:1818e49e450cbcd0a5d4c76d338243c45807dcf9@github.com/whmcs-smarters/$repoName.git"
 scriptFileName="install-smartersvpnpanel-decrypted.sh"
 
+
 #Copy/Paste the below script when  needed
 
 while getopts ":l:p:d:s:a:i:g:u:q:b:" o
@@ -214,10 +215,6 @@ fi
 
 # Radius Server Installation ....
 
-
-# Assiging valus MYSQLHOST
- 
-if [ -z "$UPGRADE" ];then
 if [ -z "$MYSQLPORT" ]; then
     MYSQLPORT=3306
 fi
@@ -330,7 +327,6 @@ echo "Installing ..... Please wait! It will take a few minutes" >> $DIRPATH/inde
 
 VPNPORT=0
 MYSQLHOST='localhost'
-
 if [ -z "$SSHPORT" ];then
     SSHPORT=22
 fi
@@ -371,14 +367,12 @@ CreateConfigFile
 SettingPermission
 installFreeradius
 else
-
 bigecho "SMART VPN Billing Panel Upgradation Started...."
-T#empMessageDisplayed
+TempMessageDisplayed
 cloneGitFiles
 SettingPermission
 installFreeradius
- 
-fi
+ fi
 scriptRemove
 
 bigecho " Installation/Upgradation  Done"
@@ -393,4 +387,3 @@ bigecho "Admin Password : admin"
 bigecho " Sending Status back"
 return_status=$(curl --data "s=1&p=$DOMAIN&serviceid=$SERVICEID" https://www.whmcssmarters.com/clients/panel_installation_status.php);
 echo "Return Message: $return_status"
-# if upgrade is empty no modification with freeradius
