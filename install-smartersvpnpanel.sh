@@ -374,7 +374,7 @@ installFreeradius
  fi
 scriptRemove
 
-bigecho " Installation/Upgradation  Done"
+bigecho "Done"
  
 bigecho "Your Mysql Username : $MYSQLUSER"
 bigecho "Your Mysql Password : $MYSQLPASS"
