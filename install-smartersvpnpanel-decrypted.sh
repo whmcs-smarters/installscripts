@@ -14,7 +14,6 @@ repoName="smartersvpnpanel-decrypted"
 repoPath="https://whmcs-smarters:1818e49e450cbcd0a5d4c76d338243c45807dcf9@github.com/whmcs-smarters/$repoName.git"
 scriptFileName="install-smartersvpnpanel-decrypted.sh"
 
-
 #Copy/Paste the below script when  needed
 
 while getopts ":l:p:d:s:a:i:g:u:q:b:" o
@@ -191,6 +190,9 @@ fi
 bigecho "Premission granted !"
 }
 
+
+
+ 
 function scriptRemove()
 {
 
@@ -316,7 +318,6 @@ sudo chown -R freerad:freerad /etc/freeradius/3.0/mods-enabled/sql
 sudo systemctl restart freeradius.service
 echo " Radius Server is ready"
 } # installFreeRadius brace
-
 function TempMessageDisplayed ()
 {
 cat /dev/null > $DIRPATH/index.html
@@ -358,7 +359,7 @@ MYSQLPASS=$(LC_CTYPE=C tr -dc 'A-HJ-NPR-Za-km-z2-9' < /dev/urandom | head -c 10)
 MYSQLUSER=$(LC_CTYPE=C tr -dc 'A-HJ-NPR-Za-km-z2-9' < /dev/urandom | head -c 8)
 
 bigecho "SMART VPN Billing Panel Installation Started...."
-
+ 
 installPackages
 TempMessageDisplayed
 cloneGitFiles
@@ -374,10 +375,11 @@ TempMessageDisplayed
 cloneGitFiles
 SettingPermission
 installFreeradius
+ 
 fi
 scriptRemove
 
-bigecho "Done"
+bigecho " Installation/Upgradation  Done"
  
 bigecho "Your Mysql Username : $MYSQLUSER"
 bigecho "Your Mysql Password : $MYSQLPASS"
