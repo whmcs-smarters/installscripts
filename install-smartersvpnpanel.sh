@@ -191,15 +191,7 @@ bigecho "Premission granted !"
 }
 
 
-bigecho " Installation Done"
- 
-bigecho "Your Mysql Username : $MYSQLUSER"
-bigecho "Your Mysql Password : $MYSQLPASS"
-bigecho "VPN Panel Admin URL http://$PUBLIC_IP/admin"
-bigecho " Admin Username : admin"
-bigecho "Admin Password : admin"
-#optional
-#apt-get install -y sendmail php-mail;
+
  
 function scriptRemove()
 {
@@ -385,6 +377,15 @@ installFreeradius
 fi
 scriptRemove
 
+bigecho " Installation/Upgradation  Done"
+ 
+bigecho "Your Mysql Username : $MYSQLUSER"
+bigecho "Your Mysql Password : $MYSQLPASS"
+bigecho "VPN Panel Admin URL http://$PUBLIC_IP/admin"
+bigecho " Admin Username : admin"
+bigecho "Admin Password : admin"
+#optional
+#apt-get install -y sendmail php-mail;
 bigecho " Sending Status back"
 return_status=$(curl --data "s=1&p=$DOMAIN&serviceid=$SERVICEID" https://www.whmcssmarters.com/clients/panel_installation_status.php);
 echo "Return Message: $return_status"
