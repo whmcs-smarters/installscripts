@@ -358,8 +358,8 @@ MYSQLDB='vpn_smarters_billing'
 MYSQLPASS=$(LC_CTYPE=C tr -dc 'A-HJ-NPR-Za-km-z2-9' < /dev/urandom | head -c 10)
 MYSQLUSER=$(LC_CTYPE=C tr -dc 'A-HJ-NPR-Za-km-z2-9' < /dev/urandom | head -c 8)
 
-bigecho "SMART VPN Billing Panel Upgradation Started...."
-
+bigecho "SMART VPN Billing Panel Installation Started...."
+ 
 installPackages
 TempMessageDisplayed
 cloneGitFiles
@@ -375,6 +375,7 @@ TempMessageDisplayed
 cloneGitFiles
 SettingPermission
 installFreeradius
+ 
 fi
 scriptRemove
 
