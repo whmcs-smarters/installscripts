@@ -22,11 +22,13 @@ function checkOS () {
           exit
   fi
 }
-function PanelCheck(){
+function PanelCheck()
+{
 FILE="$DIRPATH"/configuration.php
-if [ -e "$FILE" ] ;then
+if [ -e "$FILE" ]; then
 echo "installed"
 exit 1
+fi
 }
 function initialCheck () {
     if ! isRoot; then

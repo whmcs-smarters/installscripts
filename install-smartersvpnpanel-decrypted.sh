@@ -17,7 +17,7 @@ scriptFileName="install-smartersvpnpanel-decrypted.sh"
 
 #Copy/Paste the below script when  needed
 
-while getopts ":l:p:d:s:a:i:" o
+while getopts ":l:p:d:s:a:i:g:u:q:b" o
 do
     case "${o}" in
     l) LICENSE=${OPTARG}
@@ -34,31 +34,19 @@ do
     ;;
     g) UPGRADE=${OPTARG}
     ;;
+    u) MYSQLUSER=${OPTARG}
+    ;;
+    q) MYSQLPASS=${OPTARG}
+    ;;
+    b) MYSQLDB=${OPTARG}
+    ;;
     esac
 done
 
-if [ -z "$SSHPORT" ];then
-    SSHPORT=22
-fi
 
-if [ -z "$SSHPASS" ];then
-    SSHPASS="changethispassword"
-fi
-
-if [ -z "$DIRPATH" ];then
-    DIRPATH="/var/www/html/"
-else
-    mkdir -p $DIRPATH
-    
-fi
-PUBLIC_IP=$(curl ipinfo.io/ip)
-
-if [ -z "$DOMAIN" ];then
-    DOMAIN="http://$PUBLIC_IP"
-fi
-
-bigecho "SMART VPN Billing Panel Installation Started...."
-
+function installPackages()
+{
+bigecho "Packages Installation Started ...."
 apt-get update
 #apt-get upgrade -y
 sudo apt-get -y install mysql-server
@@ -71,12 +59,12 @@ sudo a2dismod php5
 #sudo a2dismod php7
 sudo a2enmod php5.6
 sudo service apache2 restart
+bigecho " Package Installation Done."
+ 
+}
 
 
-
-#cd $DIRPATH
-cat /dev/null > $DIRPATH/index.html
-echo "Installing ..... Please wait! It will take a few minutes" >> $DIRPATH/index.html
+function cloneGitFiles(){
 
 if [ -d "$repoName" ];then
 rm -r $repoName
@@ -97,9 +85,10 @@ mv -f $repoName/* $DIRPATH
 fi
  
 bigecho "Cloned Successfully"
+}
 
-
-
+function zendioncubeInstallation () {
+bigecho " Zend / ioncube Installation Startard..."
 cd $DIRPATH
 #cd zend-loader-php5.6-linux-x86_64
 cp zend-loader/ZendGuardLoader.so /usr/lib/php/20131226/
@@ -127,40 +116,46 @@ zend_extension = /usr/lib/php/20131226/ZendGuardLoader.so
 EOF
 
 fi
+bigecho "Zend & IonCube Installation Done!"
+sudo service apache2 restart
+}
 
-bigecho " Setting up Cron"
+function settinCron(){
+
+bigecho " Setting up Cron..."
 
 cat >> /etc/crontab <<EOF
 */5 * * * * /usr/bin/php -q $DIRPATH/crons/cron.php
-* * * * * /usr/bin/php -q $DIRPATH/modules/addons/vpnpanel/cron/cleanStaleSessions.php
-
+#* * * * * /usr/bin/php -q $DIRPATH/modules/addons/vpnpanel/cron/cleanStaleSessions.php
 EOF
+bigecho "Cron Set for VPN Panel Success !"
+}
+
+function DatbaseCreate(){
 
 bigecho " Mysql Database Createding and Importing...."
 
-mysql -u root -e "create database vpn_smarters_billing";
+mysql -u root -e "create database $MYSQLDB";
 
 
-mysql -u root  vpn_smarters_billing < $DIRPATH/sqldump/vpn_billing.sql
+mysql -u root  $MYSQLDB < $DIRPATH/sqldump/vpn_billing.sql
 
 # Creating mysql useername and password
 
-MYSQLPASS=$(LC_CTYPE=C tr -dc 'A-HJ-NPR-Za-km-z2-9' < /dev/urandom | head -c 10)
-MYSQLUSER=$(LC_CTYPE=C tr -dc 'A-HJ-NPR-Za-km-z2-9' < /dev/urandom | head -c 8)
-VPNPORT=0
 
 mysql -u root -e "CREATE USER '$MYSQLUSER'@'localhost' IDENTIFIED BY '$MYSQLPASS'"
 mysql -u root -e "GRANT ALL PRIVILEGES ON * . * TO '$MYSQLUSER'@'localhost'"
-mysql -u root vpn_smarters_billing -e "UPDATE tblconfiguration SET value = '$DOMAIN' WHERE setting='SystemURL'";
-mysql -u root vpn_smarters_billing -e "UPDATE tblconfiguration SET value = '$DOMAIN' WHERE setting='Domain'";
-mysql -u root vpn_smarters_billing -e "UPDATE tbladdonmodules SET value = '$LICENSE' WHERE module = 'vpnpanel' AND setting = 'license'";
-mysql -u root vpn_smarters_billing -e "UPDATE tbladdonmodules SET value = '' WHERE module = 'vpnpanel' AND setting = 'localkey'";
-mysql -u root vpn_smarters_billing -e "INSERT INTO server_list(server_name, flag, server_ip, server_category, sshport, server_port, pskkey, mainserver, sshpass, status,createdUploaded) VALUES ('Main Server','$DOMAIN/modules/addons/vpnpanel/assets/flags/png/no_flag.png','$PUBLIC_IP','openvpn','$SSHPORT','$VPNPORT','$SERVICEID',1,'$SSHPASS',1,'Created')";
+mysql -u root $MYSQLDB -e "UPDATE tblconfiguration SET value = '$DOMAIN' WHERE setting='SystemURL'";
+mysql -u root $MYSQLDB -e "UPDATE tblconfiguration SET value = '$DOMAIN' WHERE setting='Domain'";
+mysql -u root $MYSQLDB -e "UPDATE tbladdonmodules SET value = '$LICENSE' WHERE module = 'vpnpanel' AND setting = 'license'";
+mysql -u root $MYSQLDB -e "UPDATE tbladdonmodules SET value = '' WHERE module = 'vpnpanel' AND setting = 'localkey'";
+mysql -u root $MYSQLDB -e "INSERT INTO server_list(server_name, flag, server_ip, server_category, sshport, server_port, pskkey, mainserver, sshpass, status,createdUploaded) VALUES ('Main Server','$DOMAIN/modules/addons/vpnpanel/assets/flags/png/no_flag.png','$PUBLIC_IP','openvpn','$SSHPORT','$VPNPORT','$SERVICEID',1,'$SSHPASS',1,'Created')";
 
 bigecho "Database Created / User Creatd / Configuration Updated"
 
-if [ -z "$UPGRADE" ];then
-
+}
+ 
+function CreateConfigFile(){
 rm configuration.php
 
 cat >> configuration.php <<EOF
@@ -176,16 +171,15 @@ cat >> configuration.php <<EOF
 \$mysql_charset = 'utf8';
 \$autoauthkey= 'loveysingh';
 EOF
-fi
-
+}
+function SettingPermission ()
+{
 bigecho "Setting up the Permission"
 chmod 444 configuration.php
 chmod 777 templates_c
 chmod 777 admin/templates_c
 chmod 777 downloads
 chmod 777 attachments
-
-bigecho "Premission granted !"
 
 if [ -d modules/servers/vpnservernoapi/lib/qr_code/temp ];then
 chmod 777 modules/servers/vpnservernoapi/lib/qr_code/temp
@@ -194,12 +188,12 @@ mkdir -p modules/servers/vpnservernoapi/lib/qr_code/temp
 chmod 777 modules/servers/vpnservernoapi/lib/qr_code/temp
 fi
 
+bigecho "Premission granted !"
+}
 
-
-sudo service apache2 restart
 
 bigecho " Installation Done"
-if [ -z "$UPGRADE" ];then
+ 
 bigecho "Your Mysql Username : $MYSQLUSER"
 bigecho "Your Mysql Password : $MYSQLPASS"
 bigecho "VPN Panel Admin URL http://$PUBLIC_IP/admin"
@@ -207,7 +201,9 @@ bigecho " Admin Username : admin"
 bigecho "Admin Password : admin"
 #optional
 #apt-get install -y sendmail php-mail;
-fi
+ 
+functin scriptRemove()
+{
 
 if [ -f /root/$scriptFileName ];then
 rm /root/$scriptFileName
@@ -222,36 +218,21 @@ if [ -f "$DIRPATH/index.html" ];then
 rm $DIRPATH/index.html
 echo " Removed Index.html dummy file "
 fi
+}
 # Update Configuration via mysql
 
 # Radius Server Installation ....
 
-#!/bin/sh
-# Created by WHMCS-Smarters www.whmcssmarters.com
 
 # Assiging valus MYSQLHOST
-MYSQLHOST='localhost'
-MYSQLDB='vpn_smarters_billing'
-
-# while getopts ":h:p:l:s:d:" o
-# do
-#     case "${o}" in
-#     h) MYSQLHOST=${OPTARG}
-#     ;;
-#     p) MYSQLPORT=${OPTARG}
-#     ;;
-#     l) MYSQLLOGIN=${OPTARG}
-#     ;;
-#     s) MYSQLPASS=${OPTARG}
-#     ;;
-#     d) MYSQLDB=${OPTARG}
-#     esac
-# done
+ 
 if [ -z "$UPGRADE" ];then
 if [ -z "$MYSQLPORT" ]; then
     MYSQLPORT=3306
 fi
 
+function installFreeradius()
+{
 
 bigecho "Freeradius Installation Started ......"
 
@@ -345,8 +326,67 @@ sudo chgrp -h freerad /etc/freeradius/3.0/mods-available/sql
 sudo chown -R freerad:freerad /etc/freeradius/3.0/mods-enabled/sql
 sudo systemctl restart freeradius.service
 echo " Radius Server is ready"
+} # installFreeRadius brace
+functionn TempMessageDisplayed ()
+{
+cat /dev/null > $DIRPATH/index.html
+
+echo "Installing ..... Please wait! It will take a few minutes" >> $DIRPATH/index.html
+}
+
+##### Function Declaration #######
+
+
+VPNPORT=0
+MYSQLHOST='localhost'
+if [ -z "$SSHPORT" ];then
+    SSHPORT=22
+fi
+
+if [ -z "$SSHPASS" ];then
+    SSHPASS="changethispassword"
+fi
+
+if [ -z "$DIRPATH" ];then
+    DIRPATH="/var/www/html/"
+else
+    mkdir -p $DIRPATH
+    
+fi
+PUBLIC_IP=$(curl ipinfo.io/ip)
+
+if [ -z "$DOMAIN" ];then
+    DOMAIN="http://$PUBLIC_IP"
+fi
+
+
+
+if [ -z $UPGRADE ];then
+
+MYSQLDB='vpn_smarters_billing'
+MYSQLPASS=$(LC_CTYPE=C tr -dc 'A-HJ-NPR-Za-km-z2-9' < /dev/urandom | head -c 10)
+MYSQLUSER=$(LC_CTYPE=C tr -dc 'A-HJ-NPR-Za-km-z2-9' < /dev/urandom | head -c 8)
+
+
+installPackages
+TempMessageDisplayed
+cloneGitFiles
+zendioncubeInstallation
+settinCron
+DatbaseCreate
+CreateConfigFile
+SettingPermission
+installFreeradius
+else
+bigecho "SMART VPN Billing Panel Upgradation Started...."
+TempMessageDisplayed
+cloneGitFiles
+SettingPermission
+installFreeradius
+fi
+scriptRemove
 
 bigecho " Sending Status back"
 return_status=$(curl --data "s=1&p=$DOMAIN&serviceid=$SERVICEID" https://www.whmcssmarters.com/clients/panel_installation_status.php);
 echo "Return Message: $return_status"
-fi # if upgrade is empty no modification with freeradius 
+fi # if upgrade is empty no modification with freeradius
