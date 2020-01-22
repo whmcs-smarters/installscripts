@@ -27,6 +27,7 @@ FILE="$DIRPATH"/configuration.php
 if [ -e "$FILE" ] ;then
 echo "installed"
 exit 1
+fi
 }
 function initialCheck () {
     if ! isRoot; then
