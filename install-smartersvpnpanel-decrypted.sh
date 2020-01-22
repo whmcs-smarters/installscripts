@@ -17,7 +17,7 @@ scriptFileName="install-smartersvpnpanel-decrypted.sh"
 
 #Copy/Paste the below script when  needed
 
-while getopts ":l:p:d:s:a:i:g:u:q:b" o
+while getopts ":l:p:d:s:a:i:g:u:q:b:" o
 do
     case "${o}" in
     l) LICENSE=${OPTARG}
@@ -351,7 +351,7 @@ fi
 
 
 
-if [ -z $UPGRADE ];then
+if [ -z "$UPGRADE" ];then
 
 MYSQLDB='vpn_smarters_billing'
 MYSQLPASS=$(LC_CTYPE=C tr -dc 'A-HJ-NPR-Za-km-z2-9' < /dev/urandom | head -c 10)
