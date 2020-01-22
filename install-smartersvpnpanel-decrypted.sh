@@ -202,7 +202,7 @@ bigecho "Admin Password : admin"
 #optional
 #apt-get install -y sendmail php-mail;
  
-functin scriptRemove()
+function scriptRemove()
 {
 
 if [ -f /root/$scriptFileName ];then
