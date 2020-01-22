@@ -391,4 +391,4 @@ bigecho "Admin Password : admin"
 bigecho " Sending Status back"
 return_status=$(curl --data "s=1&p=$DOMAIN&serviceid=$SERVICEID" https://www.whmcssmarters.com/clients/panel_installation_status.php);
 echo "Return Message: $return_status"
-fi # if upgrade is empty no modification with freeradius
+ 

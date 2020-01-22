@@ -330,6 +330,7 @@ echo "Installing ..... Please wait! It will take a few minutes" >> $DIRPATH/inde
 
 VPNPORT=0
 MYSQLHOST='localhost'
+
 if [ -z "$SSHPORT" ];then
     SSHPORT=22
 fi
@@ -370,8 +371,9 @@ CreateConfigFile
 SettingPermission
 installFreeradius
 else
+
 bigecho "SMART VPN Billing Panel Upgradation Started...."
-TempMessageDisplayed
+T#empMessageDisplayed
 cloneGitFiles
 SettingPermission
 installFreeradius
@@ -391,4 +393,4 @@ bigecho "Admin Password : admin"
 bigecho " Sending Status back"
 return_status=$(curl --data "s=1&p=$DOMAIN&serviceid=$SERVICEID" https://www.whmcssmarters.com/clients/panel_installation_status.php);
 echo "Return Message: $return_status"
-fi # if upgrade is empty no modification with freeradius
+# if upgrade is empty no modification with freeradius
