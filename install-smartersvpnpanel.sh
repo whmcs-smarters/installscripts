@@ -157,7 +157,7 @@ bigecho "Database Created / User Creatd / Configuration Updated"
  mysql -u $MYSQLUSER $MYSQLDB -e "UPDATE tblconfiguration SET value = '$DOMAIN' WHERE setting='Domain'";
  mysql -u $MYSQLUSER $MYSQLDB -e "UPDATE tbladdonmodules SET value = '$LICENSE' WHERE module = 'vpnpanel' AND setting = 'license'";
  mysql -u $MYSQLUSER $MYSQLDB -e "UPDATE tbladdonmodules SET value = '' WHERE module = 'vpnpanel' AND setting = 'localkey'";
- mysql -u $MYSQLUSER $MYSQLDB -e "UPDATE server_list SET mainserver = 0 WHERE server_ip = $PUBLIC_IP";
+ mysql -u $MYSQLUSER $MYSQLDB -e "UPDATE server_list SET mainserver = 0 WHERE 1
  mysql -u $MYSQLUSER $MYSQLDB -e "INSERT INTO server_list(server_name, flag, server_ip, server_category, sshport, server_port, pskkey, mainserver, sshpass, status,createdUploaded) VALUES ('Main Server','$DOMAIN/modules/addons/vpnpanel/assets/flags/png/no_flag.png','$PUBLIC_IP','openvpn','$SSHPORT','$VPNPORT','$SERVICEID',1,'$SSHPASS',1,'Created')";
 
 }
@@ -217,8 +217,8 @@ if [ -f "$DIRPATH/index.html" ];then
 rm $DIRPATH/index.html
 echo " Removed Index.html dummy file "
 fi
-if [ -f "~/.my.cnf" ];then
-rm ~/.my.cnf
+if [ -f "$DIRPATH/.my.cnf" ];then
+rm "$DIRPATH/.my.cnf"
 echo "Removed CNF File"
 fi
 }
@@ -349,6 +349,8 @@ EOF
 
 VPNPORT=0
 MYSQLHOST='localhost'
+PUBLIC_IP=$(curl ipinfo.io/ip)
+
 if [ -z "$SSHPORT" ];then
     SSHPORT=22
 fi
@@ -363,7 +365,7 @@ else
     mkdir -p $DIRPATH
     
 fi
-PUBLIC_IP=$(curl ipinfo.io/ip)
+
 
 if [ -z "$DOMAIN" ];then
     DOMAIN="http://$PUBLIC_IP"
