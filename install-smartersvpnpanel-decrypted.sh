@@ -17,7 +17,7 @@ scriptFileName="install-smartersvpnpanel-decrypted.sh"
 
 #Copy/Paste the below script when  needed
 
-while getopts ":l:p:d:s:a:i:u:l:q:b:" o
+while getopts ":l:p:d:s:a:i:" o
 do
     case "${o}" in
     l) LICENSE=${OPTARG}
@@ -33,10 +33,6 @@ do
     i) SERVICEID=${OPTARG}
     ;;
     g) UPGRADE=${OPTARG}
-    ;;
-    r) MYSQLROOTPASS=${OPTARG}
-    ;;
-    b) MYSQLDB=${OPTARG}
     ;;
     esac
 done
@@ -102,6 +98,8 @@ fi
  
 bigecho "Cloned Successfully"
 
+
+
 cd $DIRPATH
 #cd zend-loader-php5.6-linux-x86_64
 cp zend-loader/ZendGuardLoader.so /usr/lib/php/20131226/
@@ -138,41 +136,30 @@ cat >> /etc/crontab <<EOF
 
 EOF
 
-
-
-MYSQLHOST='localhost'
-
-
-if [ -z $UPGRADE ];then
 bigecho " Mysql Database Createding and Importing...."
 
-mysql -u root -e "create database $MYSQLDB";
-
-MYSQLDB='vpn_smarters_billing'
-else
-bigecho "Upgrading Database"
-fi
+mysql -u root -e "create database vpn_smarters_billing";
 
 
-mysql -u root  $MYSQLDB < $DIRPATH/sqldump/vpn_billing.sql
+mysql -u root  vpn_smarters_billing < $DIRPATH/sqldump/vpn_billing.sql
 
 # Creating mysql useername and password
 
 MYSQLPASS=$(LC_CTYPE=C tr -dc 'A-HJ-NPR-Za-km-z2-9' < /dev/urandom | head -c 10)
 MYSQLUSER=$(LC_CTYPE=C tr -dc 'A-HJ-NPR-Za-km-z2-9' < /dev/urandom | head -c 8)
-
 VPNPORT=0
 
 mysql -u root -e "CREATE USER '$MYSQLUSER'@'localhost' IDENTIFIED BY '$MYSQLPASS'"
 mysql -u root -e "GRANT ALL PRIVILEGES ON * . * TO '$MYSQLUSER'@'localhost'"
-mysql -u root $MYSQLDB -e "UPDATE tblconfiguration SET value = '$DOMAIN' WHERE setting='SystemURL'";
-mysql -u root $MYSQLDB -e "UPDATE tblconfiguration SET value = '$DOMAIN' WHERE setting='Domain'";
-mysql -u root $MYSQLDB -e "UPDATE tbladdonmodules SET value = '$LICENSE' WHERE module = 'vpnpanel' AND setting = 'license'";
-mysql -u root $MYSQLDB -e "UPDATE tbladdonmodules SET value = '' WHERE module = 'vpnpanel' AND setting = 'localkey'";
-mysql -u root $MYSQLDB -e "INSERT INTO server_list(server_name, flag, server_ip, server_category, sshport, server_port, pskkey, mainserver, sshpass, status,createdUploaded) VALUES ('Main Server','$DOMAIN/modules/addons/vpnpanel/assets/flags/png/no_flag.png','$PUBLIC_IP','openvpn','$SSHPORT','$VPNPORT','$SERVICEID',1,'$SSHPASS',1,'Created')";
+mysql -u root vpn_smarters_billing -e "UPDATE tblconfiguration SET value = '$DOMAIN' WHERE setting='SystemURL'";
+mysql -u root vpn_smarters_billing -e "UPDATE tblconfiguration SET value = '$DOMAIN' WHERE setting='Domain'";
+mysql -u root vpn_smarters_billing -e "UPDATE tbladdonmodules SET value = '$LICENSE' WHERE module = 'vpnpanel' AND setting = 'license'";
+mysql -u root vpn_smarters_billing -e "UPDATE tbladdonmodules SET value = '' WHERE module = 'vpnpanel' AND setting = 'localkey'";
+mysql -u root vpn_smarters_billing -e "INSERT INTO server_list(server_name, flag, server_ip, server_category, sshport, server_port, pskkey, mainserver, sshpass, status,createdUploaded) VALUES ('Main Server','$DOMAIN/modules/addons/vpnpanel/assets/flags/png/no_flag.png','$PUBLIC_IP','openvpn','$SSHPORT','$VPNPORT','$SERVICEID',1,'$SSHPASS',1,'Created')";
 
 bigecho "Database Created / User Creatd / Configuration Updated"
 
+if [ -z "$UPGRADE" ];then
 
 rm configuration.php
 
@@ -189,12 +176,15 @@ cat >> configuration.php <<EOF
 \$mysql_charset = 'utf8';
 \$autoauthkey= 'loveysingh';
 EOF
+fi
+
 bigecho "Setting up the Permission"
 chmod 444 configuration.php
 chmod 777 templates_c
 chmod 777 admin/templates_c
 chmod 777 downloads
 chmod 777 attachments
+
 bigecho "Premission granted !"
 
 if [ -d modules/servers/vpnservernoapi/lib/qr_code/temp ];then
@@ -209,7 +199,7 @@ fi
 sudo service apache2 restart
 
 bigecho " Installation Done"
-
+if [ -z "$UPGRADE" ];then
 bigecho "Your Mysql Username : $MYSQLUSER"
 bigecho "Your Mysql Password : $MYSQLPASS"
 bigecho "VPN Panel Admin URL http://$PUBLIC_IP/admin"
@@ -217,6 +207,7 @@ bigecho " Admin Username : admin"
 bigecho "Admin Password : admin"
 #optional
 #apt-get install -y sendmail php-mail;
+fi
 
 if [ -f /root/$scriptFileName ];then
 rm /root/$scriptFileName
@@ -235,7 +226,28 @@ fi
 
 # Radius Server Installation ....
 
+#!/bin/sh
+# Created by WHMCS-Smarters www.whmcssmarters.com
 
+# Assiging valus MYSQLHOST
+MYSQLHOST='localhost'
+MYSQLDB='vpn_smarters_billing'
+
+# while getopts ":h:p:l:s:d:" o
+# do
+#     case "${o}" in
+#     h) MYSQLHOST=${OPTARG}
+#     ;;
+#     p) MYSQLPORT=${OPTARG}
+#     ;;
+#     l) MYSQLLOGIN=${OPTARG}
+#     ;;
+#     s) MYSQLPASS=${OPTARG}
+#     ;;
+#     d) MYSQLDB=${OPTARG}
+#     esac
+# done
+if [ -z "$UPGRADE" ];then
 if [ -z "$MYSQLPORT" ]; then
     MYSQLPORT=3306
 fi
@@ -337,3 +349,4 @@ echo " Radius Server is ready"
 bigecho " Sending Status back"
 return_status=$(curl --data "s=1&p=$DOMAIN&serviceid=$SERVICEID" https://www.whmcssmarters.com/clients/panel_installation_status.php);
 echo "Return Message: $return_status"
+fi # if upgrade is empty no modification with freeradius 

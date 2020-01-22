@@ -23,7 +23,6 @@ function checkOS () {
   fi
 }
 function PanelCheck(){
-
 FILE="$DIRPATH"/configuration.php
 if [ -e "$FILE" ] ;then
 echo "installed"
