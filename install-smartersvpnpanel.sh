@@ -147,16 +147,20 @@ mysql -u root  $MYSQLDB < $DIRPATH/sqldump/vpn_billing.sql
 
 mysql -u root -e "CREATE USER '$MYSQLUSER'@'localhost' IDENTIFIED BY '$MYSQLPASS'"
 mysql -u root -e "GRANT ALL PRIVILEGES ON * . * TO '$MYSQLUSER'@'localhost'"
-mysql -u root $MYSQLDB -e "UPDATE tblconfiguration SET value = '$DOMAIN' WHERE setting='SystemURL'";
-mysql -u root $MYSQLDB -e "UPDATE tblconfiguration SET value = '$DOMAIN' WHERE setting='Domain'";
-mysql -u root $MYSQLDB -e "UPDATE tbladdonmodules SET value = '$LICENSE' WHERE module = 'vpnpanel' AND setting = 'license'";
-mysql -u root $MYSQLDB -e "UPDATE tbladdonmodules SET value = '' WHERE module = 'vpnpanel' AND setting = 'localkey'";
-mysql -u root $MYSQLDB -e "INSERT INTO server_list(server_name, flag, server_ip, server_category, sshport, server_port, pskkey, mainserver, sshpass, status,createdUploaded) VALUES ('Main Server','$DOMAIN/modules/addons/vpnpanel/assets/flags/png/no_flag.png','$PUBLIC_IP','openvpn','$SSHPORT','$VPNPORT','$SERVICEID',1,'$SSHPASS',1,'Created')";
-
+DatabaseUpdate
 bigecho "Database Created / User Creatd / Configuration Updated"
 
 }
- 
+ function DatabaseUpdate(){
+ createCNF
+ mysql -u $MYSQLUSER $MYSQLDB -e "UPDATE tblconfiguration SET value = '$DOMAIN' WHERE setting='SystemURL'";
+ mysql -u $MYSQLUSER $MYSQLDB -e "UPDATE tblconfiguration SET value = '$DOMAIN' WHERE setting='Domain'";
+ mysql -u $MYSQLUSER $MYSQLDB -e "UPDATE tbladdonmodules SET value = '$LICENSE' WHERE module = 'vpnpanel' AND setting = 'license'";
+ mysql -u $MYSQLUSER $MYSQLDB -e "UPDATE tbladdonmodules SET value = '' WHERE module = 'vpnpanel' AND setting = 'localkey'";
+ mysql -u $MYSQLUSER $MYSQLDB -e "UPDATE `server_list` SET mainserver = 0 WHERE server_ip = $PUBLIC_IP";
+ mysql -u $MYSQLUSER $MYSQLDB -e "INSERT INTO server_list(server_name, flag, server_ip, server_category, sshport, server_port, pskkey, mainserver, sshpass, status,createdUploaded) VALUES ('Main Server','$DOMAIN/modules/addons/vpnpanel/assets/flags/png/no_flag.png','$PUBLIC_IP','openvpn','$SSHPORT','$VPNPORT','$SERVICEID',1,'$SSHPASS',1,'Created')";
+
+}
 function CreateConfigFile(){
 rm configuration.php
 
@@ -212,6 +216,10 @@ if [ -f "$DIRPATH/index.html" ];then
 
 rm $DIRPATH/index.html
 echo " Removed Index.html dummy file "
+fi
+if [ -f "~/.my.cnf" ];then
+rm ~/.my.cnf
+echo "Removed CNF File"
 fi
 }
 # Update Configuration via mysql
@@ -325,6 +333,17 @@ cat /dev/null > $DIRPATH/index.html
 echo "Installing ..... Please wait! It will take a few minutes" >> $DIRPATH/index.html
 }
 
+function createCNF(){
+cat >> ~/.my.cnf <<EOF
+[mysql]
+user = $MYSQLUSER
+password = $MYSQLPASS
+
+[mysqldump]
+user = $MYSQLUSER
+password = $MYSQLPASS
+EOF
+}
 ##### Function Declaration #######
 
 
@@ -373,6 +392,7 @@ else
 bigecho "SMART VPN Billing Panel Upgradation Started...."
 TempMessageDisplayed
 cloneGitFiles
+DatabaseUpdate
 SettingPermission
 installFreeradius
  fi
