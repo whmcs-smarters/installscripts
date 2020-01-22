@@ -318,7 +318,7 @@ sudo chown -R freerad:freerad /etc/freeradius/3.0/mods-enabled/sql
 sudo systemctl restart freeradius.service
 echo " Radius Server is ready"
 } # installFreeRadius brace
-functionn TempMessageDisplayed ()
+function TempMessageDisplayed ()
 {
 cat /dev/null > $DIRPATH/index.html
 
