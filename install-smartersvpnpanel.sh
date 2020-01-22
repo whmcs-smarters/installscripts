@@ -74,14 +74,17 @@ else
 bigecho " Cloning ......"
 git clone $repoPath
 fi
-FILE="$DIRPATH/configuration.php"
-if [ -f "$FILE" ];then
-echo "Removing existings smarterspanel files first then Moving "
-rm -r $DIRPATH/*
 mv -f $repoName/* $DIRPATH
-else
-mv -f $repoName/* $DIRPATH
-fi
+
+#FILE="$DIRPATH/configuration.php"
+
+#if [ -f "$FILE" ];then
+#echo "Removing existings smarterspanel files first then Moving "
+#rm -r $DIRPATH/*
+#mv -f $repoName/* $DIRPATH
+#else
+#mv -f $repoName/* $DIRPATH
+#fi
  
 bigecho "Cloned Successfully"
 }
@@ -173,12 +176,13 @@ EOF
 }
 function SettingPermission ()
 {
+cd $DIRPATH
 bigecho "Setting up the Permission"
-chmod 444 configuration.php
-chmod 777 templates_c
-chmod 777 admin/templates_c
-chmod 777 downloads
-chmod 777 attachments
+chmod 444 "$DIRPATH/configuration.php"
+chmod 777 "$DIRPATH/templates_c"
+chmod 777 "$DIRPATH/admin/templates_c"
+chmod 777 "$DIRPATH/downloads"
+chmod 777 "$DIRPATH/attachments"
 
 if [ -d modules/servers/vpnservernoapi/lib/qr_code/temp ];then
 chmod 777 modules/servers/vpnservernoapi/lib/qr_code/temp
