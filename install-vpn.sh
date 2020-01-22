@@ -42,7 +42,7 @@ conf_bk() { /bin/cp -f "$1" "$1.old-$SYS_DT" 2>/dev/null; }
 bigecho() { echo; echo "## $1"; echo; }
 
 # Ikev2 VPN Server Installation #
-bigecho " Ikev2 VPN Installation Started ....."
+bigecho " VPN Installation Started ....."
 
 if [ -z "$RADIUS_SECRET" ];then
   RADIUS_SECRET="testing123"
@@ -53,11 +53,12 @@ fi
 #[ -z "$PUBLIC_IP" ] && PUBLIC_IP=$(wget -t 3 -T 15 -qO- http://ipv4.icanhazip.com)
 
 PUBLIC_IP=$(curl ipinfo.io/ip)
+OS="ubuntu"
 echo " Public IP Address: $PUBLIC_IP"
 
 
 vpnsetup() {
-
+bigecho " Ikev2 VPN Installation Started..."
 bigecho "Populating apt-get cache..."
 
 export DEBIAN_FRONTEND=noninteractive
@@ -266,11 +267,12 @@ bigecho " Password : test123"
 bigecho " Certificate is "
 
 echo $ca_cert;
-
+bigecho "ikev2 VPN server Installtion Done"
 }
 
 vpnremove()
 {
+bigecho " Removing existing ikev2 VPN ..."
 apt remove strongswan strongswan-pki libcharon-standard-plugins libstrongswan libstrongswan-standard-plugins strongswan-charon strongswan-libcharon strongswan-starter -yq
 
 # These package were automatically installed and no longer required : libcharon-standard-plugins libstrongswan libstrongswan-standard-plugins strongswan-charon strongswan-libcharon strongswan-starter
@@ -324,48 +326,22 @@ function tunAvailable () {
 }
 
 # we declared only Ubuntu must be installed with 18.04
-OS="ubuntu"
+
 
 function openvpnrestart()
 {
+bigecho " Restarting OpenVPN .."
 # Finally, restart and enable OpenVPN
-   if [[ "$OS" = 'arch' || "$OS" = 'fedora' || "$OS" = 'centos' ]]; then
-       # Don't modify package-provided service
-       cp /usr/lib/systemd/system/openvpn-server@.service /etc/systemd/system/openvpn-server@.service
+cp /lib/systemd/system/openvpn\@.service /etc/systemd/system/openvpn\@.service
 
-       # Workaround to fix OpenVPN service on OpenVZ
-       sed -i 's|LimitNPROC|#LimitNPROC|' /etc/systemd/system/openvpn-server@.service
-       # Another workaround to keep using /etc/openvpn/
-       sed -i 's|/etc/openvpn/server|/etc/openvpn|' /etc/systemd/system/openvpn-server@.service
-       # On fedora, the service hardcodes the ciphers. We want to manage the cipher ourselves, so we remove it from the service
-       
-       if [[ "$OS" == "fedora" ]];then
-           sed -i 's|--cipher AES-256-GCM --ncp-ciphers AES-256-GCM:AES-128-GCM:AES-256-CBC:AES-128-CBC:BF-CBC||' /etc/systemd/system/openvpn-server@.service
-       fi
+# Workaround to fix OpenVPN service on OpenVZ
+sed -i 's|LimitNPROC|#LimitNPROC|' /etc/systemd/system/openvpn\@.service
+# Another workaround to keep using /etc/openvpn/
+sed -i 's|/etc/openvpn/server|/etc/openvpn|' /etc/systemd/system/openvpn\@.service
 
-       systemctl daemon-reload
-       systemctl restart openvpn-server@server
-       systemctl enable openvpn-server@server
-   elif [[ "$OS" == "ubuntu" ]] && [[ "$VERSION_ID" == "16.04" ]]; then
-       # On Ubuntu 16.04, we use the package from the OpenVPN repo
-       # This package uses a sysvinit service
-       systemctl enable openvpn
-       systemctl start openvpn
-      
-   else
-       # Don't modify package-provided service
-       cp /lib/systemd/system/openvpn\@.service /etc/systemd/system/openvpn\@.service
-
-       # Workaround to fix OpenVPN service on OpenVZ
-       sed -i 's|LimitNPROC|#LimitNPROC|' /etc/systemd/system/openvpn\@.service
-       # Another workaround to keep using /etc/openvpn/
-       sed -i 's|/etc/openvpn/server|/etc/openvpn|' /etc/systemd/system/openvpn\@.service
-
-       systemctl daemon-reload
-       systemctl restart openvpn@server
-       systemctl enable openvpn@server
-        
-   fi
+systemctl daemon-reload
+systemctl restart openvpn@server
+systemctl enable openvpn@server
 
 }
 function installUnbound () {
@@ -1326,7 +1302,7 @@ function removeUnbound () {
 }
 
 function removeOpenVPN () {
-    #echo ""
+    bigecho " Removing existing OpenVPN... "
     # shellcheck disable=SC2034
     #read -rp "Do you really want to remove OpenVPN? [y/n]: " -e -i n REMOVE
      
@@ -1395,21 +1371,14 @@ function removeOpenVPN () {
             removeUnbound
         fi
         echo ""
-        echo "OpenVPN removed!"
-  
-    #else
-    #    echo ""
-        #echo "Removal aborted!"
-    #fi
+        bigecho "OpenVPN removed!"
+   
 }
-
-
-
 
 
 radiusclientsetup(){
 
-## RadiusClient Installation Started #
+bigecho "RadiusClient Installation Started..."
 
 
 apt-get -y install libgcrypt11-dev build-essential
@@ -1438,7 +1407,7 @@ cp -r radiusplugin.so /etc/openvpn/radius
 
 # PUBLIC_IP=$(dig @resolver1.opendns.com -t A -4 myip.opendns.com +short)
 # [ -z "$PUBLIC_IP" ] && PUBLIC_IP=$(wget -t 3 -T 15 -qO- http://ipv4.icanhazip.com)
-PUBLIC_IP=$(curl ipinfo.io/ip)
+
 
 conf_bk "/etc/openvpn/radius/radius.cnf"
 
@@ -1515,9 +1484,10 @@ sharedsecret=$RADIUS_SECRET
 }
 
 EOF
-## Radiusclient Installation Done ##
-
+bigecho "Radiusclient Installation Done"
 }
+
+#################### FUNCTION DECLARATION STARTED HERE ###############################
 
 if [[ $VPNTYPE == "ikev2" ]];then
 bigecho " VPN Type $VPNTYPE"
@@ -1574,7 +1544,7 @@ openvpnrestart
 if [ -z "$APIKEY" ]
       then
 
-      echo "API Key Not Found! It seems the script runs directory on the server"
+      bigecho "API Key Not Found! It seems the script runs directory on the server"
 
       else
     
@@ -1585,8 +1555,8 @@ if [ -z "$APIKEY" ]
       echo "Return Status : "$return_status
       echo " Ack Done for Status Updation on Panel Side"
 else
-      echo " Seems Server not updated on Panel Side"
-      echo "Return Message: "$return_status
+      bigecho" Seems Server not updated on Panel Side"
+      bigecho "Return Message: "$return_status
       fi
       fi
     
