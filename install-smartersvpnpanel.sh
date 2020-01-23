@@ -220,8 +220,8 @@ if [ -f "$DIRPATH/index.html" ];then
 rm $DIRPATH/index.html
 echo " Removed Index.html dummy file "
 fi
-if [ -f "$DIRPATH/.my.cnf" ];then
-rm "$DIRPATH/.my.cnf"
+if [ -f "/root/.my.cnf" ];then
+rm "/root/.my.cnf"
 echo "Removed CNF File"
 fi
 }
@@ -339,12 +339,12 @@ echo "Installing ..... Please wait! It will take a few minutes" >> $DIRPATH/inde
 function createCNF(){
 cat >> ~/.my.cnf <<EOF
 [mysql]
-user = $MYSQLUSER
-password = $MYSQLPASS
+user = '$MYSQLUSER'
+password = '$MYSQLPASS'
 
 [mysqldump]
-user = $MYSQLUSER
-password = $MYSQLPASS
+user = '$MYSQLUSER'
+password = '$MYSQLPASS'
 EOF
 }
 ##### Function Declaration #######
