@@ -166,9 +166,9 @@ bigecho "Database Created / User Creatd / Configuration Updated"
 
 }
 function CreateConfigFile(){
-rm configuration.php
+rm "$DIRPATH/configuration.php"
 
-cat >> configuration.php <<EOF
+cat >> "$DIRPATH/configuration.php" <<EOF
 <?php
 \$license = 'WHMCS-29kavnamq1';
 \$db_host = 'localhost';
@@ -192,11 +192,11 @@ chmod 777 "$DIRPATH/admin/templates_c"
 chmod 777 "$DIRPATH/downloads"
 chmod 777 "$DIRPATH/attachments"
 
-if [ -d modules/servers/vpnservernoapi/lib/qr_code/temp ];then
-chmod 777 modules/servers/vpnservernoapi/lib/qr_code/temp
+if [ -d "$DIRPATH/modules/servers/vpnservernoapi/lib/qr_code/temp" ];then
+chmod 777 "$DIRPATH/modules/servers/vpnservernoapi/lib/qr_code/temp"
 else
-mkdir -p modules/servers/vpnservernoapi/lib/qr_code/temp
-chmod 777 modules/servers/vpnservernoapi/lib/qr_code/temp
+mkdir -p "$DIRPATH/modules/servers/vpnservernoapi/lib/qr_code/temp
+chmod 777 "$DIRPATH/modules/servers/vpnservernoapi/lib/qr_code/temp"
 fi
 
 bigecho "Premission granted !"
