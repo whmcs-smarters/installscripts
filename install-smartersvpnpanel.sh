@@ -13,6 +13,7 @@ repoName="smartersvpnpanel"
 repoPath="https://amansmarters:aa29246e0d9acd108307e63fd8bf5e6b0cfe957b@github.com/whmcs-smarters/$repoName.git"
 scriptFileName="install-smartersvpnpanel.sh"
 
+
 #Copy/Paste the below script when  needed
 
 while getopts ":l:p:d:s:a:i:g:u:q:b:" o
@@ -156,8 +157,10 @@ bigecho "Database Created / User Creatd / Configuration Updated"
  mysql -u $MYSQLUSER $MYSQLDB -e "UPDATE tblconfiguration SET value = '$DOMAIN' WHERE setting='Domain'";
  mysql -u $MYSQLUSER $MYSQLDB -e "UPDATE tbladdonmodules SET value = '$LICENSE' WHERE module = 'vpnpanel' AND setting = 'license'";
  mysql -u $MYSQLUSER $MYSQLDB -e "UPDATE tbladdonmodules SET value = '' WHERE module = 'vpnpanel' AND setting = 'localkey'";
- mysql -u $MYSQLUSER $MYSQLDB -e "UPDATE server_list SET mainserver = '0' WHERE 1";
- mysql -u $MYSQLUSER $MYSQLDB -e "INSERT INTO server_list(server_name, flag, server_ip, server_category, sshport, server_port, pskkey, mainserver, sshpass, status,createdUploaded) VALUES ('MainServer','$DOMAIN/modules/addons/vpnpanel/assets/flags/png/no_flag.png','$PUBLIC_IP','openvpn','$SSHPORT','$VPNPORT','$SERVICEID',1,'$SSHPASS',1,'Created')";
+ mysql -u $MYSQLUSER $MYSQLDB -e "UPDATE server_list SET mainserver = 0 WHERE 1";
+ mysql -u $MYSQLUSER $MYSQLDB -e "DELETE FROM server_list WHERE server_ip = '$PUBLIC_IP'";
+ mysql -u $MYSQLUSER $MYSQLDB -e "INSERT INTO server_list(server_name, flag, server_ip, server_category, sshport, server_port, pskkey, mainserver, sshpass, status,createdUploaded) VALUES ('Main Server','$DOMAIN/modules/addons/vpnpanel/assets/flags/png/no_flag.png','$PUBLIC_IP','openvpn','$SSHPORT','$VPNPORT','$SERVICEID',1,'$SSHPASS',1,'Created')";
+
 }
 function CreateConfigFile(){
 rm configuration.php
