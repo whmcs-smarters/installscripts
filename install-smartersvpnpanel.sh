@@ -74,7 +74,7 @@ else
 bigecho " Cloning ......"
 git clone $repoPath
 fi
-mv -f $repoName/* $DIRPATH
+#mv -f $repoName/* $DIRPATH
 
 FILE="$DIRPATH/configuration.php"
 
