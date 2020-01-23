@@ -221,7 +221,6 @@ fi
  
 rm "/root/.my.cnf" || echo "CNF File not removed"
  
-fi
 }
 # Update Configuration via mysql
 
