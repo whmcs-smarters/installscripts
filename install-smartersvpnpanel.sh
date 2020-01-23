@@ -1,6 +1,7 @@
 
 #!/bin/sh
 # Created by WHMCS-Smarters www.whmcssmarters.com
+#FileVersion 2.2
 export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 SYS_DT=$(date +%F-%T)
 
@@ -220,9 +221,9 @@ if [ -f "$DIRPATH/index.html" ];then
 rm $DIRPATH/index.html
 echo " Removed Index.html dummy file "
 fi
-if [ -f "/root/.my.cnf" ];then
-rm "/root/.my.cnf"
-echo "Removed CNF File"
+ 
+rm "/root/.my.cnf" || echo "CNF File not removed"
+ 
 fi
 }
 # Update Configuration via mysql
@@ -339,11 +340,11 @@ echo "Installing ..... Please wait! It will take a few minutes" >> $DIRPATH/inde
 function createCNF(){
 cat >> ~/.my.cnf <<EOF
 [mysql]
-user = '$MYSQLUSER'
+user = $MYSQLUSER
 password = '$MYSQLPASS'
 
 [mysqldump]
-user = '$MYSQLUSER'
+user = $MYSQLUSER
 password = '$MYSQLPASS'
 EOF
 }
