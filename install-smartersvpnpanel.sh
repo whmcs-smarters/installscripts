@@ -65,8 +65,8 @@ bigecho " Package Installation Done."
 
 function cloneGitFiles(){
 
-if [ -d "$repoName" ];then
-rm -r $repoName
+if [ -d "/root/$repoName" ];then
+rm -r "/root/"$repoName
 echo "Removing existing folder "
 bigecho " Cloning ......"
 git clone $repoPath
@@ -76,31 +76,31 @@ git clone $repoPath
 fi
 mv -f $repoName/* $DIRPATH
 
-#FILE="$DIRPATH/configuration.php"
+FILE="$DIRPATH/configuration.php"
 
-#if [ -f "$FILE" ];then
-#echo "Removing existings smarterspanel files first then Moving "
-#rm -r $DIRPATH/*
-#mv -f $repoName/* $DIRPATH
-#else
-#mv -f $repoName/* $DIRPATH
-#fi
+if [ -f "$FILE" ];then
+echo "Removing existings smarterspanel files first then Moving "
+rm -r $DIRPATH/*
+mv -f $repoName/* $DIRPATH
+else
+mv -f $repoName/* $DIRPATH
+fi
  
 bigecho "Cloned Successfully"
 }
 
 function zendioncubeInstallation () {
 bigecho " Zend / ioncube Installation Startard..."
-cd $DIRPATH
+#cd $DIRPATH
 #cd zend-loader-php5.6-linux-x86_64
-cp zend-loader/ZendGuardLoader.so /usr/lib/php/20131226/
+cp "$DIRPATH/zend-loader/ZendGuardLoader.so /usr/lib/php/20131226/"
 
-cp zend-loader/opcache.so /usr/lib/php/20131226/
+cp "$DIRPATH/zend-loader/opcache.so /usr/lib/php/20131226/"
 
 # Ioncube installation
  
 
-cp ioncube/ioncube_loader_lin_5.6.so /usr/lib/php/20131226
+cp "$DIRPATH/ioncube/ioncube_loader_lin_5.6.so /usr/lib/php/20131226"
 
 if ! grep -qs "Smarters VPN Panel Installation" /etc/php/5.6/apache2/php.ini; then
 
@@ -153,6 +153,7 @@ bigecho "Database Created / User Creatd / Configuration Updated"
 }
  function DatabaseUpdate(){
  createCNF
+ bigecho " Started Updating Database using User : $MYSQLUSER and DB name $MYSQLDB  ";
  mysql -u $MYSQLUSER $MYSQLDB -e "UPDATE tblconfiguration SET value = '$DOMAIN' WHERE setting='SystemURL'";
  mysql -u $MYSQLUSER $MYSQLDB -e "UPDATE tblconfiguration SET value = '$DOMAIN' WHERE setting='Domain'";
  mysql -u $MYSQLUSER $MYSQLDB -e "UPDATE tbladdonmodules SET value = '$LICENSE' WHERE module = 'vpnpanel' AND setting = 'license'";
@@ -181,7 +182,7 @@ EOF
 }
 function SettingPermission ()
 {
-cd $DIRPATH
+#cd $DIRPATH
 bigecho "Setting up the Permission"
 chmod 444 "$DIRPATH/configuration.php"
 chmod 777 "$DIRPATH/templates_c"
@@ -207,11 +208,11 @@ function scriptRemove()
 
 if [ -f /root/$scriptFileName ];then
 rm /root/$scriptFileName
-bigecho " Script install-smartersvpnpanel-decrypted.sh removed !!"
+bigecho " Script install-smart...sh removed !!"
 fi
-if [ -f /root/checkServerCompatibility.sh ];then
+if [ -f /root/checkMainServerCompatibility.sh.sh ];then
 rm /root/checkServerCompatibility.sh
-bigecho " Removed checkServerCompatibility.sh Script !!"
+bigecho " Removed checkMainServerCompatibility.sh.sh Script !!"
 fi
 if [ -f "$DIRPATH/index.html" ];then
 
@@ -396,6 +397,7 @@ bigecho "SMART VPN Billing Panel Upgradation Started...."
 TempMessageDisplayed
 cloneGitFiles
 DatabaseUpdate
+CreateConfigFile
 SettingPermission
 installFreeradius
  fi
