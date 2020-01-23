@@ -175,7 +175,7 @@ cat >> "$DIRPATH/configuration.php" <<EOF
 \$db_port = '';
 \$db_username = '$MYSQLUSER';
 \$db_password = '$MYSQLPASS';
-\$db_name = 'vpn_smarters_billing';
+\$db_name = '$MYSQLDB';
 \$cc_encryption_hash = 'ZzruzaTJMDHVK9o4TDHagNUmYi2aBb1qBiL0iuzVY7Hz6WtQp0QwEAJsJBsaDkr4';
 \$templates_compiledir = 'templates_c';
 \$mysql_charset = 'utf8';
@@ -375,9 +375,10 @@ fi
 
 if [ -z "$UPGRADE" ];then
 
-MYSQLDB='vpn_smarters_billing'
+
 MYSQLPASS=$(LC_CTYPE=C tr -dc 'A-HJ-NPR-Za-km-z2-9' < /dev/urandom | head -c 10)
 MYSQLUSER=$(LC_CTYPE=C tr -dc 'A-HJ-NPR-Za-km-z2-9' < /dev/urandom | head -c 8)
+MYSQLDB="vpn_smarters_billing_$MYSQLUSER"
 
 bigecho "SMART VPN Billing Panel Installation Started...."
  
