@@ -13,7 +13,6 @@ repoName="smartersvpnpanel"
 repoPath="https://amansmarters:aa29246e0d9acd108307e63fd8bf5e6b0cfe957b@github.com/whmcs-smarters/$repoName.git"
 scriptFileName="install-smartersvpnpanel.sh"
 
-
 #Copy/Paste the below script when  needed
 
 while getopts ":l:p:d:s:a:i:g:u:q:b:" o
