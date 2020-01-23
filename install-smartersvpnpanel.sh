@@ -153,7 +153,8 @@ bigecho "Database Created / User Creatd / Configuration Updated"
 }
  function DatabaseUpdate(){
  createCNF
- bigecho " Started Updating Database using User : $MYSQLUSER and DB name $MYSQLDB  ";
+ 
+ bigecho " Started Updating Database using User : $MYSQLUSER and DB name $MYSQLDB";
  mysql -u $MYSQLUSER $MYSQLDB -e "UPDATE tblconfiguration SET value = '$DOMAIN' WHERE setting='SystemURL'";
  mysql -u $MYSQLUSER $MYSQLDB -e "UPDATE tblconfiguration SET value = '$DOMAIN' WHERE setting='Domain'";
  mysql -u $MYSQLUSER $MYSQLDB -e "UPDATE tbladdonmodules SET value = '$LICENSE' WHERE module = 'vpnpanel' AND setting = 'license'";
