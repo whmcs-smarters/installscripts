@@ -78,7 +78,6 @@ fi
 mv -f $repoName/* $DIRPATH
 
 #FILE="$DIRPATH/configuration.php"
-
 #if [ -f "$FILE" ];then
 #echo "Removing existings smarterspanel files first then Moving "
 #rm -r $DIRPATH/*
