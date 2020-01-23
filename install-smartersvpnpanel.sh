@@ -202,9 +202,6 @@ fi
 bigecho "Premission granted !"
 }
 
-
-
- 
 function scriptRemove()
 {
 
