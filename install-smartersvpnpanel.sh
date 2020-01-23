@@ -195,7 +195,7 @@ chmod 777 "$DIRPATH/attachments"
 if [ -d "$DIRPATH/modules/servers/vpnservernoapi/lib/qr_code/temp" ];then
 chmod 777 "$DIRPATH/modules/servers/vpnservernoapi/lib/qr_code/temp"
 else
-mkdir -p "$DIRPATH/modules/servers/vpnservernoapi/lib/qr_code/temp
+mkdir -p "$DIRPATH/modules/servers/vpnservernoapi/lib/qr_code/temp"
 chmod 777 "$DIRPATH/modules/servers/vpnservernoapi/lib/qr_code/temp"
 fi
 
