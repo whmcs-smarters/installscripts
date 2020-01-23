@@ -209,7 +209,7 @@ if [ -f /root/$scriptFileName ];then
 rm /root/$scriptFileName
 bigecho " Script install-smart...sh removed !!"
 fi
-if [ -f /root/checkMainServerCompatibility.sh.sh ];then
+if [ -f /root/checkMainServerCompatibility.sh ];then
 rm /root/checkServerCompatibility.sh
 bigecho " Removed checkMainServerCompatibility.sh.sh Script !!"
 fi
