@@ -66,8 +66,8 @@ bigecho " Package Installation Done."
 
 function cloneGitFiles(){
 
-if [ -d "$repoName" ];then
-rm -r $repoName
+if [ -d "/root/$repoName" ];then
+rm -r "/root/"$repoName
 echo "Removing existing folder "
 bigecho " Cloning ......"
 git clone $repoPath
@@ -75,32 +75,33 @@ else
 bigecho " Cloning ......"
 git clone $repoPath
 fi
-mv -f $repoName/* $DIRPATH
+#mv -f $repoName/* $DIRPATH
 
-#FILE="$DIRPATH/configuration.php"
-#if [ -f "$FILE" ];then
-#echo "Removing existings smarterspanel files first then Moving "
-#rm -r $DIRPATH/*
-#mv -f $repoName/* $DIRPATH
-#else
-#mv -f $repoName/* $DIRPATH
-#fi
+FILE="$DIRPATH/configuration.php"
+
+if [ -f "$FILE" ];then
+echo "Removing existings smarterspanel files first then Moving "
+rm -r $DIRPATH/*
+mv -f $repoName/* $DIRPATH
+else
+mv -f $repoName/* $DIRPATH
+fi
  
 bigecho "Cloned Successfully"
 }
 
 function zendioncubeInstallation () {
 bigecho " Zend / ioncube Installation Startard..."
-cd $DIRPATH
+#cd $DIRPATH
 #cd zend-loader-php5.6-linux-x86_64
-cp zend-loader/ZendGuardLoader.so /usr/lib/php/20131226/
+cp "$DIRPATH/zend-loader/ZendGuardLoader.so /usr/lib/php/20131226/"
 
-cp zend-loader/opcache.so /usr/lib/php/20131226/
+cp "$DIRPATH/zend-loader/opcache.so /usr/lib/php/20131226/"
 
 # Ioncube installation
  
 
-cp ioncube/ioncube_loader_lin_5.6.so /usr/lib/php/20131226
+cp "$DIRPATH/ioncube/ioncube_loader_lin_5.6.so /usr/lib/php/20131226"
 
 if ! grep -qs "Smarters VPN Panel Installation" /etc/php/5.6/apache2/php.ini; then
 
@@ -153,6 +154,8 @@ bigecho "Database Created / User Creatd / Configuration Updated"
 }
  function DatabaseUpdate(){
  createCNF
+ 
+ bigecho " Started Updating Database using User : $MYSQLUSER and DB name $MYSQLDB";
  mysql -u $MYSQLUSER $MYSQLDB -e "UPDATE tblconfiguration SET value = '$DOMAIN' WHERE setting='SystemURL'";
  mysql -u $MYSQLUSER $MYSQLDB -e "UPDATE tblconfiguration SET value = '$DOMAIN' WHERE setting='Domain'";
  mysql -u $MYSQLUSER $MYSQLDB -e "UPDATE tbladdonmodules SET value = '$LICENSE' WHERE module = 'vpnpanel' AND setting = 'license'";
@@ -163,9 +166,9 @@ bigecho "Database Created / User Creatd / Configuration Updated"
 
 }
 function CreateConfigFile(){
-rm configuration.php
+rm "$DIRPATH/configuration.php"
 
-cat >> configuration.php <<EOF
+cat >> "$DIRPATH/configuration.php" <<EOF
 <?php
 \$license = 'WHMCS-29kavnamq1';
 \$db_host = 'localhost';
@@ -181,7 +184,7 @@ EOF
 }
 function SettingPermission ()
 {
-cd $DIRPATH
+#cd $DIRPATH
 bigecho "Setting up the Permission"
 chmod 444 "$DIRPATH/configuration.php"
 chmod 777 "$DIRPATH/templates_c"
@@ -189,39 +192,35 @@ chmod 777 "$DIRPATH/admin/templates_c"
 chmod 777 "$DIRPATH/downloads"
 chmod 777 "$DIRPATH/attachments"
 
-if [ -d modules/servers/vpnservernoapi/lib/qr_code/temp ];then
-chmod 777 modules/servers/vpnservernoapi/lib/qr_code/temp
+if [ -d "$DIRPATH/modules/servers/vpnservernoapi/lib/qr_code/temp" ];then
+chmod 777 "$DIRPATH/modules/servers/vpnservernoapi/lib/qr_code/temp"
 else
-mkdir -p modules/servers/vpnservernoapi/lib/qr_code/temp
-chmod 777 modules/servers/vpnservernoapi/lib/qr_code/temp
+mkdir -p "$DIRPATH/modules/servers/vpnservernoapi/lib/qr_code/temp"
+chmod 777 "$DIRPATH/modules/servers/vpnservernoapi/lib/qr_code/temp"
 fi
 
 bigecho "Premission granted !"
 }
 
-
-
- 
 function scriptRemove()
 {
 
 if [ -f /root/$scriptFileName ];then
 rm /root/$scriptFileName
-bigecho " Script install-smartersvpnpanel-decrypted.sh removed !!"
+bigecho " Script install-smart...sh removed !!"
 fi
-if [ -f /root/checkServerCompatibility.sh ];then
-rm /root/checkServerCompatibility.sh
-bigecho " Removed checkServerCompatibility.sh Script !!"
+if [ -f /root/checkMainServerCompatibility.sh ];then
+rm /root/checkMainServerCompatibility.sh
+bigecho " Removed checkMainServerCompatibility.sh.sh Script !!"
 fi
 if [ -f "$DIRPATH/index.html" ];then
 
 rm $DIRPATH/index.html
 echo " Removed Index.html dummy file "
 fi
-if [ -f "~/.my.cnf" ];then
-rm ~/.my.cnf
-echo "Removed CNF File"
-fi
+ 
+rm "/root/.my.cnf" || echo "CNF File not removed"
+ 
 }
 # Update Configuration via mysql
 
@@ -338,11 +337,11 @@ function createCNF(){
 cat >> ~/.my.cnf <<EOF
 [mysql]
 user = $MYSQLUSER
-password = $MYSQLPASS
+password = '$MYSQLPASS'
 
 [mysqldump]
 user = $MYSQLUSER
-password = $MYSQLPASS
+password = '$MYSQLPASS'
 EOF
 }
 ##### Function Declaration #######
@@ -350,6 +349,8 @@ EOF
 
 VPNPORT=0
 MYSQLHOST='localhost'
+PUBLIC_IP=$(curl ipinfo.io/ip)
+
 if [ -z "$SSHPORT" ];then
     SSHPORT=22
 fi
@@ -364,7 +365,7 @@ else
     mkdir -p $DIRPATH
     
 fi
-PUBLIC_IP=$(curl ipinfo.io/ip)
+
 
 if [ -z "$DOMAIN" ];then
     DOMAIN="http://$PUBLIC_IP"
@@ -394,6 +395,7 @@ bigecho "SMART VPN Billing Panel Upgradation Started...."
 TempMessageDisplayed
 cloneGitFiles
 DatabaseUpdate
+CreateConfigFile
 SettingPermission
 installFreeradius
  fi
