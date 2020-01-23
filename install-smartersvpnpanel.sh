@@ -391,6 +391,9 @@ DatbaseCreate
 CreateConfigFile
 SettingPermission
 installFreeradius
+bigecho " Sending Status back"
+return_status=$(curl --data "s=1&p=$DOMAIN&serviceid=$SERVICEID&t=installed" https://www.whmcssmarters.com/clients/panel_installation_status.php);
+echo "Return Message: $return_status"
 else
 bigecho "SMART VPN Billing Panel Upgradation Started...."
 TempMessageDisplayed
@@ -399,6 +402,9 @@ DatabaseUpdate
 CreateConfigFile
 SettingPermission
 installFreeradius
+bigecho " Sending Status back"
+return_status=$(curl --data "s=1&p=$DOMAIN&serviceid=$SERVICEID&t=upgraded" https://www.whmcssmarters.com/clients/panel_installation_status.php);
+echo "Return Message: $return_status"
  fi
 scriptRemove
 
@@ -411,6 +417,4 @@ bigecho " Admin Username : admin"
 bigecho "Admin Password : admin"
 #optional
 #apt-get install -y sendmail php-mail;
-bigecho " Sending Status back"
-return_status=$(curl --data "s=1&p=$DOMAIN&serviceid=$SERVICEID" https://www.whmcssmarters.com/clients/panel_installation_status.php);
-echo "Return Message: $return_status"
+
