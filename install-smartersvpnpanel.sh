@@ -210,7 +210,7 @@ rm /root/$scriptFileName
 bigecho " Script install-smart...sh removed !!"
 fi
 if [ -f /root/checkMainServerCompatibility.sh ];then
-rm /root/checkServerCompatibility.sh
+rm /root/checkMainServerCompatibility.sh
 bigecho " Removed checkMainServerCompatibility.sh.sh Script !!"
 fi
 if [ -f "$DIRPATH/index.html" ];then
