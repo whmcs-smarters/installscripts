@@ -59,6 +59,7 @@ sudo a2dismod php5
 #sudo a2dismod php7
 sudo a2enmod php5.6
 sudo service apache2 restart
+service mysql restart
 bigecho " Package Installation Done."
  
 }
