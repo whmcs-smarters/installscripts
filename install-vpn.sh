@@ -1416,7 +1416,7 @@ fi
 
 cat >> /etc/openvpn/radius/radius.cnf <<EOF
 
-NAS-Identifier=anyName
+NAS-Identifier=$PUBLIC_IP
 # The service type which is sent to the RADIUS server
 Service-Type=5
 # The framed protocol which is sent to the RADIUS server
