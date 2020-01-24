@@ -1555,8 +1555,8 @@ if [ -z "$APIKEY" ]
       echo "Return Status : "$return_status
       echo " Ack Done for Status Updation on Panel Side"
 else
-      bigecho" Seems Server not updated on Panel Side"
-      bigecho "Return Message: "$return_status
+      bigecho "Seems Server not updated on Panel Side"
+      bigecho "Return Message:" $return_status
       fi
       fi
     
