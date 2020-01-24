@@ -1,7 +1,7 @@
 #!/bin/bash
 #Created by WHMCS-Smarters Team. We provide VPN Software Solution & Services for Business at www.whmcssmarters.com
 
-while getopts ":h:p:r:i:d:x:y:a:m:s:r:v:l:" o
+while getopts ":h:p:l:i:d:x:y:a:m:s:r:v:c:" o
 do
     case "${o}" in
     h) PANELURL=${OPTARG}
@@ -27,8 +27,6 @@ do
     v) VPNTYPE=${OPTARG}
     ;;
     c) REMOVED=${OPTARG}
-    ;;
-    *) usage
     ;;
     esac
 done
@@ -1522,6 +1520,7 @@ openvpnrestart
   if [[ -z "$REMOVED" ]]; then
     vpnsetup "$@"
   else
+  
     vpnremove "$@"
     vpnsetup "$@"
   fi
@@ -1531,6 +1530,7 @@ openvpnrestart
     installOpenVPN
     openvpnrestart
   else
+   removeOpenVPN
    installOpenVPN
    openvpnrestart
   fi
@@ -1562,5 +1562,5 @@ else
     
     #  cleaning files
     rm /root/checkServerCompatibility.sh
-    rm install-vpn.sh
+    rm /root/install-vpn.sh
 exit 0
