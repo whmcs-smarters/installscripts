@@ -1,6 +1,7 @@
-#!/bin/sh
+#!/bin/bash
+
 # Created by WHMCS-Smarters www.whmcssmarters.com
-#File Version 2.3
+#File Version 2.4
 export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 SYS_DT=$(date +%F-%T)
 
@@ -43,17 +44,16 @@ do
 done
 
 
-function installPackages()
-{
+function installPackages(){
 bigecho "Packages Installation Started ...."
-apt-get update
+apt-get update -yq
 #apt-get upgrade -y
-sudo apt-get -y install mysql-server
-sudo apt install apache2 -y
-sudo apt-get install software-properties-common -y
-sudo add-apt-repository ppa:ondrej/php -y
-sudo apt-get update -y
-sudo apt-get install php5.6 php5.6-mbstring git php5.6-mcrypt php5.6-mysql php5.6-xml unzip zip gzip tar php5.6-curl php5.6-gd php5.6-zip  -y
+sudo apt-get -yq install mysql-server
+sudo apt install apache2 -yq
+sudo apt-get install software-properties-common -yq
+sudo add-apt-repository ppa:ondrej/php -yq
+sudo apt-get update -yq
+sudo apt-get install php5.6 php5.6-mbstring git php5.6-mcrypt php5.6-mysql php5.6-xml unzip zip gzip tar php5.6-curl php5.6-gd php5.6-zip  -yq
 sudo a2dismod php5
 #sudo a2dismod php7
 sudo a2enmod php5.6
@@ -62,7 +62,6 @@ service mysql restart
 bigecho " Package Installation Done."
  
 }
-
 
 function cloneGitFiles(){
 

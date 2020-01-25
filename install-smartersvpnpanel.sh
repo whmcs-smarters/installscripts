@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Created by WHMCS-Smarters www.whmcssmarters.com
-#FileVersion 2.3
+#FileVersion 2.4
 export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 SYS_DT=$(date +%F-%T)
 
