@@ -1,4 +1,5 @@
-#!/bin/sh
+#!/bin/bash
+
 # Created by WHMCS-Smarters www.whmcssmarters.com
 #FileVersion 2.3
 export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
@@ -415,4 +416,3 @@ bigecho " Admin Username : admin"
 bigecho "Admin Password : admin"
 #optional
 #apt-get install -y sendmail php-mail;
-
