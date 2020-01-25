@@ -46,16 +46,16 @@ done
 
 function installPackages(){
 bigecho "Packages Installation Started ...."
-apt-get update -yq
+apt-get update -y
 #apt-get upgrade -y
 sudo apt-get -yq install mysql-server
-sudo apt install apache2 -yq
-sudo apt-get install software-properties-common -yq
-sudo add-apt-repository ppa:ondrej/php -yq
-sudo apt-get update -yq
-sudo apt-get install php5.6 php5.6-mbstring git php5.6-mcrypt php5.6-mysql php5.6-xml unzip zip gzip tar php5.6-curl php5.6-gd php5.6-zip  -yq
+sudo apt install apache2 -y
+sudo apt-get install software-properties-common -y
+sudo add-apt-repository ppa:ondrej/php -y
+sudo apt-get update -y
+sudo apt-get install php5.6 php5.6-mbstring git php5.6-mcrypt php5.6-mysql php5.6-xml unzip zip gzip tar php5.6-curl php5.6-gd php5.6-zip  -y
 sudo a2dismod php5
-#sudo a2dismod php7
+sudo a2dismod php7
 sudo a2enmod php5.6
 sudo service apache2 restart
 service mysql restart
@@ -415,4 +415,4 @@ bigecho "VPN Panel Admin URL http://$PUBLIC_IP/admin"
 bigecho " Admin Username : admin"
 bigecho "Admin Password : admin"
 #optional
-#apt-get install -y sendmail php-mail;
+#apt-get install -y sendmail php-mail -y
