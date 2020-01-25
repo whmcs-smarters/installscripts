@@ -1,4 +1,3 @@
-
 #!/bin/sh
 # Created by WHMCS-Smarters www.whmcssmarters.com
 #FileVersion 2.3

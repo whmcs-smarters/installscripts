@@ -1,7 +1,6 @@
-
 #!/bin/sh
 # Created by WHMCS-Smarters www.whmcssmarters.com
-
+#File Version 2.3
 export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 SYS_DT=$(date +%F-%T)
 
@@ -95,14 +94,14 @@ function zendioncubeInstallation () {
 bigecho " Zend / ioncube Installation Startard..."
 #cd $DIRPATH
 #cd zend-loader-php5.6-linux-x86_64
-cp "$DIRPATH/zend-loader/ZendGuardLoader.so /usr/lib/php/20131226/"
+cp "$DIRPATH/zend-loader/ZendGuardLoader.so" /usr/lib/php/20131226/
 
-cp "$DIRPATH/zend-loader/opcache.so /usr/lib/php/20131226/"
+cp "$DIRPATH/zend-loader/opcache.so" /usr/lib/php/20131226/
 
 # Ioncube installation
  
 
-cp "$DIRPATH/ioncube/ioncube_loader_lin_5.6.so /usr/lib/php/20131226"
+cp "$DIRPATH/ioncube/ioncube_loader_lin_5.6.so" /usr/lib/php/20131226
 
 if ! grep -qs "Smarters VPN Panel Installation" /etc/php/5.6/apache2/php.ini; then
 
@@ -418,4 +417,3 @@ bigecho " Admin Username : admin"
 bigecho "Admin Password : admin"
 #optional
 #apt-get install -y sendmail php-mail;
-
