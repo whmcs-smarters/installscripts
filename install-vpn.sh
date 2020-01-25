@@ -1,7 +1,7 @@
 #!/bin/bash
 #Created by WHMCS-Smarters Team. We provide VPN Software Solution & Services for Business at www.whmcssmarters.com
 
-while getopts ":h:p:r:i:d:x:y:a:m:s:r:v:l:" o
+while getopts ":h:p:l:i:d:x:y:a:m:s:r:v:c:" o
 do
     case "${o}" in
     h) PANELURL=${OPTARG}
@@ -27,8 +27,6 @@ do
     v) VPNTYPE=${OPTARG}
     ;;
     c) REMOVED=${OPTARG}
-    ;;
-    *) usage
     ;;
     esac
 done
@@ -1418,7 +1416,7 @@ fi
 
 cat >> /etc/openvpn/radius/radius.cnf <<EOF
 
-NAS-Identifier=anyName
+NAS-Identifier=$PUBLIC_IP
 # The service type which is sent to the RADIUS server
 Service-Type=5
 # The framed protocol which is sent to the RADIUS server
@@ -1522,6 +1520,7 @@ openvpnrestart
   if [[ -z "$REMOVED" ]]; then
     vpnsetup "$@"
   else
+  
     vpnremove "$@"
     vpnsetup "$@"
   fi
@@ -1531,6 +1530,7 @@ openvpnrestart
     installOpenVPN
     openvpnrestart
   else
+   removeOpenVPN
    installOpenVPN
    openvpnrestart
   fi
@@ -1555,12 +1555,12 @@ if [ -z "$APIKEY" ]
       echo "Return Status : "$return_status
       echo " Ack Done for Status Updation on Panel Side"
 else
-      bigecho" Seems Server not updated on Panel Side"
-      bigecho "Return Message: "$return_status
+      bigecho "Seems Server not updated on Panel Side"
+      bigecho "Return Message:" $return_status
       fi
       fi
     
     #  cleaning files
     rm /root/checkServerCompatibility.sh
-    rm install-vpn.sh
+    rm /root/install-vpn.sh
 exit 0
