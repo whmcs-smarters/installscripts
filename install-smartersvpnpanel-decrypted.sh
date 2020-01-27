@@ -415,4 +415,4 @@ bigecho "VPN Panel Admin URL http://$PUBLIC_IP/admin"
 bigecho " Admin Username : admin"
 bigecho "Admin Password : admin"
 #optional
-#apt-get install -y sendmail php-mail -y
+#apt-get install -y sendmail php-mail
