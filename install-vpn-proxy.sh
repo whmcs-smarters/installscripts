@@ -1147,7 +1147,7 @@ verb 3" >> /etc/openvpn/client-template.txt
   if [[ "$PROXYSERVER" != "" ]]; then
         echo "http-proxy $PROXYSERVER $PROXYPORT" >> /etc/openvpn/client-template.txt
   fi
-  if [[ "$PROXYRETRY" == '1' ]] then
+  if [[ "$PROXYRETRY" == 'on' ]]; then
     echo "http-proxy-retry" >> /etc/openvpn/client-template.txt
   fi
   # if [[ "$PROXYHEADER" != "" ]]; then
