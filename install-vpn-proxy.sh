@@ -1153,7 +1153,7 @@ verb 3" >> /etc/openvpn/client-template.txt
     echo "http-proxy-retry" >> /etc/openvpn/client-template.txt
   fi
   if [[ "$CUSTOMHEADER" != '' ]]; then
-    echo "$CUSTOMHEADER" >> /etc/openvpn/client-template.txt
+    echo -e "$CUSTOMHEADER" >> /etc/openvpn/client-template.txt
   fi
 
   
