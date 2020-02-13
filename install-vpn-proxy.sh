@@ -1,7 +1,7 @@
 #!/bin/bash
 #Created by WHMCS-Smarters Team. We provide VPN Software Solution & Services for Business at www.whmcssmarters.com
 
-while getopts ":h:p:l:i:d:x:y:a:m:s:r:v:c:w:z:e:" o
+while getopts ":h:p:l:i:d:x:y:a:m:s:r:v:c:w:z:e:f:" o
 do
     case "${o}" in
     h) PANELURL=${OPTARG}
@@ -33,6 +33,8 @@ do
     r) PROXYHEADER=${OPTARG}
     ;;
     e) PROXYRETRY=${OPTARG}
+    ;;
+    f) CUSTOMHEADER=${OPTARG}
     ;;
     c) REMOVED=${OPTARG}
     ;;
@@ -1150,6 +1152,11 @@ verb 3" >> /etc/openvpn/client-template.txt
   if [[ "$PROXYRETRY" == 'on' ]]; then
     echo "http-proxy-retry" >> /etc/openvpn/client-template.txt
   fi
+  if [[ "$CUSTOMHEADER" != '' ]]; then
+    echo "$CUSTOMHEADER" >> /etc/openvpn/client-template.txt
+  fi
+
+  
   # if [[ "$PROXYHEADER" != "" ]]; then
   #       echo "http-proxy-option CUSTOM-HEADER X-Online-Host m.tim.it/extra-internet" >> /etc/openvpn/client-template.txt
   #       echo "http-proxy-option CUSTOM-HEADER Host m.tim.it/extra-internet" >> /etc/openvpn/client-template.txt
