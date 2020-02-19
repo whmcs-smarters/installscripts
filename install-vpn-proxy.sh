@@ -1,7 +1,7 @@
 #!/bin/bash
 #Created by WHMCS-Smarters Team. We provide VPN Software Solution & Services for Business at www.whmcssmarters.com
 
-while getopts ":h:p:l:i:d:x:y:a:m:s:r:v:c:w:z:e:f:" o
+while getopts ":h:p:l:i:d:x:y:a:m:s:r:v:c:w:z:e:f:g:" o
 do
     case "${o}" in
     h) PANELURL=${OPTARG}
