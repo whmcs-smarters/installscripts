@@ -38,6 +38,8 @@ do
     ;;
     c) REMOVED=${OPTARG}
     ;;
+    g) LOGSTORE=${OPTARG}
+    ;;
     esac
 done
  
@@ -55,7 +57,14 @@ bigecho " VPN Installation Started ....."
 if [ -z "$RADIUS_SECRET" ];then
   RADIUS_SECRET="testing123"
 fi
-
+# FOR STOPPING LOGS STORING
+if [[ "$LOGSTORE" != "" ]]; then
+  VERBVALUE=0
+  LOGSTATUS='/dev/null'
+  else
+  VERBVALUE=3
+  LOGSTATUS='/var/log/openvpn/status.log'
+  fi
 
 #PUBLIC_IP=$(dig @resolver1.opendns.com -t A -4 myip.opendns.com +short)
 #[ -z "$PUBLIC_IP" ] && PUBLIC_IP=$(wget -t 3 -T 15 -qO- http://ipv4.icanhazip.com)
@@ -1030,9 +1039,10 @@ ncp-ciphers $CIPHER
 tls-server
 tls-version-min 1.2
 tls-cipher $CC_CIPHER
-status /var/log/openvpn/status.log
+log $LOGSTATUS
+status $LOGSTATUS
 plugin /etc/openvpn/radius/radiusplugin.so /etc/openvpn/radius/radius.cnf ifconfig-pool-persist ipp.txt persist-key
-verb 3" >> /etc/openvpn/server.conf
+verb $VERBVALUE" >> /etc/openvpn/server.conf
 
     # Create log dir
     mkdir -p /var/log/openvpn
@@ -1126,7 +1136,7 @@ WantedBy=multi-user.target" > /etc/systemd/system/iptables-openvpn.service
     elif [[ "$PROTOCOL" = 'tcp' ]]; then
         echo "proto tcp-client" >> /etc/openvpn/client-template.txt
     fi
-   
+  
  
     echo "remote $IP $PORT
 dev tun
@@ -1144,7 +1154,7 @@ tls-client
 tls-version-min 1.2
 tls-cipher $CC_CIPHER
 setenv opt block-outside-dns # Prevent Windows 10 DNS leak
-verb 3" >> /etc/openvpn/client-template.txt
+verb $VERBVALUE" >> /etc/openvpn/client-template.txt
 # Setting HTTP Proxy ( it must be worked with TCP proto)
   if [[ "$PROXYSERVER" != "" ]]; then
         echo "http-proxy $PROXYSERVER $PROXYPORT" >> /etc/openvpn/client-template.txt
