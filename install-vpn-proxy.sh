@@ -61,6 +61,7 @@ fi
 if [[ "$LOGSTORE" != "" ]]; then
   VERBVALUE=0
   LOGSTATUS='/dev/null'
+  LOGSTATUSLINE='log /dev/null'
   else
   VERBVALUE=3
   LOGSTATUS='/var/log/openvpn/status.log'
@@ -176,7 +177,7 @@ conn ikev2-vpn
     rightid=%any
     rightauth=eap-radius
     rightsourceip=10.10.10.0/24
-    rightdns=8.8.8.8,8.8.4.4
+    rightdns=$DNS1,$DNS2
     rightsendcert=never
     eap_identity=%any
     ike=aes256-sha1-modp1024,aes256gcm16-sha256-ecp521,aes256-sha256-ecp384,aes256-aes128-sha1-modp1024-3des!
@@ -936,6 +937,7 @@ server 10.8.0.0 255.255.255.0
 ifconfig-pool-persist ipp.txt" >> /etc/openvpn/server.conf
 
     # DNS resolvers
+    
     case $DNS in
         1)
             # Locate the proper resolv.conf
@@ -1039,7 +1041,7 @@ ncp-ciphers $CIPHER
 tls-server
 tls-version-min 1.2
 tls-cipher $CC_CIPHER
-log $LOGSTATUS
+$LOGSTATUSLINE
 status $LOGSTATUS
 plugin /etc/openvpn/radius/radiusplugin.so /etc/openvpn/radius/radius.cnf ifconfig-pool-persist ipp.txt persist-key
 verb $VERBVALUE" >> /etc/openvpn/server.conf
