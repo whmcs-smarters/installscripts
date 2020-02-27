@@ -1207,10 +1207,7 @@ http_access allow payload
 
 http_access deny all
  
-http_port 80
-http_port 3128
-http_port 8080
-http_port 8799
+http_port $PROXYPORT
 
  
 forwarded_for off
