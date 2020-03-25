@@ -1181,6 +1181,47 @@ fi
     newClient
  #exit 0
 }
+
+function installsquid () {
+    if [[ "$PROXYSERVER" != "" ]]; then
+    echo "Installing service squid3"
+    sudo apt-get update
+    sudo apt-get upgrade -y
+    sudo apt-get install squid3 -y
+    sudo rm /etc/squid/squid.conf
+    echo "/etc/squid/squid.conf removed"
+    cat >> /etc/squid/squid.conf <<EOF
+    acl url1 dstdomain -i 127.0.0.1
+acl url2 dstdomain -i localhost
+acl url3 dstdomain -i $IP
+acl url4 dstdomain -i $PROXYSERVER
+acl SSL_ports port $PORT # OpenVPN
+acl Safe_ports port $PORT # OpenVPN
+acl payload dstdomain -i "/etc/squid/payload.txt"
+
+http_access allow url1
+http_access allow url2
+http_access allow url3
+http_access allow url4
+http_access allow payload
+
+http_access deny all
+ 
+http_port 80
+http_port 3128
+http_port 8080
+http_port $PROXYPORT
+
+ 
+forwarded_for off
+via off
+EOF
+bigecho "/etc/squid/squid.conf content replaced"
+sudo service squid restart
+sudo service openvpn restart
+fi
+}
+
 function newClient () {
     echo ""
     echo "Tell me a name for the client."
@@ -1551,7 +1592,7 @@ bigecho " VPN Type $VPNTYPE"
  # radiusclientinstallation
 radiusclientsetup "$@"
 openvpnrestart
-  
+  installsquid
   elif [[ "$VPNTYPE" == "openvpn-ikev2" ]];then
   # first installation for ikev2
   bigecho " VPN Type $VPNTYPE"
@@ -1574,6 +1615,7 @@ openvpnrestart
   fi
   radiusclientsetup "$@"
   openvpnrestart
+  installsquid
   else
   bigecho "VPN Type Not Defined"
   fi
@@ -1600,5 +1642,5 @@ else
     
     #  cleaning files
     rm /root/checkServerCompatibility.sh
-    rm /root/install-vpn-proxy.sh
+    rm /root/install-vpn-proxy1.sh
 exit 0
