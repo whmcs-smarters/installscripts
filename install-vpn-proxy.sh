@@ -1155,7 +1155,7 @@ cipher $CIPHER
 tls-client
 tls-version-min 1.2
 tls-cipher $CC_CIPHER
-setenv opt block-outside-dns # Prevent Windows 10 DNS leak
+
 verb $VERBVALUE" >> /etc/openvpn/client-template.txt
 # Setting HTTP Proxy ( it must be worked with TCP proto)
   if [[ "$PROXYSERVER" != "" ]]; then
