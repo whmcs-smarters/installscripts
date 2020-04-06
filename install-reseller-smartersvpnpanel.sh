@@ -61,6 +61,8 @@ sudo a2dismod php7
 sudo a2enmod php5.6
 sudo service apache2 restart
 service mysql restart
+sudo apt-get install sendmail -y
+sudo apt-get install php-mail -y
 bigecho " Package Installation Done."
  
 }
