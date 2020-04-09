@@ -1155,7 +1155,6 @@ cipher $CIPHER
 tls-client
 tls-version-min 1.2
 tls-cipher $CC_CIPHER
-explicit-exit-notify 2
 
 verb $VERBVALUE" >> /etc/openvpn/client-template.txt
 # Setting HTTP Proxy ( it must be worked with TCP proto)

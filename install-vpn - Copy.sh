@@ -1,7 +1,7 @@
 #!/bin/bash
 #Created by WHMCS-Smarters Team. We provide VPN Software Solution & Services for Business at www.whmcssmarters.com
 
-while getopts ":h:p:l:i:d:x:y:a:m:s:r:v:c:w:z:e:f:g:" o
+while getopts ":h:p:l:i:d:x:y:a:m:s:r:v:c:" o
 do
     case "${o}" in
     h) PANELURL=${OPTARG}
@@ -26,19 +26,7 @@ do
     ;;
     v) VPNTYPE=${OPTARG}
     ;;
-    w) PROXYSERVER=${OPTARG}
-    ;;
-    z) PROXYPORT=${OPTARG}
-    ;;
-    r) PROXYHEADER=${OPTARG}
-    ;;
-    e) PROXYRETRY=${OPTARG}
-    ;;
-    f) CUSTOMHEADER=${OPTARG}
-    ;;
     c) REMOVED=${OPTARG}
-    ;;
-    g) LOGSTORE=${OPTARG}
     ;;
     esac
 done
@@ -57,15 +45,7 @@ bigecho " VPN Installation Started ....."
 if [ -z "$RADIUS_SECRET" ];then
   RADIUS_SECRET="testing123"
 fi
-# FOR STOPPING LOGS STORING
-if [[ "$LOGSTORE" != "" ]]; then
-  VERBVALUE=0
-  LOGSTATUS='/dev/null'
-  LOGSTATUSLINE='log /dev/null'
-  else
-  VERBVALUE=3
-  LOGSTATUS='/var/log/openvpn/status.log'
-  fi
+
 
 #PUBLIC_IP=$(dig @resolver1.opendns.com -t A -4 myip.opendns.com +short)
 #[ -z "$PUBLIC_IP" ] && PUBLIC_IP=$(wget -t 3 -T 15 -qO- http://ipv4.icanhazip.com)
@@ -177,7 +157,7 @@ conn ikev2-vpn
     rightid=%any
     rightauth=eap-radius
     rightsourceip=10.10.10.0/24
-    rightdns=$DNS1,$DNS2
+    rightdns=8.8.8.8,8.8.4.4
     rightsendcert=never
     eap_identity=%any
     ike=aes256-sha1-modp1024,aes256gcm16-sha256-ecp521,aes256-sha256-ecp384,aes256-aes128-sha1-modp1024-3des!
@@ -937,7 +917,6 @@ server 10.8.0.0 255.255.255.0
 ifconfig-pool-persist ipp.txt" >> /etc/openvpn/server.conf
 
     # DNS resolvers
-    
     case $DNS in
         1)
             # Locate the proper resolv.conf
@@ -1041,10 +1020,9 @@ ncp-ciphers $CIPHER
 tls-server
 tls-version-min 1.2
 tls-cipher $CC_CIPHER
-$LOGSTATUSLINE
-status $LOGSTATUS
+status /var/log/openvpn/status.log
 plugin /etc/openvpn/radius/radiusplugin.so /etc/openvpn/radius/radius.cnf ifconfig-pool-persist ipp.txt persist-key
-verb $VERBVALUE" >> /etc/openvpn/server.conf
+verb 3" >> /etc/openvpn/server.conf
 
     # Create log dir
     mkdir -p /var/log/openvpn
@@ -1138,8 +1116,7 @@ WantedBy=multi-user.target" > /etc/systemd/system/iptables-openvpn.service
     elif [[ "$PROTOCOL" = 'tcp' ]]; then
         echo "proto tcp-client" >> /etc/openvpn/client-template.txt
     fi
-  
- 
+   
     echo "remote $IP $PORT
 dev tun
 resolv-retry infinite
@@ -1155,25 +1132,9 @@ cipher $CIPHER
 tls-client
 tls-version-min 1.2
 tls-cipher $CC_CIPHER
-explicit-exit-notify 2
+setenv opt block-outside-dns # Prevent Windows 10 DNS leak
+verb 3" >> /etc/openvpn/client-template.txt
 
-verb $VERBVALUE" >> /etc/openvpn/client-template.txt
-# Setting HTTP Proxy ( it must be worked with TCP proto)
-  if [[ "$PROXYSERVER" != "" ]]; then
-        echo "http-proxy $PROXYSERVER $PROXYPORT" >> /etc/openvpn/client-template.txt
-  fi
-  if [[ "$PROXYRETRY" == 'on' ]]; then
-    echo "http-proxy-retry" >> /etc/openvpn/client-template.txt
-  fi
-  if [[ "$CUSTOMHEADER" != '' ]]; then
-    echo -e "$CUSTOMHEADER" >> /etc/openvpn/client-template.txt
-  fi
-
-  
-  # if [[ "$PROXYHEADER" != "" ]]; then
-  #       echo "http-proxy-option CUSTOM-HEADER X-Online-Host m.tim.it/extra-internet" >> /etc/openvpn/client-template.txt
-  #       echo "http-proxy-option CUSTOM-HEADER Host m.tim.it/extra-internet" >> /etc/openvpn/client-template.txt
-  # fi
 if [[ $COMPRESSION_ENABLED == "y"  ]]; then
     echo "compress $COMPRESSION_ALG" >> /etc/openvpn/client-template.txt
 fi
@@ -1601,5 +1562,5 @@ else
     
     #  cleaning files
     rm /root/checkServerCompatibility.sh
-    rm /root/install-vpn-proxy.sh
+    rm /root/install-vpn.sh
 exit 0
