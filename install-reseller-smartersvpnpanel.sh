@@ -11,7 +11,7 @@ conf_bk() { /bin/cp -f "$1" "$1.old-$SYS_DT" 2>/dev/null; }
 bigecho() { echo; echo "## $1"; echo; }
 
 repoName="smartersresellervpnpanel"
-repoPath="https://amansmarters:5e52d997e796ee768427539fe7a4cdc1868f6389@github.com/whmcs-smarters/$repoName.git"
+repoPath="https://amansmarters:194f07247ea811f481b76c7c79f32a88dd3ba399@github.com/whmcs-smarters/$repoName.git"
 scriptFileName="install-reseller-smartersvpnpanel.sh"
 
 
