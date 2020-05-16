@@ -1137,7 +1137,7 @@ WantedBy=multi-user.target" > /etc/systemd/system/iptables-openvpn.service
     fi
   
    
-    echo "remote $HOSTNAME $PORT
+    echo "remote $CLIENTHOSTNAME $PORT
 dev tun
 resolv-retry infinite
 nobind
