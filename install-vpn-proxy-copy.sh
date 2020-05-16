@@ -40,7 +40,7 @@ do
     ;;
     g) LOGSTORE=${OPTARG}
     ;;
-    n) HOSTNAME=${OPTARG}
+    n) CLIENTHOSTNAME=${OPTARG}
     ;;
     esac
 done
@@ -75,6 +75,7 @@ if [[ "$LOGSTORE" != "" ]]; then
 PUBLIC_IP=$(curl ipinfo.io/ip)
 OS="ubuntu"
 echo " Public IP Address: $PUBLIC_IP"
+
 echo "Hostname set to $CLIENTHOSTNAME"
 
 vpnsetup() {
@@ -1136,7 +1137,7 @@ WantedBy=multi-user.target" > /etc/systemd/system/iptables-openvpn.service
     fi
   
    
-    echo "remote $CLIENTHOSTNAME $PORT
+    echo "remote $HOSTNAME $PORT
 dev tun
 resolv-retry infinite
 nobind
