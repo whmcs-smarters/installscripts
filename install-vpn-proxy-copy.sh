@@ -75,11 +75,6 @@ if [[ "$LOGSTORE" != "" ]]; then
 PUBLIC_IP=$(curl ipinfo.io/ip)
 OS="ubuntu"
 echo " Public IP Address: $PUBLIC_IP"
-if [ -z "$HOSTNAME"];then
-    CLIENTHOSTNAME=$HOSTNAME
-else
-    CLIENTHOSTNAME=$IP
-fi
 echo "Hostname set to $CLIENTHOSTNAME"
 
 vpnsetup() {
@@ -1587,7 +1582,7 @@ if [ -z "$APIKEY" ]
     
       bigecho "Sending Server Status after installation succesfully"
 
-      return_status=$(curl --data "api=$APIKEY&status=1&ip=$PUBLIC_IP&v=$VPNTYPE" $PANELURL/includes/vpnapi/serverstatus.php);
+      return_status=$(curl --data "api=$APIKEY&status=1&ip=$CLIENTHOSTNAME&v=$VPNTYPE" $PANELURL/includes/vpnapi/serverstatus.php);
       if [ "$return_status" == "1" ]; then
       echo "Return Status : "$return_status
       echo " Ack Done for Status Updation on Panel Side"
