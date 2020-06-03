@@ -10,7 +10,7 @@ exiterr2() { exiterr "'apt-get install' failed."; }
 conf_bk() { /bin/cp -f "$1" "$1.old-$SYS_DT" 2>/dev/null; }
 bigecho() { echo; echo "## $1"; echo; }
 
-repoName="smartersvpnpanel"
+repoName="smarterspanel-org"
 repoPath="https://amansmarters:194f07247ea811f481b76c7c79f32a88dd3ba399@github.com/whmcs-smarters/$repoName.git"
 scriptFileName="install-smartersvpnpanel.sh"
 
