@@ -200,6 +200,10 @@ mkdir -p "$DIRPATH/modules/servers/vpnservernoapi/lib/qr_code/temp"
 chmod 777 "$DIRPATH/modules/servers/vpnservernoapi/lib/qr_code/temp"
 fi
 
+if [ -d "$DIRPATH/install" ];then
+chmod 777 "$DIRPATH/install"
+fi
+
 bigecho "Premission granted !"
 }
 
