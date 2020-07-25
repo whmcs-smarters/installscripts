@@ -58,6 +58,18 @@ Usage:
    
   Information options:
   ---------------------------------------
+  -f		    Control file
+                    Syntax: 
+                    Example: SVPONETIME-bed9652927~/var/www/html~http://ss.royvpn.com/~22~xuFOYI9TbAS7ISoKLDHn0mREdPjD+Ws36nFrncz6lDw=~68760~UPU8HuPJ~W2LUpmHUFR~vpn_smarters_billing_UPU8HuPJ
+
+  -i	            To install vpnpanel
+  -u                To upgrade vpnpanel
+
+
+  Syntax:
+
+  $0 -f <control file txt> -i
+  $0 -f <control file txt> -u
 
   Other standard options are:  
   ---------------------------------------
@@ -259,6 +271,12 @@ func_gitclone()
 	     STATUS=`echo $?`
              func_status "$STATUS"
              echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: old smarterspanel data files has been removed " 1>>$LOG_FILE.log 2>&1
+	     echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: creating directory $VAR_DIRPATH" 1>>$LOG_FILE.log 2>&1
+	     mkdir -p $VAR_DIRPATH 1>>$LOG_FILE.log 2>&1
+	     STATUS=`echo $?`
+	     func_status "$STATUS"
+             echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: directory $VAR_DIRPATH has been successfully created" 1>>$LOG_FILE.log 2>&1
+
 	     echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: copying smarterspanel new data files to $VAR_DIRPATH" 1>>$LOG_FILE.log 2>&1
 	     mv -f $REPO_NAME/* $VAR_DIRPATH 1>>$LOG_FILE.log 2>&1
 	     STATUS=`echo $?`
@@ -863,7 +881,7 @@ do
     case $1 in
     -h|--help)
        printf " \n"
-       func_var
+       SCRIPT_VERSION="WHMCSSMARTERS vpnpanel setup version 1.0[[2020/06/01]]"
        if [[ $SCRIPT_VERSION ]]
        then
              printf "$SCRIPT_VERSION \n"
@@ -912,7 +930,7 @@ do
       ;;
     -v|--version)
       printf " \n"
-      func_var
+      SCRIPT_VERSION="WHMCSSMARTERS vpnpanel setup version 1.0[[2020/06/01]]"
       if [[ $SCRIPT_VERSION ]]
       then
             printf "$SCRIPT_VERSION\n"
