@@ -849,6 +849,20 @@ func_status()
                exit
          fi
         }
+##############################################################################################################################################
+#Function information:
+#
+#
+##############################################################################################################################################
+
+func_returnstatus()
+        {
+         echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: vpnpanel return status information" 1>>$LOG_FILE.log 2>&1
+	 curl --data "s=1&p=$VAR_DOMAIN&serviceid=$VAR_SERVICEID&t=installed" https://www.whmcssmarters.com/clients/panel_installation_status.php 1>>$LOG_FILE.log 2>&1
+         STATUS=`echo $?`
+         func_status "$STATUS"
+        }
+
 
 ##############################################################################################################################################
 #Function information:
@@ -908,6 +922,7 @@ do
       func_mysqlupdate
       func_permission
       func_freeradius
+      func_returnstatus
       exit
       shift
       ;;
@@ -920,6 +935,7 @@ do
       func_mysqlupdate
       func_permission
       func_freeradius
+      func_returnstatus
       echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: vpnpanel has been upgraded successfully " 1>>$LOG_FILE.log 2>&1
       exit
       shift
