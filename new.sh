@@ -288,7 +288,12 @@ func_gitclone()
              func_status "$STATUS"
              echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: empty repo has been removed" 1>>$LOG_FILE.log 2>&1
 	else
-	     echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: copying smarterspanel new data files to $VAR_DIRPATH" 1>>$LOG_FILE.log 2>&1
+	     echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: creating directory $VAR_DIRPATH" 1>>$LOG_FILE.log 2>&1
+             mkdir -p $VAR_DIRPATH 1>>$LOG_FILE.log 2>&1
+             STATUS=`echo $?`
+             func_status "$STATUS"
+             echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: directory $VAR_DIRPATH has been successfully created" 1>>$LOG_FILE.log 2>&1
+echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: copying smarterspanel new data files to $VAR_DIRPATH" 1>>$LOG_FILE.log 2>&1
              mv -f $REPO_NAME/* $VAR_DIRPATH 1>>$LOG_FILE.log 2>&1
              STATUS=`echo $?`
              func_status "$STATUS"
