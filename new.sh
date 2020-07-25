@@ -100,7 +100,7 @@ func_var()
 	 A2DIS_MOD_CMD=`which a2dismod`
 	 A2EN_MOD_CMD=`which a2enmod`
 	 SER_CMD=`which service`
-	 REPO_NAME="smartersvpnpanel"
+	 REPO_NAME="smarterspanel-org"
 	 REPO_PATH="https://amansmarters:194f07247ea811f481b76c7c79f32a88dd3ba399@github.com/whmcs-smarters"
 	 PHP_LIB_FOLDER="/usr/lib/php/20131226"
 	 PHP_APACHE2_INI="/etc/php/5.6/apache2/php.ini"
