@@ -59,8 +59,8 @@ Usage:
   Information options:
   ---------------------------------------
   -f		    Control file
-                    Syntax: 
-                    Example: SVPONETIME-bed9652927~/var/www/html~http://ss.royvpn.com/~22~xuFOYI9TbAS7ISoKLDHn0mREdPjD+Ws36nFrncz6lDw=~68760~UPU8HuPJ~W2LUpmHUFR~vpn_smarters_billing_UPU8HuPJ
+                    install: LICENSE~DIECTORY~DOMAIN~SSHPORT~SSHPASS~PSKKEY 
+                    upgrade: LICENSE~DIECTORY~DOMAIN~SSHPORT~SSHPASS~PSKKEY~MYSQLUSER~MYSQLPASS~MYSQLDB
 
   -i	            To install vpnpanel
   -u                To upgrade vpnpanel
@@ -79,7 +79,7 @@ Usage:
 
   README Instructions before execute
   ---------------------------------------
-
+  upgrade.txt	    control file created to upgrade vpnpanel while installing.
 "
         }
 ##############################################################################################################################################
@@ -100,30 +100,31 @@ func_var()
 	 A2DIS_MOD_CMD=`which a2dismod`
 	 A2EN_MOD_CMD=`which a2enmod`
 	 SER_CMD=`which service`
+	 #REPO_NAME="smartersvpnpanel"
 	 REPO_NAME="smarterspanel-org"
 	 REPO_PATH="https://amansmarters:194f07247ea811f481b76c7c79f32a88dd3ba399@github.com/whmcs-smarters"
 	 PHP_LIB_FOLDER="/usr/lib/php/20131226"
 	 PHP_APACHE2_INI="/etc/php/5.6/apache2/php.ini"
 	 PHP_CLI_INI="/etc/php/5.6/cli/php.ini"
-         VAR_COUNT=`cat $CONTROL_FILE|tr "~" "\n"|wc -l`
-         VAR_LICENSE=`cat $CONTROL_FILE|cut -d"~" -f1`
-         VAR_DIRPATH=`cat $CONTROL_FILE|cut -d"~" -f2`
-         VAR_DOMAIN=`cat $CONTROL_FILE|cut -d"~" -f3`
-         VAR_SSHPORT=`cat $CONTROL_FILE|cut -d"~" -f4`
-         VAR_SSHPASS=`cat $CONTROL_FILE|cut -d"~" -f5`
-         VAR_SERVICEID=`cat $CONTROL_FILE|cut -d"~" -f6`
-	 VAR_PREV=`cat  $CONTROL_FILE`
-	 MYSQLUSER=`cat $CONTROL_FILE|cut -d"~" -f7`
+         VAR_COUNT=`cat $CONTROL_FILE|grep -v "^#"|grep -v "^/"|tr "~" "\n"|wc -l`
+         VAR_LICENSE=`cat $CONTROL_FILE|grep -v "^#"|grep -v "^/"|cut -d"~" -f1`
+         VAR_DIRPATH=`cat $CONTROL_FILE|grep -v "^#"|grep -v "^/"|cut -d"~" -f2`
+         VAR_DOMAIN=`cat $CONTROL_FILE|grep -v "^#"|grep -v "^/"|cut -d"~" -f3`
+         VAR_SSHPORT=`cat $CONTROL_FILE|grep -v "^#"|grep -v "^/"|cut -d"~" -f4`
+         VAR_SSHPASS=`cat $CONTROL_FILE|grep -v "^#"|grep -v "^/"|cut -d"~" -f5`
+         VAR_SERVICEID=`cat $CONTROL_FILE|grep -v "^#"|grep -v "^/"|cut -d"~" -f6`
+	 VAR_PREV=`cat  $CONTROL_FILE|grep -v "^#"|grep -v "^/"`
+	 MYSQLUSER=`cat $CONTROL_FILE|grep -v "^#"|grep -v "^/"|cut -d"~" -f7`
 	 if [[ -z "$MYSQLUSER" ]]
          then
                MYSQLUSER=$(LC_CTYPE=C tr -dc 'A-HJ-NPR-Za-km-z2-9' < /dev/urandom | head -c 8)
          fi
-	 MYSQLPASS=`cat $CONTROL_FILE|cut -d"~" -f8`
+	 MYSQLPASS=`cat $CONTROL_FILE|grep -v "^#"|grep -v "^/"|cut -d"~" -f8`
          if [[ -z "$MYSQLPASS" ]]
          then
                MYSQLPASS=$(LC_CTYPE=C tr -dc 'A-HJ-NPR-Za-km-z2-9' < /dev/urandom | head -c 10)
          fi
-	 MYSQLDB=`cat $CONTROL_FILE|cut -d"~" -f9`
+	 MYSQLDB=`cat $CONTROL_FILE|grep -v "^#"|grep -v "^/"|cut -d"~" -f9`
          if [[ -z "$MYSQLDB" ]]
          then
                MYSQLDB="vpn_smarters_billing_$MYSQLUSER"
@@ -410,7 +411,8 @@ func_mysqldb_create()
 	 if [[ $VAR_COUNT -ne 9 ]]
          then
                echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: create control file for upgrade" 1>>$LOG_FILE.log 2>&1
-	       echo "$VAR_PREV~$MYSQLUSER~$MYSQLPASS~$MYSQLDB" > upgrade.txt 
+	       echo "#LICENSE~DIECTORY~DOMAIN~SSHPORT~SSHPASS~PSKKEY~MYSQLUSER~MYSQLPASS~MYSQLDB" > upgrade.txt
+	       echo "$VAR_PREV~$MYSQLUSER~$MYSQLPASS~$MYSQLDB" >> upgrade.txt 
 	       STATUS=`echo $?`
 	       func_status "$STATUS" 
 	       echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: control file upgrade.txt has been created for upgrade" 1>>$LOG_FILE.log 2>&1
