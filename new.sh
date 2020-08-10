@@ -437,7 +437,7 @@ func_config()
 	     echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: removed configuration file $VAR_DIRPATH/configuration.php " 1>>$LOG_FILE.log 2>&1
 	     echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: updating configuration file $VAR_DIRPATH/configuration.php " 1>>$LOG_FILE.log 2>&1
 	     echo "<?php" > $VAR_DIRPATH/configuration.php
-	     echo "\$license = 'WHMCS-29kavnamq1';" >> $VAR_DIRPATH/configuration.php
+	     echo "\$license = '';" >> $VAR_DIRPATH/configuration.php
 	     echo "\$db_host = 'localhost';" >> $VAR_DIRPATH/configuration.php
 	     echo "\$db_username = '$MYSQLUSER';" >> $VAR_DIRPATH/configuration.php
 	     echo "\$db_password = '$MYSQLPASS';" >> $VAR_DIRPATH/configuration.php
@@ -449,7 +449,7 @@ func_config()
 	 else
              echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: updating configuration file $VAR_DIRPATH/configuration.php " 1>>$LOG_FILE.log 2>&1
              echo "<?php" > $VAR_DIRPATH/configuration.php
-             echo "\$license = 'WHMCS-29kavnamq1';" >> $VAR_DIRPATH/configuration.php
+             echo "\$license = '';" >> $VAR_DIRPATH/configuration.php
              echo "\$db_host = 'localhost';" >> $VAR_DIRPATH/configuration.php
              echo "\$db_username = '$MYSQLUSER';" >> $VAR_DIRPATH/configuration.php
              echo "\$db_password = '$MYSQLPASS';" >> $VAR_DIRPATH/configuration.php
@@ -645,7 +645,6 @@ func_freeradius()
 	       echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: stopping freeradius " 1>>$LOG_FILE.log 2>&1
 	       $SERVICE_CMD freeradius stop 1>>$LOG_FILE.log 2>&1
 	       STATUS=`echo $?`
-	       func_status "$STATUS"
 	       echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: freeradius has been stopped " 1>>$LOG_FILE.log 2>&1
 	       if [[ -d /etc/freeradius/3.0 ]]
 	       then
