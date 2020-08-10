@@ -137,7 +137,7 @@ func_var()
 	 VPN_PORT=0
 	 MYSQLHOST='localhost'
 	 MYSQLPORT=3306
-	 LOG_FILE=VAR_DIRPATH`basename $0 ".sh"`
+	 LOG_FILE=$VAR_DIRPATH`basename $0 ".sh"`
 	}
 ##############################################################################################################################################
 #Function information:
