@@ -113,7 +113,7 @@ func_var()
          VAR_SSHPORT=`cat $CONTROL_FILE|grep -v "^#"|grep -v "^/"|cut -d"~" -f4`
          VAR_SSHPASS=`cat $CONTROL_FILE|grep -v "^#"|grep -v "^/"|cut -d"~" -f5`
          VAR_SERVICEID=`cat $CONTROL_FILE|grep -v "^#"|grep -v "^/"|cut -d"~" -f6`
-         VAR_WHMCSLICENSE=`cat $CONTROL_FILE|grep -v "^#"|grep -v "^/"|cut -d"~" -f7
+         VAR_WHMCSLICENSE=`cat $CONTROL_FILE|grep -v "^#"|grep -v "^/"|cut -d"~" -f7`
 	 VAR_PREV=`cat  $CONTROL_FILE|grep -v "^#"|grep -v "^/"`
 	 MYSQLUSER=`cat $CONTROL_FILE|grep -v "^#"|grep -v "^/"|cut -d"~" -f7`
 	 if [[ -z "$MYSQLUSER" ]]
