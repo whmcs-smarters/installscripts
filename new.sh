@@ -113,6 +113,7 @@ func_var()
          VAR_SSHPORT=`cat $CONTROL_FILE|grep -v "^#"|grep -v "^/"|cut -d"~" -f4`
          VAR_SSHPASS=`cat $CONTROL_FILE|grep -v "^#"|grep -v "^/"|cut -d"~" -f5`
          VAR_SERVICEID=`cat $CONTROL_FILE|grep -v "^#"|grep -v "^/"|cut -d"~" -f6`
+         VAR_WHMCSLICENSE=`cat $CONTROL_FILE|grep -v "^#"|grep -v "^/"|cut -d"~" -f7
 	 VAR_PREV=`cat  $CONTROL_FILE|grep -v "^#"|grep -v "^/"`
 	 MYSQLUSER=`cat $CONTROL_FILE|grep -v "^#"|grep -v "^/"|cut -d"~" -f7`
 	 if [[ -z "$MYSQLUSER" ]]
@@ -437,7 +438,7 @@ func_config()
 	     echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: removed configuration file $VAR_DIRPATH/configuration.php\n " 1>>$LOG_FILE.log 2>&1
 	     echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: updating configuration file $VAR_DIRPATH/configuration.php\n " 1>>$LOG_FILE.log 2>&1
 	     echo "<?php" > $VAR_DIRPATH/configuration.php
-	     echo "\$license = '';" >> $VAR_DIRPATH/configuration.php
+	     echo "\$license = '$VAR_WHMCSLICENSE';" >> $VAR_DIRPATH/configuration.php
 	     echo "\$db_host = 'localhost';" >> $VAR_DIRPATH/configuration.php
 	     echo "\$db_username = '$MYSQLUSER';" >> $VAR_DIRPATH/configuration.php
 	     echo "\$db_password = '$MYSQLPASS';" >> $VAR_DIRPATH/configuration.php
@@ -449,7 +450,7 @@ func_config()
 	 else
              echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: updating configuration file $VAR_DIRPATH/configuration.php\n " 1>>$LOG_FILE.log 2>&1
              echo "<?php" > $VAR_DIRPATH/configuration.php
-             echo "\$license = '';" >> $VAR_DIRPATH/configuration.php
+             echo "\$license = '$VAR_WHMCSLICENSE';" >> $VAR_DIRPATH/configuration.php
              echo "\$db_host = 'localhost';" >> $VAR_DIRPATH/configuration.php
              echo "\$db_username = '$MYSQLUSER';" >> $VAR_DIRPATH/configuration.php
              echo "\$db_password = '$MYSQLPASS';" >> $VAR_DIRPATH/configuration.php
