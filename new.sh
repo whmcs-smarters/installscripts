@@ -236,42 +236,42 @@ func_gitclone()
          if [[ -d $VAR_PWD/$REPO_NAME ]]
          then
 	     echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: $REPO_NAME repo exist." 1>>$LOG_FILE.log 2>&1
-             echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: removing $REPO_NAME repo " 1>>$LOG_FILE.log 2>&1
+             echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: removing $REPO_NAME repo\n " 1>>$LOG_FILE.log 2>&1
 	     rm -rf $VAR_PWD/$REPO_NAME 1>>$LOG_FILE.log 2>&1
 	     STATUS=`echo $?`
              func_status "$STATUS"
-	     echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: removed $REPO_NAME repo " 1>>$LOG_FILE.log 2>&1
+	     echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: removed $REPO_NAME repo\n " 1>>$LOG_FILE.log 2>&1
 	     echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: previous $REPO_NAME has been removed." 1>>$LOG_FILE.log 2>&1
-             echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: checking git status " 1>>$LOG_FILE.log 2>&1
+             echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: checking git status\n " 1>>$LOG_FILE.log 2>&1
 	     which  git 1>>$LOG_FILE.log 2>&1
              STATUS=`echo $?`
              func_status "$STATUS"
-	     echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: git running on server " 1>>$LOG_FILE.log 2>&1
-             echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: cloning repo $REPO_NAME " 1>>$LOG_FILE.log 2>&1
+	     echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: git running on server\n " 1>>$LOG_FILE.log 2>&1
+             echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: cloning repo $REPO_NAME\n " 1>>$LOG_FILE.log 2>&1
              git clone $REPO_PATH/$REPO_NAME.git 1>>$LOG_FILE.log 2>&1
 	     STATUS=`echo $?`
              func_status "$STATUS"
-             echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: cloning of  repo $REPO_NAME has been completed " 1>>$LOG_FILE.log 2>&1
+             echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: cloning of  repo $REPO_NAME has been completed\n " 1>>$LOG_FILE.log 2>&1
      	else
-             echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: checking git status " 1>>$LOG_FILE.log 2>&1
+             echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: checking git status\n " 1>>$LOG_FILE.log 2>&1
              which  git 1>>$LOG_FILE.log 2>&1
              STATUS=`echo $?`
              func_status "$STATUS"
-             echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: git running on server " 1>>$LOG_FILE.log 2>&1
-             echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: cloning repo $REPO_NAME " 1>>$LOG_FILE.log 2>&1
+             echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: git running on server\n " 1>>$LOG_FILE.log 2>&1
+             echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: cloning repo $REPO_NAME\n " 1>>$LOG_FILE.log 2>&1
              git clone $REPO_PATH/$REPO_NAME.git 1>>$LOG_FILE.log 2>&1
              STATUS=`echo $?`
              func_status "$STATUS"
-             echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: cloning of  repo $REPO_NAME has been completed " 1>>$LOG_FILE.log 2>&1
+             echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: cloning of  repo $REPO_NAME has been completed\n " 1>>$LOG_FILE.log 2>&1
 	fi
         if [[ -f $VAR_DIRPATH/configuration.php ]]
         then
-             echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: smarterspanel data files exists " 1>>$LOG_FILE.log 2>&1
-             echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: removing smarterspanel data files " 1>>$LOG_FILE.log 2>&1
+             echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: smarterspanel data files exists\n " 1>>$LOG_FILE.log 2>&1
+             echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: removing smarterspanel data files\n " 1>>$LOG_FILE.log 2>&1
 	     rm -rf $VAR_DIRPATH/* 1>>$LOG_FILE.log 2>&1
 	     STATUS=`echo $?`
              func_status "$STATUS"
-             echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: old smarterspanel data files has been removed " 1>>$LOG_FILE.log 2>&1
+             echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: old smarterspanel data files has been removed\n " 1>>$LOG_FILE.log 2>&1
 	     echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: creating directory $VAR_DIRPATH" 1>>$LOG_FILE.log 2>&1
 	     mkdir -p $VAR_DIRPATH 1>>$LOG_FILE.log 2>&1
 	     STATUS=`echo $?`
@@ -384,7 +384,7 @@ func_mysqldb_create()
         {
          if [[ -f ~/.my.cnf ]]
          then
-                echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: removing ~/.my.cnf configuration file " 1>>$LOG_FILE.log 2>&1
+                echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: removing ~/.my.cnf configuration file\n " 1>>$LOG_FILE.log 2>&1
                 rm -f ~/.my.cnf 1>>$LOG_FILE.log 2>&1
                 STATUS=`echo $?`
                 func_status "$STATUS"
@@ -430,12 +430,12 @@ func_config()
 	 if [[ -f $VAR_DIRPATH/configuration.php ]]
          then
 	     echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: configuration file $VAR_DIRPATH/configuration.php available" 1>>$LOG_FILE.log 2>&1
-	     echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: removing configuration file $VAR_DIRPATH/configuration.php " 1>>$LOG_FILE.log 2>&1
+	     echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: removing configuration file $VAR_DIRPATH/configuration.php\n " 1>>$LOG_FILE.log 2>&1
 	     rm -f $VAR_DIRPATH/configuration.php 1>>$LOG_FILE.log 2>&1
              STATUS=`echo $?`
 	     func_status "$STATUS"
-	     echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: removed configuration file $VAR_DIRPATH/configuration.php " 1>>$LOG_FILE.log 2>&1
-	     echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: updating configuration file $VAR_DIRPATH/configuration.php " 1>>$LOG_FILE.log 2>&1
+	     echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: removed configuration file $VAR_DIRPATH/configuration.php\n " 1>>$LOG_FILE.log 2>&1
+	     echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: updating configuration file $VAR_DIRPATH/configuration.php\n " 1>>$LOG_FILE.log 2>&1
 	     echo "<?php" > $VAR_DIRPATH/configuration.php
 	     echo "\$license = '';" >> $VAR_DIRPATH/configuration.php
 	     echo "\$db_host = 'localhost';" >> $VAR_DIRPATH/configuration.php
@@ -445,9 +445,9 @@ func_config()
 	     echo "\$cc_encryption_hash = '';" >> $VAR_DIRPATH/configuration.php
 	     echo "\$templates_compiledir = 'templates_c';" >> $VAR_DIRPATH/configuration.php
 	     echo "\$mysql_charset = 'utf8';" >> $VAR_DIRPATH/configuration.php
-	     echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: configuration file $VAR_DIRPATH/configuration.php updated " 1>>$LOG_FILE.log 2>&1
+	     echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: configuration file $VAR_DIRPATH/configuration.php updated\n " 1>>$LOG_FILE.log 2>&1
 	 else
-             echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: updating configuration file $VAR_DIRPATH/configuration.php " 1>>$LOG_FILE.log 2>&1
+             echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: updating configuration file $VAR_DIRPATH/configuration.php\n " 1>>$LOG_FILE.log 2>&1
              echo "<?php" > $VAR_DIRPATH/configuration.php
              echo "\$license = '';" >> $VAR_DIRPATH/configuration.php
              echo "\$db_host = 'localhost';" >> $VAR_DIRPATH/configuration.php
@@ -457,7 +457,7 @@ func_config()
              echo "\$cc_encryption_hash = '';" >> $VAR_DIRPATH/configuration.php
              echo "\$templates_compiledir = 'templates_c';" >> $VAR_DIRPATH/configuration.php
              echo "\$mysql_charset = 'utf8';" >> $VAR_DIRPATH/configuration.php
-             echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: configuration file $VAR_DIRPATH/configuration.php updated " 1>>$LOG_FILE.log 2>&1   
+             echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: configuration file $VAR_DIRPATH/configuration.php updated\n " 1>>$LOG_FILE.log 2>&1   
          fi
 	}
 ##############################################################################################################################################
@@ -528,30 +528,30 @@ func_mysqlupdate()
 
 func_permission()
         {
-         echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: updating file configuration.php permission " 1>>$LOG_FILE.log 2>&1
+         echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: updating file configuration.php permission\n " 1>>$LOG_FILE.log 2>&1
 	 chmod 444 $VAR_DIRPATH/configuration.php 1>>$LOG_FILE.log 2>&1
          STATUS=`echo $?`
 	 func_status "$STATUS"
-	 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: changed file configuration.php permission " 1>>$LOG_FILE.log 2>&1
-         echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: updating directory templates_c permission " 1>>$LOG_FILE.log 2>&1
+	 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: changed file configuration.php permission\n " 1>>$LOG_FILE.log 2>&1
+         echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: updating directory templates_c permission\n " 1>>$LOG_FILE.log 2>&1
 	 chmod 777 $VAR_DIRPATH/templates_c 1>>$LOG_FILE.log 2>&1
 	 STATUS=`echo $?`
 	 func_status "$STATUS"
-	 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: updated directory templates_c permission " 1>>$LOG_FILE.log 2>&1
-	 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: updating directory admin/templates_c permission " 1>>$LOG_FILE.log 2>&1
+	 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: updated directory templates_c permission\n " 1>>$LOG_FILE.log 2>&1
+	 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: updating directory admin/templates_c permission\n " 1>>$LOG_FILE.log 2>&1
 	 chmod 777 $VAR_DIRPATH/admin/templates_c 1>>$LOG_FILE.log 2>&1
 	 STATUS=`echo $?`
 	 func_status "$STATUS"
-	 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: updated directory admin/templates_c permission " 1>>$LOG_FILE.log 2>&1
-	 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: updating directory downloads permission " 1>>$LOG_FILE.log 2>&1
+	 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: updated directory admin/templates_c permission\n " 1>>$LOG_FILE.log 2>&1
+	 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: updating directory downloads permission\n " 1>>$LOG_FILE.log 2>&1
 	 chmod 777 $VAR_DIRPATH/downloads 1>>$LOG_FILE.log 2>&1
 	 STATUS=`echo $?`
 	 func_status "$STATUS"
-	 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: updating directory attachments permission " 1>>$LOG_FILE.log 2>&1
+	 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: updating directory attachments permission\n " 1>>$LOG_FILE.log 2>&1
 	 chmod 777 $VAR_DIRPATH/attachments 1>>$LOG_FILE.log 2>&1
 	 STATUS=`echo $?`
 	 func_status "$STATUS"
-	 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: updated directory attachments permission " 1>>$LOG_FILE.log 2>&1
+	 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: updated directory attachments permission\n " 1>>$LOG_FILE.log 2>&1
  	}
 ##############################################################################################################################################
 #Function information:
@@ -563,15 +563,15 @@ func_cleanup()
         {
          if [[ -f $VAR_PWD/$1 ]] 
          then
-		 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: removing script $VAR_PWD/$1 " 1>>$LOG_FILE.log 2>&1
+		 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: removing script $VAR_PWD/$1\n " 1>>$LOG_FILE.log 2>&1
 		 rm -f $VAR_PWD/$1 1>>$LOG_FILE.log 2>&1
                  STATUS=`echo $?`
 		 func_status "$STATUS"
-		 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: script $1 has been removed " 1>>$LOG_FILE.log 2>&1
+		 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: script $1 has been removed\n " 1>>$LOG_FILE.log 2>&1
          fi
          if [[ -f $VAR_PWD/checkMainServerCompatibility.sh ]]
 	 then
-		 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: removing script $VAR_PWD/checkMainServerCompatibility.sh " 1>>$LOG_FILE.log 2>&1
+		 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: removing script $VAR_PWD/checkMainServerCompatibility.sh\n " 1>>$LOG_FILE.log 2>&1
 		 rm -f $VAR_PWD/checkMainServerCompatibility.sh 1>>$LOG_FILE.log 2>&1
 		 STATUS=`echo $?`
 		 func_status "$STATUS"
@@ -579,11 +579,11 @@ func_cleanup()
 	 fi
          if [[ -f $VAR_DIRPATH/index.html ]]
          then
-		 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: removing $VAR_DIRPATH/index.html " 1>>$LOG_FILE.log 2>&1
+		 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: removing $VAR_DIRPATH/index.html\n " 1>>$LOG_FILE.log 2>&1
 		 rm -f $VAR_DIRPATH/index.html
 		 STATUS=`echo $?`
 		 func_status "$STATUS"
-		 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: removed $VAR_DIRPATH/index.html " 1>>$LOG_FILE.log 2>&1
+		 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: removed $VAR_DIRPATH/index.html\n " 1>>$LOG_FILE.log 2>&1
 	 fi
 	 if [[ -d $VAR_DIRPATH ]]
 	 then
@@ -602,14 +602,14 @@ func_mycnf()
         {
 	 if [[ -f ~/.my.cnf ]]
 	 then
-	        echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: removing ~/.my.cnf configuration file " 1>>$LOG_FILE.log 2>&1
+	        echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: removing ~/.my.cnf configuration file\n " 1>>$LOG_FILE.log 2>&1
 		rm -f ~/.my.cnf 1>>$LOG_FILE.log 2>&1
 		STATUS=`echo $?`
 		func_status "$STATUS"
                 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: ~/.my.cnf configuration file has been removed" 1>>$LOG_FILE.log 2>&1
 	 fi
 
-	 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: creating ~/.my.cnf configuration file " 1>>$LOG_FILE.log 2>&1
+	 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: creating ~/.my.cnf configuration file\n " 1>>$LOG_FILE.log 2>&1
 	 echo "[mysql]" > ~/.my.cnf 
 	 STATUS=`echo $?`
 	 func_status "$STATUS"
@@ -630,7 +630,7 @@ func_mycnf()
 	 echo "password = '$MYSQLPASS'" >> ~/.my.cnf
 	 STATUS=`echo $?`
 	 func_status "$STATUS"
-	 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: ~/.my.cnf configuration file has been created " 1>>$LOG_FILE.log 2>&1
+	 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: ~/.my.cnf configuration file has been created\n " 1>>$LOG_FILE.log 2>&1
         }
 ##############################################################################################################################################
 #Function information:
@@ -640,69 +640,69 @@ func_mycnf()
 
 func_freeradius()
         {
-	 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: starting process to install freeradius " 1>>$LOG_FILE.log 2>&1
-	 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: checking if freeradius installed " 1>>$LOG_FILE.log 2>&1
+	 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: starting process to install freeradius\n " 1>>$LOG_FILE.log 2>&1
+	 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: checking if freeradius installed\n " 1>>$LOG_FILE.log 2>&1
 	 $SERVICE_CMD freeradius restart 1>>$LOG_FILE.log 2>&1
 	 STATUS=`echo $?`
 	 if [[ $STATUS != 0 ]]
 	 then
-               echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: uninstall freeradius " 1>>$LOG_FILE.log 2>&1
-	       echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: stopping freeradius " 1>>$LOG_FILE.log 2>&1
+               echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: uninstall freeradius\n " 1>>$LOG_FILE.log 2>&1
+	       echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: stopping freeradius\n " 1>>$LOG_FILE.log 2>&1
 	       $SERVICE_CMD freeradius stop 1>>$LOG_FILE.log 2>&1
 	       STATUS=`echo $?`
-	       echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: freeradius has been stopped " 1>>$LOG_FILE.log 2>&1
+	       echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: freeradius has been stopped\n " 1>>$LOG_FILE.log 2>&1
 	       if [[ -d /etc/freeradius/3.0 ]]
 	       then
-		      echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: removing freeradius installation directory " 1>>$LOG_FILE.log 2>&1
+		      echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: removing freeradius installation directory\n " 1>>$LOG_FILE.log 2>&1
 		      rm -rf /etc/freeradius 1>>$LOG_FILE.log 2>&1
 		      STATUS=`echo $?`
 		      func_status "$STATUS"
-		      echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: freeradius installation directory has been removed " 1>>$LOG_FILE.log 2>&1
+		      echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: freeradius installation directory has been removed\n " 1>>$LOG_FILE.log 2>&1
 	       fi
-               echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: purging freeradius packages " 1>>$LOG_FILE.log 2>&1
+               echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: purging freeradius packages\n " 1>>$LOG_FILE.log 2>&1
                (sleep 5; echo Y;)|$APT_CMD purge freeradius-common freeradius freeradius-mysql freeradius-utils 1>>$LOG_FILE.log 2>&1
                STATUS=`echo $?`
                func_status "$STATUS"
-               echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: freeradius packages has been purged " 1>>$LOG_FILE.log 2>&1
-	       echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: freeradius uninstalled " 1>>$LOG_FILE.log 2>&1
-	       echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: installing freeradius " 1>>$LOG_FILE.log 2>&1
-	       echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: installing freeradius packages " 1>>$LOG_FILE.log 2>&1
+               echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: freeradius packages has been purged\n " 1>>$LOG_FILE.log 2>&1
+	       echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: freeradius uninstalled\n " 1>>$LOG_FILE.log 2>&1
+	       echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: installing freeradius\n " 1>>$LOG_FILE.log 2>&1
+	       echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: installing freeradius packages\n " 1>>$LOG_FILE.log 2>&1
 	       (sleep 5; echo Y;)|$APT_CMD install freeradius-common freeradius freeradius-mysql freeradius-utils 1>>$LOG_FILE.log 2>&1
 	       STATUS=`echo $?`
 	       func_status "$STATUS"
 	       echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: freeradius packages have been installed successfully" 1>>$LOG_FILE.log 2>&1
-	       echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: restarting freeradius " 1>>$LOG_FILE.log 2>&1
+	       echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: restarting freeradius\n " 1>>$LOG_FILE.log 2>&1
 	       $SERVICE_CMD freeradius restart 1>>$LOG_FILE.log 2>&1
 	       STATUS=`echo $?`
 	       func_status "$STATUS"
-	       echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: freeradius has been restarted " 1>>$LOG_FILE.log 2>&1
-	       echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: freeradius has been installed successfully " 1>>$LOG_FILE.log 2>&1
+	       echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: freeradius has been restarted\n " 1>>$LOG_FILE.log 2>&1
+	       echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: freeradius has been installed successfully\n " 1>>$LOG_FILE.log 2>&1
          else
-               echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: installing freeradius " 1>>$LOG_FILE.log 2>&1
+               echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: installing freeradius\n " 1>>$LOG_FILE.log 2>&1
 	       echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: purging freeradius packages" 1>>$LOG_FILE.log 2>&1
                (sleep 5; echo Y;)|$APT_CMD purge freeradius-common freeradius freeradius-mysql freeradius-utils 1>>$LOG_FILE.log 2>&1
 	       STATUS=`echo $?`
 	       func_status "$STATUS"
 	       echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: freeradius packages have been purged successfully" 1>>$LOG_FILE.log 2>&1
-               echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: installing freeradius packages " 1>>$LOG_FILE.log 2>&1
+               echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: installing freeradius packages\n " 1>>$LOG_FILE.log 2>&1
                (sleep 5; echo Y;)|$APT_CMD install freeradius-common freeradius freeradius-mysql freeradius-utils 1>>$LOG_FILE.log 2>&1
                STATUS=`echo $?`
                func_status "$STATUS"
                echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: freeradius packages have been installed successfully" 1>>$LOG_FILE.log 2>&1
-               echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: restarting freeradius " 1>>$LOG_FILE.log 2>&1
+               echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: restarting freeradius\n " 1>>$LOG_FILE.log 2>&1
                $SERVICE_CMD freeradius restart 1>>$LOG_FILE.log 2>&1
                STATUS=`echo $?`
                func_status "$STATUS"
-               echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: freeradius has been restarted " 1>>$LOG_FILE.log 2>&1
-               echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: freeradius has been installed successfully " 1>>$LOG_FILE.log 2>&1
+               echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: freeradius has been restarted\n " 1>>$LOG_FILE.log 2>&1
+               echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: freeradius has been installed successfully\n " 1>>$LOG_FILE.log 2>&1
 	       
 	 fi
-	 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: stoping freeradius " 1>>$LOG_FILE.log 2>&1
+	 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: stoping freeradius\n " 1>>$LOG_FILE.log 2>&1
 	 $SERVICE_CMD freeradius stop 1>>$LOG_FILE.log 2>&1
 	 STATUS=`echo $?`
 	 func_status "$STATUS"
-	 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: freeradius has been stopped " 1>>$LOG_FILE.log 2>&1
-	 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: creating freeradius sql configuration file " 1>>$LOG_FILE.log 2>&1
+	 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: freeradius has been stopped\n " 1>>$LOG_FILE.log 2>&1
+	 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: creating freeradius sql configuration file\n " 1>>$LOG_FILE.log 2>&1
 cat > /etc/freeradius/3.0/mods-enabled/sql <<EOF
 sql {
 driver = "rlm_sql_mysql"
@@ -755,49 +755,49 @@ group_attribute = "SQL-Group"
 }
 EOF
 
-        echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: freeradius sql configuration file has been created " 1>>$LOG_FILE.log 2>&1
-        echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: changing group of sql configuration file " 1>>$LOG_FILE.log 2>&1
+        echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: freeradius sql configuration file has been created\n " 1>>$LOG_FILE.log 2>&1
+        echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: changing group of sql configuration file\n " 1>>$LOG_FILE.log 2>&1
 	chgrp -h freerad /etc/freeradius/3.0/mods-available/sql 1>>$LOG_FILE.log 2>&1
 	STATUS=`echo $?`
 	func_status "$STATUS"
-	echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: sql configuration file group has been changed " 1>>$LOG_FILE.log 2>&1
-	echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: changing owner of sql configuration file " 1>>$LOG_FILE.log 2>&1
+	echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: sql configuration file group has been changed\n " 1>>$LOG_FILE.log 2>&1
+	echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: changing owner of sql configuration file\n " 1>>$LOG_FILE.log 2>&1
 	chown -R freerad:freerad /etc/freeradius/3.0/mods-enabled/sql 1>>$LOG_FILE.log 2>&1
 	STATUS=`echo $?`
 	func_status "$STATUS"
-	echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: sql configuration file onwers have been changed " 1>>$LOG_FILE.log 2>&1
+	echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: sql configuration file onwers have been changed\n " 1>>$LOG_FILE.log 2>&1
 
-	echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: starting process to enable freeradius default site " 1>>$LOG_FILE.log 2>&1
+	echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: starting process to enable freeradius default site\n " 1>>$LOG_FILE.log 2>&1
 	if [[ -f /etc/freeradius/3.0/sites-enabled/default ]]
 	then
-		echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: creating archive directory for default configurations " 1>>$LOG_FILE.log 2>&1
+		echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: creating archive directory for default configurations\n " 1>>$LOG_FILE.log 2>&1
 		mkdir -p /etc/freeradius/3.0/sites-enabled/archive 1>>$LOG_FILE.log 2>&1
 		STATUS=`echo $?`
 		func_status "$STATUS"
-		echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: archive directory has been created " 1>>$LOG_FILE.log 2>&1
-		echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: taking backup of old default configuration " 1>>$LOG_FILE.log 2>&1
+		echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: archive directory has been created\n " 1>>$LOG_FILE.log 2>&1
+		echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: taking backup of old default configuration\n " 1>>$LOG_FILE.log 2>&1
 		cp /etc/freeradius/3.0/sites-enabled/default /etc/freeradius/3.0/sites-enabled/archive/default-$DATE$TIME 1>>$LOG_FILE.log 2>&1
                 STATUS=`echo $?`
 		func_status "$STATUS"
-		echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: backup has been completed " 1>>$LOG_FILE.log 2>&1
-		echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: removing old default configuration " 1>>$LOG_FILE.log 2>&1
+		echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: backup has been completed\n " 1>>$LOG_FILE.log 2>&1
+		echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: removing old default configuration\n " 1>>$LOG_FILE.log 2>&1
 		rm -f /etc/freeradius/3.0/sites-enabled/default 1>>$LOG_FILE.log 2>&1
 		STATUS=`echo $?`
 		func_status "$STATUS"
-		echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: removed old default configuration " 1>>$LOG_FILE.log 2>&1
+		echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: removed old default configuration\n " 1>>$LOG_FILE.log 2>&1
 		if [[ -f $VAR_DIRPATH/radiusconf/default ]]
 		then
-			echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: copy the new default configuration " 1>>$LOG_FILE.log 2>&1
+			echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: copy the new default configuration\n " 1>>$LOG_FILE.log 2>&1
 			cp $VAR_DIRPATH/radiusconf/default /etc/freeradius/3.0/sites-enabled/ 1>>$LOG_FILE.log 2>&1
 			STATUS=`echo $?`
 			func_status "$STATUS"
-			echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: new default configuration has been copied to respective location " 1>>$LOG_FILE.log 2>&1
-			echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: change group of configuration file " 1>>$LOG_FILE.log 2>&1
+			echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: new default configuration has been copied to respective location\n " 1>>$LOG_FILE.log 2>&1
+			echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: change group of configuration file\n " 1>>$LOG_FILE.log 2>&1
 			chgrp -h freerad /etc/freeradius/3.0/sites-enabled/default 1>>$LOG_FILE.log 2>&1
 			STATUS=`echo $?`
 			func_status "$STATUS"
 			echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: configuration file group has been changed" 1>>$LOG_FILE.log 2>&1
-			echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: change owner of configuration file " 1>>$LOG_FILE.log 2>&1
+			echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: change owner of configuration file\n " 1>>$LOG_FILE.log 2>&1
 			chown -R freerad:freerad /etc/freeradius/3.0/sites-enabled/default 1>>$LOG_FILE.log 2>&1
 			STATUS=`echo $?`
 			func_status "$STATUS"
@@ -805,11 +805,11 @@ EOF
 		fi
         fi
         echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: freeradius has been installed successfully" 1>>$LOG_FILE.log 2>&1
-	echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: restarting freeradius service " 1>>$LOG_FILE.log 2>&1
+	echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: restarting freeradius service\n " 1>>$LOG_FILE.log 2>&1
         $SERVICE_CMD freeradius restart 1>>$LOG_FILE.log 2>&1
 	STATUS=`echo $?`
 	func_status "$STATUS"
-	echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: freeradius service has been restarted successfully " 1>>$LOG_FILE.log 2>&1
+	echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: freeradius service has been restarted successfully\n " 1>>$LOG_FILE.log 2>&1
         }
 ##############################################################################################################################################
 #Function information:
@@ -937,7 +937,7 @@ do
     -u|--upgrade)
       func_varcheck "$CONTROL_FILE" "-f"
       func_var
-      echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: starting vpnpanel upgrade process " 1>$LOG_FILE.log 2>&1
+      echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: starting vpnpanel upgrade process\n " 1>$LOG_FILE.log 2>&1
       func_gitclone
       func_config
       func_mysqlupdate
@@ -945,7 +945,7 @@ do
       func_freeradius
       func_returnstatus
       func_cleanup
-      echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: vpnpanel has been upgraded successfully " 1>>$LOG_FILE.log 2>&1
+      echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: vpnpanel has been upgraded successfully\n " 1>>$LOG_FILE.log 2>&1
       exit
       shift
       ;;
