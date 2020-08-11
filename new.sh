@@ -412,8 +412,8 @@ func_mysqldb_create()
 	 if [[ $VAR_COUNT -ne 9 ]]
          then
                echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: create control file for upgrade" 1>>$LOG_FILE.log 2>&1
-	       echo "#LICENSE~DIECTORY~DOMAIN~SSHPORT~SSHPASS~PSKKEY~MYSQLUSER~MYSQLPASS~MYSQLDB" > upgrade.txt
-	       echo "$VAR_PREV~$MYSQLUSER~$MYSQLPASS~$MYSQLDB" >> upgrade.txt 
+	       echo "#LICENSE~DIECTORY~DOMAIN~SSHPORT~SSHPASS~PSKKEY~MYSQLUSER~MYSQLPASS~MYSQLDB~WHMCSLicense" > upgrade.txt
+	       echo "$VAR_PREV~$MYSQLUSER~$MYSQLPASS~$MYSQLDB~$VAR_WHMCSLICENSE" >> upgrade.txt 
 	       STATUS=`echo $?`
 	       func_status "$STATUS" 
 	       echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: control file upgrade.txt has been created for upgrade" 1>>$LOG_FILE.log 2>&1
@@ -450,7 +450,7 @@ func_config()
 	 else
              echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: updating configuration file $VAR_DIRPATH/configuration.php\n " 1>>$LOG_FILE.log 2>&1
              echo "<?php" > $VAR_DIRPATH/configuration.php
-             echo "\$license = '$VAR_WHMCSLICENSE';" >> $VAR_DIRPATH/configuration.php
+             echo "\$license = '$VAR_WHMCSLICENSE   ';" >> $VAR_DIRPATH/configuration.php
              echo "\$db_host = 'localhost';" >> $VAR_DIRPATH/configuration.php
              echo "\$db_username = '$MYSQLUSER';" >> $VAR_DIRPATH/configuration.php
              echo "\$db_password = '$MYSQLPASS';" >> $VAR_DIRPATH/configuration.php
