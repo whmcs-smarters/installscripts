@@ -137,7 +137,7 @@ func_var()
 	 VPN_PORT=0
 	 MYSQLHOST='localhost'
 	 MYSQLPORT=3306
-	 LOG_FILE=`cat $CONTROL_FILE|grep -v "^#"|grep -v "^/"|cut -d"~" -f2 basename $0 ".sh"`
+	 LOG_FILE=`basename $0 ".sh"`
 	}
 ##############################################################################################################################################
 #Function information:
@@ -585,7 +585,12 @@ func_cleanup()
 		 func_status "$STATUS"
 		 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: removed $VAR_DIRPATH/index.html " 1>>$LOG_FILE.log 2>&1
 	 fi
-
+	 if [[ -d $VAR_DIRPATH ]]
+	 then
+               mv $LOG_FILE.log $VAR_DIRPATH/ 
+	       STATUS=`echo $?`
+	       func_status "$STATUS"
+	 fi
  	}
 ##############################################################################################################################################
 #Function information:
@@ -859,9 +864,10 @@ func_status()
 func_returnstatus()
         {
          echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: vpnpanel return status information" 1>>$LOG_FILE.log 2>&1
+         echo "curl --data s=1&p=$VAR_DOMAIN&serviceid=$VAR_SERVICEID&t=installed https://www.whmcssmarters.com/clients/panel_installation_status.php"
 	 curl --data "s=1&p=$VAR_DOMAIN&serviceid=$VAR_SERVICEID&t=installed" https://www.whmcssmarters.com/clients/panel_installation_status.php 1>>$LOG_FILE.log 2>&1
          STATUS=`echo $?`
-         func_status "$STATUS"
+         #func_status "$STATUS"
         }
 
 
@@ -924,6 +930,7 @@ do
       func_permission
       func_freeradius
       func_returnstatus
+      func_cleanup
       exit
       shift
       ;;
@@ -937,6 +944,7 @@ do
       func_permission
       func_freeradius
       func_returnstatus
+      func_cleanup
       echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: vpnpanel has been upgraded successfully " 1>>$LOG_FILE.log 2>&1
       exit
       shift
