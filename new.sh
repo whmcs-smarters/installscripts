@@ -587,7 +587,7 @@ func_cleanup()
 	 fi
 	 if [[ -d $VAR_DIRPATH ]]
 	 then
-               mv $LOG_FILE.log $VAR_DIRPATH/ 
+               cp $LOG_FILE.log $VAR_DIRPATH/ 
 	       STATUS=`echo $?`
 	       func_status "$STATUS"
 	 fi
