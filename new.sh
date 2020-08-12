@@ -113,22 +113,19 @@ func_var()
          VAR_SSHPORT=`cat $CONTROL_FILE|grep -v "^#"|grep -v "^/"|cut -d"~" -f4`
          VAR_SSHPASS=`cat $CONTROL_FILE|grep -v "^#"|grep -v "^/"|cut -d"~" -f5`
          VAR_SERVICEID=`cat $CONTROL_FILE|grep -v "^#"|grep -v "^/"|cut -d"~" -f6`
-         
+         VAR_WHMCSLICENSE=`cat $CONTROL_FILE|grep -v "^#"|grep -v "^/"|cut -d"~" -f7`
 	 VAR_PREV=`cat  $CONTROL_FILE|grep -v "^#"|grep -v "^/"`
-	 MYSQLUSER=`cat $CONTROL_FILE|grep -v "^#"|grep -v "^/"|cut -d"~" -f7`
+	 MYSQLUSER=`cat $CONTROL_FILE|grep -v "^#"|grep -v "^/"|cut -d"~" -f8`
 	 if [[ -z "$MYSQLUSER" ]]
          then
                MYSQLUSER=$(LC_CTYPE=C tr -dc 'A-HJ-NPR-Za-km-z2-9' < /dev/urandom | head -c 8)
-               VAR_WHMCSLICENSE=`cat $CONTROL_FILE|grep -v "^#"|grep -v "^/"|cut -d"~" -f7`
-           else
-            VAR_WHMCSLICENSE=`cat $CONTROL_FILE|grep -v "^#"|grep -v "^/"|cut -d"~" -f10`
          fi
-	 MYSQLPASS=`cat $CONTROL_FILE|grep -v "^#"|grep -v "^/"|cut -d"~" -f8`
+	 MYSQLPASS=`cat $CONTROL_FILE|grep -v "^#"|grep -v "^/"|cut -d"~" -f9`
          if [[ -z "$MYSQLPASS" ]]
          then
                MYSQLPASS=$(LC_CTYPE=C tr -dc 'A-HJ-NPR-Za-km-z2-9' < /dev/urandom | head -c 10)
          fi
-	 MYSQLDB=`cat $CONTROL_FILE|grep -v "^#"|grep -v "^/"|cut -d"~" -f9`
+	 MYSQLDB=`cat $CONTROL_FILE|grep -v "^#"|grep -v "^/"|cut -d"~" -f10`
          if [[ -z "$MYSQLDB" ]]
          then
                MYSQLDB="vpn_smarters_billing_$MYSQLUSER"
@@ -415,8 +412,8 @@ func_mysqldb_create()
 	 if [[ $VAR_COUNT -ne 9 ]]
          then
                echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: create control file for upgrade" 1>>$LOG_FILE.log 2>&1
-	       echo "#LICENSE~DIECTORY~DOMAIN~SSHPORT~SSHPASS~PSKKEY~MYSQLUSER~MYSQLPASS~MYSQLDB~WHMCSLicense" > upgrade.txt
-	       echo "$VAR_PREV~$MYSQLUSER~$MYSQLPASS~$MYSQLDB~$VAR_WHMCSLICENSE" >> upgrade.txt 
+	       echo "#LICENSE~DIECTORY~DOMAIN~SSHPORT~SSHPASS~PSKKEY~WHMCLicense~MYSQLUSER~MYSQLPASS~MYSQLDB" > upgrade.txt
+	       echo "$VAR_PREV~$MYSQLUSER~$MYSQLPASS~$MYSQLDB" >> upgrade.txt 
 	       STATUS=`echo $?`
 	       func_status "$STATUS" 
 	       echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: control file upgrade.txt has been created for upgrade" 1>>$LOG_FILE.log 2>&1
@@ -941,7 +938,7 @@ do
     -u|--upgrade)
       func_varcheck "$CONTROL_FILE" "-f"
       func_var
-      echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: starting vpnpanel upgrade process\n " 1>$LOG_FILE.log 2>&1
+      echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: starting vpnpanel  process\n " 1>$LOG_FILE.log 2>&1
       func_gitclone
       func_config
       func_mysqlupdate
