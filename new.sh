@@ -113,12 +113,15 @@ func_var()
          VAR_SSHPORT=`cat $CONTROL_FILE|grep -v "^#"|grep -v "^/"|cut -d"~" -f4`
          VAR_SSHPASS=`cat $CONTROL_FILE|grep -v "^#"|grep -v "^/"|cut -d"~" -f5`
          VAR_SERVICEID=`cat $CONTROL_FILE|grep -v "^#"|grep -v "^/"|cut -d"~" -f6`
-         VAR_WHMCSLICENSE=`cat $CONTROL_FILE|grep -v "^#"|grep -v "^/"|cut -d"~" -f7`
+         
 	 VAR_PREV=`cat  $CONTROL_FILE|grep -v "^#"|grep -v "^/"`
 	 MYSQLUSER=`cat $CONTROL_FILE|grep -v "^#"|grep -v "^/"|cut -d"~" -f7`
 	 if [[ -z "$MYSQLUSER" ]]
          then
                MYSQLUSER=$(LC_CTYPE=C tr -dc 'A-HJ-NPR-Za-km-z2-9' < /dev/urandom | head -c 8)
+               VAR_WHMCSLICENSE=`cat $CONTROL_FILE|grep -v "^#"|grep -v "^/"|cut -d"~" -f7`
+           else
+            VAR_WHMCSLICENSE=`cat $CONTROL_FILE|grep -v "^#"|grep -v "^/"|cut -d"~" -f10`
          fi
 	 MYSQLPASS=`cat $CONTROL_FILE|grep -v "^#"|grep -v "^/"|cut -d"~" -f8`
          if [[ -z "$MYSQLPASS" ]]
