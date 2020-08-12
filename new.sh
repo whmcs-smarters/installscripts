@@ -413,7 +413,7 @@ func_mysqldb_create()
          then
                echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: create control file for upgrade" 1>>$LOG_FILE.log 2>&1
 	       echo "#LICENSE~DIECTORY~DOMAIN~SSHPORT~SSHPASS~PSKKEY~WHMCLicense~MYSQLUSER~MYSQLPASS~MYSQLDB" > upgrade.txt
-	       echo "$VAR_PREV~$MYSQLUSER~$MYSQLPASS~$MYSQLDB" >> upgrade.txt 
+	       echo "$VAR_PREV~$VAR_WHMCSLICENSE~$MYSQLUSER~$MYSQLPASS~$MYSQLDB" >> upgrade.txt 
 	       STATUS=`echo $?`
 	       func_status "$STATUS" 
 	       echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: control file upgrade.txt has been created for upgrade" 1>>$LOG_FILE.log 2>&1
@@ -938,7 +938,7 @@ do
     -u|--upgrade)
       func_varcheck "$CONTROL_FILE" "-f"
       func_var
-      echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: starting vpnpanel  process\n " 1>$LOG_FILE.log 2>&1
+      echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: starting vpnpanel upgrade process\n " 1>$LOG_FILE.log 2>&1
       func_gitclone
       func_config
       func_mysqlupdate
