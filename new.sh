@@ -450,7 +450,7 @@ func_config()
 	 else
              echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: updating configuration file $VAR_DIRPATH/configuration.php\n " 1>>$LOG_FILE.log 2>&1
              echo "<?php" > $VAR_DIRPATH/configuration.php
-             echo "\$license = '$VAR_WHMCSLICENSE   ';" >> $VAR_DIRPATH/configuration.php
+             echo "\$license = '$VAR_WHMCSLICENSE';" >> $VAR_DIRPATH/configuration.php
              echo "\$db_host = 'localhost';" >> $VAR_DIRPATH/configuration.php
              echo "\$db_username = '$MYSQLUSER';" >> $VAR_DIRPATH/configuration.php
              echo "\$db_password = '$MYSQLPASS';" >> $VAR_DIRPATH/configuration.php
