@@ -507,7 +507,7 @@ func_mysqlupdate()
 	 func_status "$STATUS"
 	 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: public ip has been deleted from table server_list" 1>>$LOG_FILE.log 2>&1
 	 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: add/update server details to table server_list" 1>>$LOG_FILE.log 2>&1
-	 echo "INSERT INTO server_list(server_name, flag, server_ip, server_category, sshport, server_port, pskkey, mainserver, sshpass, status,createdUploaded) VALUES ('Main Server','$VAR_DOMAIN/modules/addons/vpnpanel/assets/flags/png/no_flag.png','$SERVER_PUB_IP','openvpn','$VAR_SSHPORT','$VPN_PORT','$VAR_SERVICEID',1,'$VAR_SSHPASS',1,'Created');" > update.sql
+	 echo "INSERT INTO server_list(server_name, flag, server_ip, server_category, sshport, server_port, pskkey, mainserver, sshpass, status,createdUploaded, server_group) VALUES ('Main Server','$VAR_DOMAIN/modules/addons/vpnpanel/assets/flags/png/no_flag.png','$SERVER_PUB_IP','openvpn','$VAR_SSHPORT','$VPN_PORT','$VAR_SERVICEID',1,'$VAR_SSHPASS',1,'Created','All');" > update.sql
 	 $MYSQL_CMD -u $MYSQLUSER $MYSQLDB < update.sql 1>>$LOG_FILE.log 2>&1
 	 STATUS=`echo $?`
 	 func_status "$STATUS"
