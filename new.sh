@@ -139,6 +139,7 @@ func_var()
 	 MYSQLHOST='localhost'
 	 MYSQLPORT=3306
 	 LOG_FILE=`basename $0 ".sh"`
+	 VAR_ENCRYPTION_HASH=`cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 64 | head -n 1`
 	}
 ##############################################################################################################################################
 #Function information:
@@ -443,7 +444,7 @@ func_config()
 	     echo "\$db_username = '$MYSQLUSER';" >> $VAR_DIRPATH/configuration.php
 	     echo "\$db_password = '$MYSQLPASS';" >> $VAR_DIRPATH/configuration.php
 	     echo "\$db_name = '$MYSQLDB';" >> $VAR_DIRPATH/configuration.php
-	     echo "\$cc_encryption_hash = '';" >> $VAR_DIRPATH/configuration.php
+	     echo "\$cc_encryption_hash = '$VAR_ENCRYPTION_HASH';" >> $VAR_DIRPATH/configuration.php
 	     echo "\$templates_compiledir = 'templates_c';" >> $VAR_DIRPATH/configuration.php
 	     echo "\$mysql_charset = 'utf8';" >> $VAR_DIRPATH/configuration.php
 	     echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: configuration file $VAR_DIRPATH/configuration.php updated " 1>>$LOG_FILE.log 2>&1
@@ -455,7 +456,7 @@ func_config()
              echo "\$db_username = '$MYSQLUSER';" >> $VAR_DIRPATH/configuration.php
              echo "\$db_password = '$MYSQLPASS';" >> $VAR_DIRPATH/configuration.php
              echo "\$db_name = '$MYSQLDB';" >> $VAR_DIRPATH/configuration.php
-             echo "\$cc_encryption_hash = '';" >> $VAR_DIRPATH/configuration.php
+             echo "\$cc_encryption_hash = '$VAR_ENCRYPTION_HASH';" >> $VAR_DIRPATH/configuration.php
              echo "\$templates_compiledir = 'templates_c';" >> $VAR_DIRPATH/configuration.php
              echo "\$mysql_charset = 'utf8';" >> $VAR_DIRPATH/configuration.php
              echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: configuration file $VAR_DIRPATH/configuration.php updated " 1>>$LOG_FILE.log 2>&1   
