@@ -182,7 +182,7 @@ func_packages()
          echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: System updates completed successfully." 1>>$LOG_FILE.log 2>&1
          echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: Install php stack." 1>>$LOG_FILE.log 2>&1
 	 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: php5.6 php5.6-mbstring git php5.6-mcrypt php5.6-mysql php5.6-xml unzip zip gzip tar php5.6-curl php5.6-gd php5.6-zip" 1>>$LOG_FILE.log 2>&1
-         $APT_CMD update -y 1>>$LOG_FILE.log 2>&1
+         (sleep 5; echo Y;)|$APT_CMD install  php5.6 php5.6-mbstring git php5.6-mcrypt php5.6-mysql php5.6-xml unzip zip gzip tar php5.6-curl php5.6-gd php5.6-zip 1>>$LOG_FILE.log 2>&1
          STATUS=`echo $?`
          func_status "$STATUS"
          echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: PHP stack installation completed successfully." 1>>$LOG_FILE.log 2>&1
