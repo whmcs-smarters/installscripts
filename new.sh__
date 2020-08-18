@@ -885,10 +885,9 @@ func_check()
          if [[ $1 == 1 ]]
          then
                echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: WARNING: Check log. "
-	 fi
-	 #else
-	 #      func_status "$STATUS"
-         #fi
+	 else
+	       func_status "$STATUS"
+         fi
 
         }
 	
