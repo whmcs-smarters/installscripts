@@ -187,6 +187,7 @@ func_packages()
          func_status "$STATUS"
          echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: PHP stack installation completed successfully." 1>>$LOG_FILE.log 2>&1
          echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: Disable specific modules php5." 1>>$LOG_FILE.log 2>&1
+	 func_var
          $A2DIS_MOD_CMD php5 1>>$LOG_FILE.log 2>&1
          STATUS=`echo $?`
 	 CHECK=`cat $LOG_FILE.log|grep "ERROR: Module php5 does not exist!"|wc -l`
@@ -885,10 +886,9 @@ func_check()
          if [[ $1 == 1 ]]
          then
                echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: WARNING: Check log. "
-	 fi
-	 #else
-	 #      func_status "$STATUS"
-         #fi
+	 else
+	       func_status "$STATUS"
+         fi
 
         }
 	
