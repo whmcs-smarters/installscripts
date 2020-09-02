@@ -1,7 +1,7 @@
 #!/bin/bash
 #Created by WHMCS-Smarters Team. We provide VPN Software Solution & Services for Business at www.whmcssmarters.com
 
-while getopts ":h:p:l:i:d:x:y:a:m:s:r:v:c:w:z:e:f:g:" o
+while getopts ":h:p:l:i:d:x:y:a:m:s:r:v:c:w:z:e:f:g:n:" o
 do
     case "${o}" in
     h) PANELURL=${OPTARG}
@@ -39,6 +39,8 @@ do
     c) REMOVED=${OPTARG}
     ;;
     g) LOGSTORE=${OPTARG}
+    ;;
+    n) CLIENTHOSTNAME=${OPTARG}
     ;;
     esac
 done
@@ -1589,7 +1591,7 @@ if [ -z "$APIKEY" ]
     
       bigecho "Sending Server Status after installation succesfully"
 
-      return_status=$(curl --data "api=$APIKEY&status=1&ip=$PUBLIC_IP&v=$VPNTYPE" $PANELURL/includes/vpnapi/serverstatus.php);
+      return_status=$(curl --data "api=$APIKEY&status=1&ip=$CLIENTHOSTNAME&v=$VPNTYPE" $PANELURL/includes/vpnapi/serverstatus.php);
       if [ "$return_status" == "1" ]; then
       echo "Return Status : "$return_status
       echo " Ack Done for Status Updation on Panel Side"
