@@ -320,19 +320,19 @@ echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: copying smarters
 
 func_install_zendioncube()
         {
-	 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: zend and ioncube installation started" 1>>$LOG_FILE.log 2>&1
-         echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: copying zendguard loader to $PHP_LIB_FOLDER" 1>>$LOG_FILE.log 2>&1
-	 cp $VAR_DIRPATH/zend-loader/ZendGuardLoader.so $PHP_LIB_FOLDER 1>>$LOG_FILE.log 2>&1
-         STATUS=`echo $?`
-         func_status "$STATUS"
-         echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: zendguard loader has been copied to $PHP_LIB_FOLDER" 1>>$LOG_FILE.log 2>&1
-	 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: copying opcache to $PHP_LIB_FOLDER" 1>>$LOG_FILE.log 2>&1
-	 cp $VAR_DIRPATH/zend-loader/opcache.so $PHP_LIB_FOLDER 1>>$LOG_FILE.log 2>&1
-	 STATUS=`echo $?`
-	 func_status "$STATUS"
-	 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: opcache has been copied to $PHP_LIB_FOLDER" 1>>$LOG_FILE.log 2>&1
+	 #echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: zend and ioncube installation started" 1>>$LOG_FILE.log 2>&1
+        # echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: copying zendguard loader to $PHP_LIB_FOLDER" 1>>$LOG_FILE.log 2>&1
+	 #cp $VAR_DIRPATH/zend-loader/ZendGuardLoader.so $PHP_LIB_FOLDER 1>>$LOG_FILE.log 2>&1
+        # STATUS=`echo $?`
+        # func_status "$STATUS"
+         #echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: zendguard loader has been copied to $PHP_LIB_FOLDER" 1>>$LOG_FILE.log 2>&1
+	# echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: copying opcache to $PHP_LIB_FOLDER" 1>>$LOG_FILE.log 2>&1
+	# cp $VAR_DIRPATH/zend-loader/opcache.so $PHP_LIB_FOLDER 1>>$LOG_FILE.log 2>&1
+	 #STATUS=`echo $?`
+	 #func_status "$STATUS"
+	 #echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: opcache has been copied to $PHP_LIB_FOLDER" 1>>$LOG_FILE.log 2>&1
          echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: copying ioncube loader to $PHP_LIB_FOLDER" 1>>$LOG_FILE.log 2>&1
-	 cp $VAR_DIRPATH/ioncube/ioncube_loader_lin_5.6.so $PHP_LIB_FOLDER 1>>$LOG_FILE.log 2>&1
+	 cp $VAR_DIRPATH/ioncube/ioncube_loader_lin_7.2.so $PHP_LIB_FOLDER 1>>$LOG_FILE.log 2>&1
 	 STATUS=`echo $?`
 	 func_status "$STATUS"
 	 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: ioncube loader has been copied to $PHP_LIB_FOLDER" 1>>$LOG_FILE.log 2>&1
@@ -342,7 +342,7 @@ func_install_zendioncube()
 	 if [[ $COUNT == 0 ]]
          then
              echo "; Smarters VPN Panel Installation" >> $PHP_APACHE2_INI
-             echo "zend_extension = $PHP_LIB_FOLDER/ioncube_loader_lin_5.6.so" >> $PHP_APACHE2_INI
+             echo "zend_extension = $PHP_LIB_FOLDER/ioncube_loader_lin_7.2.so" >> $PHP_APACHE2_INI
 	     echo "zend_extension = $PHP_LIB_FOLDER/ZendGuardLoader.so" >> $PHP_APACHE2_INI
 	     echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: added zend extension directory to $PHP_APACHE2_INI" 1>>$LOG_FILE.log 2>&1
 	 fi
@@ -351,8 +351,8 @@ func_install_zendioncube()
 	 if [[ $COUNT == 0 ]]
          then
 	     echo "; Smarters VPN Panel Installation" >> $PHP_CLI_INI
-	     echo "zend_extension = $PHP_LIB_FOLDER/ioncube_loader_lin_5.6.so" >> $PHP_CLI_INI
-	     echo "zend_extension = $PHP_LIB_FOLDER/ZendGuardLoader.so" >> $PHP_CLI_INI
+	     echo "zend_extension = $PHP_LIB_FOLDER/ioncube_loader_lin_7.2.so" >> $PHP_CLI_INI
+	     #echo "zend_extension = $PHP_LIB_FOLDER/ZendGuardLoader.so" >> $PHP_CLI_INI
 	     echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: added zend extension directory to $PHP_CLI_INI" 1>>$LOG_FILE.log 2>&1
 	 fi
 	 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: zend and ioncube installation has been completed successfully" 1>>$LOG_FILE.log 2>&1
