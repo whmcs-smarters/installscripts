@@ -103,9 +103,9 @@ func_var()
 	 #REPO_NAME="smartersvpnpanel"
 	 REPO_NAME="smarterspanel-org"
 	 REPO_PATH="https://amansmarters:194f07247ea811f481b76c7c79f32a88dd3ba399@github.com/whmcs-smarters"
-	 PHP_LIB_FOLDER="/usr/lib/php/20131226"
-	 PHP_APACHE2_INI="/etc/php/5.6/apache2/php.ini"
-	 PHP_CLI_INI="/etc/php/5.6/cli/php.ini"
+	 PHP_LIB_FOLDER="/usr/lib/php/20170718"
+	 PHP_APACHE2_INI="/etc/php/7.2/apache2/php.ini"
+	 PHP_CLI_INI="/etc/php/7.2/cli/php.ini"
          VAR_COUNT=`cat $CONTROL_FILE|grep -v "^#"|grep -v "^/"|tr "~" "\n"|wc -l`
          VAR_LICENSE=`cat $CONTROL_FILE|grep -v "^#"|grep -v "^/"|cut -d"~" -f1`
          VAR_DIRPATH=`cat $CONTROL_FILE|grep -v "^#"|grep -v "^/"|cut -d"~" -f2`
@@ -181,8 +181,8 @@ func_packages()
          func_status "$STATUS"
          echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: System updates completed successfully." 1>>$LOG_FILE.log 2>&1
          echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: Install php stack." 1>>$LOG_FILE.log 2>&1
-	 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: php5.6 php5.6-mbstring git php5.6-mcrypt php5.6-mysql php5.6-xml unzip zip gzip tar php5.6-curl php5.6-gd php5.6-zip" 1>>$LOG_FILE.log 2>&1
-         (sleep 5; echo Y;)|$APT_CMD install  php5.6 php5.6-mbstring git php5.6-mcrypt php5.6-mysql php5.6-xml unzip zip gzip tar php5.6-curl php5.6-gd php5.6-zip 1>>$LOG_FILE.log 2>&1
+	 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: php7.2 php7.2-mbstring git php7.2-mcrypt php7.2-mysql php7.2-xml unzip zip gzip tar php7.2-curl php7.2-gd php7.2-zip" 1>>$LOG_FILE.log 2>&1
+         (sleep 5; echo Y;)|$APT_CMD install  php7.2 php7.2-mbstring git php7.2-mysql php7.2-xml unzip zip gzip tar php7.2-curl php7.2-gd php7.2-zip 1>>$LOG_FILE.log 2>&1
          STATUS=`echo $?`
          func_status "$STATUS"
          echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: PHP stack installation completed successfully." 1>>$LOG_FILE.log 2>&1
@@ -199,8 +199,8 @@ func_packages()
          CHECK=`cat $LOG_FILE.log|grep "ERROR: Module php7 does not exist!"|wc -l`
 	 func_check "$CHECK"
          echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: Module disabled successfully." 1>>$LOG_FILE.log 2>&1
-         echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: Enable module php5.6." 1>>$LOG_FILE.log 2>&1
-         $A2EN_MOD_CMD "php5.6" 1>>$LOG_FILE.log 2>&1
+         echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: Enable module php7.2." 1>>$LOG_FILE.log 2>&1
+         $A2EN_MOD_CMD "php7.2" 1>>$LOG_FILE.log 2>&1
          STATUS=`echo $?`
          func_status "$STATUS"
          echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: Module enabled successfully." 1>>$LOG_FILE.log 2>&1
