@@ -1590,8 +1590,12 @@ if [ -z "$APIKEY" ]
       else
     
       bigecho "Sending Server Status after installation succesfully"
-
-      return_status=$(curl --data "api=$APIKEY&status=1&ip=$CLIENTHOSTNAME&v=$VPNTYPE" $PANELURL/includes/vpnapi/serverstatus.php);
+    if [ -z "$CLIENTHOSTNAME" ]
+        then
+            return_status=$(curl --data "api=$APIKEY&status=1&ip=$PUBLIC_IP&v=$VPNTYPE" $PANELURL/includes/vpnapi/serverstatus.php);
+        else
+            return_status=$(curl --data "api=$APIKEY&status=1&ip=$CLIENTHOSTNAME&v=$VPNTYPE" $PANELURL/includes/vpnapi/serverstatus.php);
+    fi
       if [ "$return_status" == "1" ]; then
       echo "Return Status : "$return_status
       echo " Ack Done for Status Updation on Panel Side"
