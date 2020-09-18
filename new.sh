@@ -170,12 +170,12 @@ func_packages()
          STATUS=`echo $?`
          func_status "$STATUS"
          echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: Software properties installation completed successfully." 1>>$LOG_FILE.log 2>&1
-         echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: Add apt repository." 1>>$LOG_FILE.log 2>&1
-         $ADD_REPO_CMD ppa:ondrej/php -y 1>>$LOG_FILE.log 2>&1
-         STATUS=`echo $?`
-         func_status "$STATUS"
-         echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: REpository added successfully." 1>>$LOG_FILE.log 2>&1
-         echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: System updates." 1>>$LOG_FILE.log 2>&1
+         #echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: Add apt repository." 1>>$LOG_FILE.log 2>&1
+         # $ADD_REPO_CMD ppa:ondrej/php -y 1>>$LOG_FILE.log 2>&1
+         # STATUS=`echo $?`
+         # func_status "$STATUS"
+         # echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: REpository added successfully." 1>>$LOG_FILE.log 2>&1
+         # echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: System updates." 1>>$LOG_FILE.log 2>&1
          $APT_CMD update -y 1>>$LOG_FILE.log 2>&1
          STATUS=`echo $?`
          func_status "$STATUS"
