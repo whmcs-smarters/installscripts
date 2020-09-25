@@ -53,12 +53,12 @@ apt-get update -y
 sudo apt-get -yq install mysql-server
 sudo apt install apache2 -y
 sudo apt-get install software-properties-common -y
-sudo add-apt-repository ppa:ondrej/php -y
+#sudo add-apt-repository ppa:ondrej/php -y
 sudo apt-get update -y
-sudo apt-get install php5.6 php5.6-mbstring git php5.6-mcrypt php5.6-mysql php5.6-xml unzip zip gzip tar php5.6-curl php5.6-gd php5.6-zip  -y
+sudo apt-get install php7.2 php7.2-mbstring git php7.2-mcrypt php7.2-mysql php7.2-xml unzip zip gzip tar php7.2-curl php7.2-gd php7.2-zip  -y
 sudo a2dismod php5
 sudo a2dismod php7
-sudo a2enmod php5.6
+sudo a2enmod php7.2
 sudo service apache2 restart
 service mysql restart
 sudo apt-get install sendmail -y
@@ -96,29 +96,29 @@ bigecho "Cloned Successfully"
 function zendioncubeInstallation () {
 bigecho " Zend / ioncube Installation Startard..."
 #cd $DIRPATH
-#cd zend-loader-php5.6-linux-x86_64
-cp "$DIRPATH/zend-loader/ZendGuardLoader.so" /usr/lib/php/20131226/
+#cd zend-loader-php7.2-linux-x86_64
+cp "$DIRPATH/zend-loader/ZendGuardLoader.so" /usr/lib/php/20170718/
 
-cp "$DIRPATH/zend-loader/opcache.so" /usr/lib/php/20131226/
+cp "$DIRPATH/zend-loader/opcache.so" /usr/lib/php/20170718/
 
 # Ioncube installation
  
 
-cp "$DIRPATH/ioncube/ioncube_loader_lin_5.6.so" /usr/lib/php/20131226
+cp "$DIRPATH/ioncube/ioncube_loader_lin_7.2.so" /usr/lib/php/20170718
 
-if ! grep -qs "Smarters VPN Panel Installation" /etc/php/5.6/apache2/php.ini; then
+if ! grep -qs "Smarters VPN Panel Installation" /etc/php/7.2/apache2/php.ini; then
 
-cat >> /etc/php/5.6/apache2/php.ini <<EOF
+cat >> /etc/php/7.2/apache2/php.ini <<EOF
 ; Smarters VPN Panel Installation
-zend_extension = /usr/lib/php/20131226/ioncube_loader_lin_5.6.so
-zend_extension = /usr/lib/php/20131226/ZendGuardLoader.so
+zend_extension = /usr/lib/php/20170718/ioncube_loader_lin_7.2.so
+zend_extension = /usr/lib/php/20170718/ZendGuardLoader.so
 
 EOF
 
-cat >> /etc/php/5.6/cli/php.ini <<EOF
+cat >> /etc/php/7.2/cli/php.ini <<EOF
 ; Smarters VPN Panel Installation
-zend_extension = /usr/lib/php/20131226/ioncube_loader_lin_5.6.so
-zend_extension = /usr/lib/php/20131226/ZendGuardLoader.so
+zend_extension = /usr/lib/php/20170718/ioncube_loader_lin_7.2.so
+zend_extension = /usr/lib/php/20170718/ZendGuardLoader.so
 EOF
 
 fi
