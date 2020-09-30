@@ -1,7 +1,7 @@
 #!/bin/bash
 #Created by WHMCS-Smarters Team. We provide VPN Software Solution & Services for Business at www.whmcssmarters.com
 
-while getopts ":h:p:l:i:d:x:y:a:m:s:r:v:c:w:z:e:f:g:n:" o
+while getopts ":h:p:l:i:d:x:y:a:m:s:r:v:c:w:z:e:f:g:" o
 do
     case "${o}" in
     h) PANELURL=${OPTARG}
@@ -39,8 +39,6 @@ do
     c) REMOVED=${OPTARG}
     ;;
     g) LOGSTORE=${OPTARG}
-    ;;
-    n) CLIENTHOSTNAME=${OPTARG}
     ;;
     esac
 done
@@ -178,7 +176,7 @@ conn ikev2-vpn
     right=%any
     rightid=%any
     rightauth=eap-radius
-    rightsourceip=10.10.10.0/23
+    rightsourceip=10.10.10.0/24
     rightdns=$DNS1,$DNS2
     rightsendcert=never
     eap_identity=%any
@@ -377,29 +375,6 @@ hide-identity: yes
 hide-version: yes
 use-caps-for-id: yes
 prefetch: yes' >> /etc/unbound/unbound.conf
-
-        elif [[ "$OS" =~ (centos|amzn) ]]; then
-            yum install -y unbound
-
-            # Configuration
-            sed -i 's|# interface: 0.0.0.0$|interface: 10.8.0.1|' /etc/unbound/unbound.conf
-            sed -i 's|# access-control: 127.0.0.0/8 allow|access-control: 10.8.0.1/24 allow|' /etc/unbound/unbound.conf
-            sed -i 's|# hide-identity: no|hide-identity: yes|' /etc/unbound/unbound.conf
-            sed -i 's|# hide-version: no|hide-version: yes|' /etc/unbound/unbound.conf
-            sed -i 's|use-caps-for-id: no|use-caps-for-id: yes|' /etc/unbound/unbound.conf
-
-        elif [[ "$OS" = "fedora" ]]; then
-            dnf install -y unbound
-
-            # Configuration
-            sed -i 's|# interface: 0.0.0.0$|interface: 10.8.0.1|' /etc/unbound/unbound.conf
-            sed -i 's|# access-control: 127.0.0.0/8 allow|access-control: 10.8.0.1/24 allow|' /etc/unbound/unbound.conf
-            sed -i 's|# hide-identity: no|hide-identity: yes|' /etc/unbound/unbound.conf
-            sed -i 's|# hide-version: no|hide-version: yes|' /etc/unbound/unbound.conf
-            sed -i 's|# use-caps-for-id: no|use-caps-for-id: yes|' /etc/unbound/unbound.conf
-
-        elif [[ "$OS" = "arch" ]]; then
-            pacman -Syu --noconfirm unbound
 
             # Get root servers list
             curl -o /etc/unbound/root.hints https://www.internic.net/domain/named.cache
@@ -833,19 +808,7 @@ function installOpenVPN () {
         fi
         # Ubuntu > 16.04 and Debian > 8 have OpenVPN >= 2.4 without the need of a third party repository.
         apt-get install -y openvpn iptables openssl wget ca-certificates curl
-    elif [[ "$OS" = 'centos' ]]; then
-        yum install -y epel-release
-        yum install -y openvpn iptables openssl wget ca-certificates curl tar
-    elif [[ "$OS" = 'amzn' ]]; then
-        amazon-linux-extras install -y epel
-        yum install -y openvpn iptables openssl wget ca-certificates curl
-    elif [[ "$OS" = 'fedora' ]]; then
-        dnf install -y openvpn iptables openssl wget ca-certificates curl
-    elif [[ "$OS" = 'arch' ]]; then
-        # Install required dependencies and upgrade the system
-        pacman --needed --noconfirm -Syu openvpn iptables openssl wget ca-certificates curl
-    fi
-
+        fi
     # Find out if the machine uses nogroup or nobody for the permissionless group
     if grep -qs "^nogroup:" /etc/group; then
         NOGROUP=nogroup
@@ -935,7 +898,7 @@ persist-key
 persist-tun
 keepalive 10 120
 topology subnet
-server 10.8.0.0 255.255.254.0
+server 10.8.0.0 255.255.255.0
 ifconfig-pool-persist ipp.txt" >> /etc/openvpn/server.conf
 
     # DNS resolvers
@@ -1322,12 +1285,6 @@ function removeUnbound () {
 
         if [[ "$OS" =~ (debian|ubuntu) ]]; then
             apt-get autoremove --purge -y unbound
-        elif [[ "$OS" = 'arch' ]]; then
-            pacman --noconfirm -R unbound
-        elif [[ "$OS" =~ (centos|amzn) ]]; then
-            yum remove -y unbound
-        elif [[ "$OS" = 'fedora' ]]; then
-            dnf remove -y unbound
         fi
 
         rm -rf /etc/unbound/
@@ -1350,12 +1307,7 @@ function removeOpenVPN () {
         RPORT=$(grep '^port ' /etc/openvpn/server.conf | cut -d " " -f 2)
 
         # Stop OpenVPN
-        if [[ "$OS" =~ (fedora|arch|centos) ]]; then
-            systemctl disable openvpn-server@server
-            systemctl stop openvpn-server@server
-            # Remove customised service
-            rm /etc/systemd/system/openvpn-server@.service
-        elif [[ "$OS" == "ubuntu" ]] && [[ "$VERSION_ID" == "16.04" ]]; then
+        if [[ "$OS" == "ubuntu" ]] && [[ "$VERSION_ID" == "16.04" ]]; then
             systemctl disable openvpn
             systemctl stop openvpn
         else
@@ -1389,14 +1341,6 @@ function removeOpenVPN () {
                 rm /etc/apt/sources.list.d/openvpn.list
                 apt-get update
             fi
-        elif [[ "$OS" = 'arch' ]]; then
-            pacman --noconfirm -R openvpn
-        elif [[ "$OS" =~ (centos|amzn) ]]; then
-            yum remove -y openvpn
-        elif [[ "$OS" = 'fedora' ]]; then
-            dnf remove -y openvpn
-        fi
-
         # Cleanup
         find /home/ -maxdepth 2 -name "*.ovpn" -delete
         find /root/ -maxdepth 1 -name "*.ovpn" -delete
@@ -1414,6 +1358,18 @@ function removeOpenVPN () {
    
 }
 
+wiregaurdsetup(){
+
+bigecho "WireGaurd Installation Started..."
+
+curl -O https://raw.githubusercontent.com/angristan/wireguard-install/master/wireguard-install.sh
+
+chmod +x wireguard-install.sh
+
+./wireguard-install.sh
+
+bigecho "WireGaurd Installation Done"
+}
 
 radiusclientsetup(){
 
@@ -1590,12 +1546,8 @@ if [ -z "$APIKEY" ]
       else
     
       bigecho "Sending Server Status after installation succesfully"
-    if [ -z "$CLIENTHOSTNAME" ]
-        then
-            return_status=$(curl --data "api=$APIKEY&status=1&ip=$PUBLIC_IP&v=$VPNTYPE" $PANELURL/includes/vpnapi/serverstatus.php);
-        else
-            return_status=$(curl --data "api=$APIKEY&status=1&ip=$CLIENTHOSTNAME&v=$VPNTYPE" $PANELURL/includes/vpnapi/serverstatus.php);
-    fi
+
+      return_status=$(curl --data "api=$APIKEY&status=1&ip=$PUBLIC_IP&v=$VPNTYPE" $PANELURL/includes/vpnapi/serverstatus.php);
       if [ "$return_status" == "1" ]; then
       echo "Return Status : "$return_status
       echo " Ack Done for Status Updation on Panel Side"
@@ -1607,5 +1559,5 @@ else
     
     #  cleaning files
     rm /root/checkServerCompatibility.sh
-    rm /root/install-vpn-proxy.sh
+    rm /root/install-vpn-proxy-v1.sh
 exit 0
