@@ -17,7 +17,7 @@ scriptFileName="install-reseller-smartersvpnpanel.sh"
 
 #Copy/Paste the below script when  needed
 
-while getopts ":l:p:d:s:a:i:g:u:q:b:m:" o
+while getopts ":l:p:d:s:a:i:g:u:q:b:m:w:" o
 do
     case "${o}" in
     l) LICENSE=${OPTARG}
@@ -41,6 +41,8 @@ do
     b) MYSQLDB=${OPTARG}
     ;;
     m) MAINPANELURL=${OPTARG}
+    ;;
+    w) WHMCSLICENSE=${OPTARG}
     ;;
     esac
 done
@@ -173,7 +175,7 @@ rm "$DIRPATH/configuration.php"
 
 cat >> "$DIRPATH/configuration.php" <<EOF
 <?php
-\$license = 'WHMCS-reseller-121kavnamq1';
+\$license = '$WHMCSLICENSE';
 \$db_host = 'localhost';
 \$db_port = '';
 \$db_username = '$MYSQLUSER';
