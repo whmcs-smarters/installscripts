@@ -178,7 +178,7 @@ conn ikev2-vpn
     right=%any
     rightid=%any
     rightauth=eap-radius
-    rightsourceip=10.10.10.0/23
+    rightsourceip=10.10.10.0/24
     rightdns=$DNS1,$DNS2
     rightsendcert=never
     eap_identity=%any
@@ -935,7 +935,7 @@ persist-key
 persist-tun
 keepalive 10 120
 topology subnet
-server 10.8.0.0 255.255.254.0
+server 10.8.0.0 255.255.255.0
 ifconfig-pool-persist ipp.txt" >> /etc/openvpn/server.conf
 
     # DNS resolvers
@@ -1209,7 +1209,7 @@ function newClient () {
             ./easyrsa build-client-full "$CLIENT" nopass
         ;;
         2)
-        echo "âš ï¸ You will be asked for the client password below âš ï¸"
+        echo "âš ï¸�? You will be asked for the client password below âš ï¸�?"
             ./easyrsa build-client-full "$CLIENT"
         ;;
     esac
