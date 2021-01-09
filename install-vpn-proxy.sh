@@ -471,7 +471,7 @@ function installQuestions () {
     if [[ $APPROVE_IP =~ n ]]; then
         read -rp "IP address: " -e -i "$IP" IP
     fi
-    #Â If $IP is a private IP address, the server must be behind NAT
+    #Ã If $IP is a private IP address, the server must be behind NAT
     if echo "$IP" | grep -qE '^(10\.|172\.1[6789]\.|172\.2[0-9]\.|172\.3[01]\.|192\.168)'; then
         echo ""
         echo "It seems this server is behind NAT. What is its public IPv4 address or hostname?"
@@ -937,7 +937,7 @@ keepalive 10 120
 topology subnet
 server 10.8.0.0 255.255.254.0
 ifconfig-pool-persist ipp.txt" >> /etc/openvpn/server.conf
-
+echo 'push "block-outside-dns"' >> /etc/openvpn/server.conf
     # DNS resolvers
     
     case $DNS in
@@ -1209,7 +1209,7 @@ function newClient () {
             ./easyrsa build-client-full "$CLIENT" nopass
         ;;
         2)
-        echo "âš ï¸�? You will be asked for the client password below âš ï¸�?"
+        echo "Ã¢Å¡ Ã¯Â¸Â? You will be asked for the client password below Ã¢Å¡ Ã¯Â¸Â?"
             ./easyrsa build-client-full "$CLIENT"
         ;;
     esac
