@@ -927,7 +927,7 @@ function installOpenVPN () {
     elif [[ "$IPV6_SUPPORT" = 'y' ]]; then
         echo "proto ${PROTOCOL}6" >> /etc/openvpn/server.conf
     fi
-
+#ifconfig-pool-persist ipp.txt" >> /etc/openvpn/server.conf
 echo "dev tun
 user nobody
 group $NOGROUP
@@ -936,7 +936,7 @@ persist-tun
 keepalive 10 120
 topology subnet
 server 10.8.0.0 255.255.254.0
-ifconfig-pool-persist ipp.txt" >> /etc/openvpn/server.conf
+
 echo 'push "block-outside-dns"' >> /etc/openvpn/server.conf
     # DNS resolvers
     
