@@ -1149,6 +1149,8 @@ resolv-retry infinite
 nobind
 persist-key
 persist-tun
+keepalive 10 120
+reneg-sec 0
 remote-cert-tls server
 verify-x509-name $SERVER_NAME name
 auth $HMAC_ALG
