@@ -934,7 +934,7 @@ group $NOGROUP
 persist-key
 persist-tun
 keepalive 10 120
-reneg-sec 0
+reneg-sec 360000
 topology subnet
 server 10.8.0.0 255.255.255.0
 ifconfig-pool-persist ipp.txt" >> /etc/openvpn/server.conf
@@ -1150,7 +1150,7 @@ nobind
 persist-key
 persist-tun
 keepalive 10 120
-reneg-sec 0
+reneg-sec 360000
 remote-cert-tls server
 verify-x509-name $SERVER_NAME name
 auth $HMAC_ALG
