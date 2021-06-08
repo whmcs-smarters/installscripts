@@ -1610,5 +1610,5 @@ else
     
     #  cleaning files
     rm /root/checkServerCompatibility.sh
-    rm /root/install-vpn-proxy.sh
+    rm /root/install-vpn-proxy_ci.sh
 exit 0
