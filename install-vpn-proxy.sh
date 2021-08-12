@@ -471,7 +471,7 @@ function installQuestions () {
     if [[ $APPROVE_IP =~ n ]]; then
         read -rp "IP address: " -e -i "$IP" IP
     fi
-    #Â If $IP is a private IP address, the server must be behind NAT
+    #Ã If $IP is a private IP address, the server must be behind NAT
     if echo "$IP" | grep -qE '^(10\.|172\.1[6789]\.|172\.2[0-9]\.|172\.3[01]\.|192\.168)'; then
         echo ""
         echo "It seems this server is behind NAT. What is its public IPv4 address or hostname?"
@@ -1141,7 +1141,10 @@ WantedBy=multi-user.target" > /etc/systemd/system/iptables-openvpn.service
     elif [[ "$PROTOCOL" = 'tcp' ]]; then
         echo "proto tcp-client" >> /etc/openvpn/client-template.txt
     fi
-  
+    EXPLICIT="";
+  if [[ "$PROTOCOL" = 'udp' ]]; then
+EXPLICIT=explicit-exit-notify 2
+fi
  
     echo "remote $IP $PORT
 dev tun
@@ -1160,9 +1163,7 @@ cipher $CIPHER
 tls-client
 tls-version-min 1.2
 tls-cipher $CC_CIPHER
-if [[ "$PROTOCOL" = 'udp' ]]; then
-explicit-exit-notify 2
-fi
+$EXPLICIT
 verb $VERBVALUE" >> /etc/openvpn/client-template.txt
 # Setting HTTP Proxy ( it must be worked with TCP proto)
   if [[ "$PROXYSERVER" != "" ]]; then
@@ -1213,7 +1214,7 @@ function newClient () {
             ./easyrsa build-client-full "$CLIENT" nopass
         ;;
         2)
-        echo "âš ï¸�? You will be asked for the client password below âš ï¸�?"
+        echo "Ã¢Å¡ Ã¯Â¸Â? You will be asked for the client password below Ã¢Å¡ Ã¯Â¸Â?"
             ./easyrsa build-client-full "$CLIENT"
         ;;
     esac
