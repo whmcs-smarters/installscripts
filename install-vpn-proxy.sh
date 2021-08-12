@@ -1141,10 +1141,6 @@ WantedBy=multi-user.target" > /etc/systemd/system/iptables-openvpn.service
     elif [[ "$PROTOCOL" = 'tcp' ]]; then
         echo "proto tcp-client" >> /etc/openvpn/client-template.txt
     fi
-    EXPLICIT="";
-  if [[ "$PROTOCOL" = 'udp' ]]; then
-EXPLICIT=explicit-exit-notify 2
-fi
  
     echo "remote $IP $PORT
 dev tun
@@ -1163,7 +1159,7 @@ cipher $CIPHER
 tls-client
 tls-version-min 1.2
 tls-cipher $CC_CIPHER
-$EXPLICIT
+#explicit-exit-notify 2
 verb $VERBVALUE" >> /etc/openvpn/client-template.txt
 # Setting HTTP Proxy ( it must be worked with TCP proto)
   if [[ "$PROXYSERVER" != "" ]]; then
