@@ -580,13 +580,13 @@ func_cleanup()
 		 func_status "$STATUS"
 		 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: script $VAR_PWD/checkMainServerCompatibility.sh has been removed" 1>>$LOG_FILE.log 2>&1
 	 fi
-           if [[ -f $VAR_PWD/new.sh ]]
+           if [[ -f $VAR_PWD/new_211.sh ]]
      then
-         echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: removing script $VAR_PWD/new.sh " 1>>$LOG_FILE.log 2>&1
-         rm -f $VAR_PWD/new.sh 1>>$LOG_FILE.log 2>&1
+         echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: removing script $VAR_PWD/new_211.sh " 1>>$LOG_FILE.log 2>&1
+         rm -f $VAR_PWD/new_211.sh 1>>$LOG_FILE.log 2>&1
          STATUS=`echo $?`
          func_status "$STATUS"
-         echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: script $VAR_PWD/new.sh has been removed" 1>>$LOG_FILE.log 2>&1
+         echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: script $VAR_PWD/new_211.sh has been removed" 1>>$LOG_FILE.log 2>&1
      fi
          if [[ -f $VAR_DIRPATH/index.html ]]
          then
