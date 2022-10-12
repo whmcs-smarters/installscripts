@@ -31,7 +31,7 @@
 ### OR IN CONNECTION WITH THE SCRIPT OR THE USE OR      ###
 ### OTHER DEALINGS IN THE SCRIPT.                       ###
 ###########################################################
-while getopts ":h:p:l:i:d:x:y:a:m:s:r:v:c:w:z:e:f:g:n:t:q:b:" arg;  do
+while getopts ":h:p:l:i:d:x:y:a:m:s:r:v:c:w:z:e:f:g:n:t:q:b:o:" arg;  do
 case "${arg}" in
 
     h) PANELURL=${OPTARG}
