@@ -10,7 +10,7 @@
 
  
 ###########################################################
-###         WHMCSSMARTERS vpnpanel setup 2020           ###
+###         SMARTERS PANEL SETUP 2023           ###
 ###                  Version 1.0                        ###
 ###                                                     ###
 ### Copyright (c) 2020                                  ###
@@ -90,7 +90,7 @@ Usage:
 
 func_var()
         {
-         SCRIPT_VERSION="WHMCSSMARTERS vpnpanel setup version 1.0[[2020/06/01]]"         
+         SCRIPT_VERSION="SMARTERS VPN PANEL setup version 1.0[[2020/06/01]]"         
          DATE=`date +"%Y%m%d"`
          TIME=`date +"%H%M%S"`
 	 SYS_DATE=`date +%F-%T`
@@ -100,20 +100,6 @@ func_var()
 	 A2DIS_MOD_CMD=`which a2dismod`
 	 A2EN_MOD_CMD=`which a2enmod`
 	 SER_CMD=`which service`
-	 #REPO_NAME="smartersvpnpanel"
-	 REPO_NAME="whmcsvpnpanelnew"
-	 REPO_PATH="https://amansmarters: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@github.com/whmcs-smarters"
-	 PHP_LIB_FOLDER="/usr/lib/php/20170718"
-	 PHP_APACHE2_INI="/etc/php/7.2/apache2/php.ini"
-	 PHP_CLI_INI="/etc/php/7.2/cli/php.ini"
-         VAR_COUNT=`cat $CONTROL_FILE|grep -v "^#"|grep -v "^/"|tr "~" "\n"|wc -l`
-         VAR_LICENSE=`cat $CONTROL_FILE|grep -v "^#"|grep -v "^/"|cut -d"~" -f1`
-         VAR_DIRPATH=`cat $CONTROL_FILE|grep -v "^#"|grep -v "^/"|cut -d"~" -f2`
-         VAR_DOMAIN=`cat $CONTROL_FILE|grep -v "^#"|grep -v "^/"|cut -d"~" -f3`
-         VAR_SSHPORT=`cat $CONTROL_FILE|grep -v "^#"|grep -v "^/"|cut -d"~" -f4`
-         VAR_SSHPASS=`cat $CONTROL_FILE|grep -v "^#"|grep -v "^/"|cut -d"~" -f5`
-         VAR_SERVICEID=`cat $CONTROL_FILE|grep -v "^#"|grep -v "^/"|cut -d"~" -f6`
-	 VAR_WHMLICENSE=`cat $CONTROL_FILE|grep -v "^#"|grep -v "^/"|cut -d"~" -f7`
 	 VAR_PREV=`cat  $CONTROL_FILE|grep -v "^#"|grep -v "^/"`
 	 MYSQLUSER=`cat $CONTROL_FILE|grep -v "^#"|grep -v "^/"|cut -d"~" -f8`
 	 if [[ -z "$MYSQLUSER" ]]
@@ -149,379 +135,12 @@ func_var()
 
 func_packages()
         {
-         echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: Installing packages." 1>$LOG_FILE.log 2>&1
-	 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: System updates." 1>>$LOG_FILE.log 2>&1
-         $APT_CMD update -y 1>>$LOG_FILE.log 2>&1
-	 STATUS=`echo $?`
-         func_status "$STATUS"
-	 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: System updates completed successfully." 1>>$LOG_FILE.log 2>&1
 	 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: Install MySQL server." 1>>$LOG_FILE.log 2>&1
 	 $APT_CMD -yq install mysql-server 1>>$LOG_FILE.log 2>&1
          STATUS=`echo $?`
          func_status "$STATUS"
          echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: MySQL server installation completed successfully." 1>>$LOG_FILE.log 2>&1
-         echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: Install apache2 server." 1>>$LOG_FILE.log 2>&1
-         $APT_CMD install apache2 -y 1>>$LOG_FILE.log 2>&1
-         STATUS=`echo $?`
-         func_status "$STATUS"
-         echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: Apache2 server installation completed successfully." 1>>$LOG_FILE.log 2>&1
-         echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: Install software properties." 1>>$LOG_FILE.log 2>&1
-         $APT_CMD install software-properties-common -y 1>>$LOG_FILE.log 2>&1
-         STATUS=`echo $?`
-         func_status "$STATUS"
-         echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: Software properties installation completed successfully." 1>>$LOG_FILE.log 2>&1
-         #echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: Add apt repository." 1>>$LOG_FILE.log 2>&1
-         # $ADD_REPO_CMD ppa:ondrej/php -y 1>>$LOG_FILE.log 2>&1
-         # STATUS=`echo $?`
-         # func_status "$STATUS"
-         # echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: REpository added successfully." 1>>$LOG_FILE.log 2>&1
-         # echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: System updates." 1>>$LOG_FILE.log 2>&1
-         $APT_CMD update -y 1>>$LOG_FILE.log 2>&1
-         STATUS=`echo $?`
-         func_status "$STATUS"
-         echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: System updates completed successfully." 1>>$LOG_FILE.log 2>&1
-         echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: Install php stack." 1>>$LOG_FILE.log 2>&1
-	 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: php7.2 php7.2-mbstring git php7.2-mcrypt php7.2-mysql php7.2-xml unzip zip gzip tar php7.2-curl php7.2-gd php7.2-zip" 1>>$LOG_FILE.log 2>&1
-         (sleep 5; echo Y;)|$APT_CMD install  php7.2 php7.2-mbstring git php7.2-mysql php7.2-xml unzip zip gzip tar php7.2-curl php7.2-gd php7.2-zip 1>>$LOG_FILE.log 2>&1
-         STATUS=`echo $?`
-         func_status "$STATUS"
-         echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: PHP stack installation completed successfully." 1>>$LOG_FILE.log 2>&1
-         echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: Disable specific modules php5." 1>>$LOG_FILE.log 2>&1
-	 func_var
-         $A2DIS_MOD_CMD php5 1>>$LOG_FILE.log 2>&1
-         STATUS=`echo $?`
-	 CHECK=`cat $LOG_FILE.log|grep "ERROR: Module php5 does not exist!"|wc -l`
-	 func_check "$CHECK"
-         echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: Module disabled successfully." 1>>$LOG_FILE.log 2>&1
-         echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: Disable specific modules php7." 1>>$LOG_FILE.log 2>&1
-         $A2DIS_MOD_CMD php7 1>>$LOG_FILE.log 2>&1
-         STATUS=`echo $?`
-         CHECK=`cat $LOG_FILE.log|grep "ERROR: Module php7 does not exist!"|wc -l`
-	 func_check "$CHECK"
-         echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: Module disabled successfully." 1>>$LOG_FILE.log 2>&1
-         echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: Enable module php7.2." 1>>$LOG_FILE.log 2>&1
-         $A2EN_MOD_CMD "php7.2" 1>>$LOG_FILE.log 2>&1
-         STATUS=`echo $?`
-         func_status "$STATUS"
-         echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: Module enabled successfully." 1>>$LOG_FILE.log 2>&1
-         echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: Restart apache2 server." 1>>$LOG_FILE.log 2>&1
-         $SER_CMD apache2 restart 1>>$LOG_FILE.log 2>&1
-         STATUS=`echo $?`
-         func_status "$STATUS"
-         echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: Restarted apache2 server successfully." 1>>$LOG_FILE.log 2>&1
-         echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: Restart MySQL server." 1>>$LOG_FILE.log 2>&1
-         $SER_CMD mysql restart 1>>$LOG_FILE.log 2>&1
-         STATUS=`echo $?`
-         func_status "$STATUS"
-         echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: Restarted MySQL server successfully." 1>>$LOG_FILE.log 2>&1
-         echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: Install send mail server." 1>>$LOG_FILE.log 2>&1
-         $APT_CMD install sendmail -y 1>>$LOG_FILE.log 2>&1
-         STATUS=`echo $?`
-         func_status "$STATUS"
-         echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: Installation completed successfully." 1>>$LOG_FILE.log 2>&1
-         echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: Install php mail server." 1>>$LOG_FILE.log 2>&1
-         $APT_CMD install php-mail -y 1>>$LOG_FILE.log 2>&1
-         STATUS=`echo $?`
-         func_status "$STATUS"
-         echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: Installation completed successfully." 1>>$LOG_FILE.log 2>&1
-         echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: All packages installed successfully." 1>>$LOG_FILE.log 2>&1
-        }
-##############################################################################################################################################
-#Function information:
-#
-#
-##############################################################################################################################################
-
-func_gitclone()
-        {
-         printf " \n"
-	 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: starting clone repo $REPO_NAME" 1>>$LOG_FILE.log 2>&1
-         if [[ -d $VAR_PWD/$REPO_NAME ]]
-         then
-	     echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: $REPO_NAME repo exist." 1>>$LOG_FILE.log 2>&1
-             echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: removing $REPO_NAME repo " 1>>$LOG_FILE.log 2>&1
-	     rm -rf $VAR_PWD/$REPO_NAME 1>>$LOG_FILE.log 2>&1
-	     STATUS=`echo $?`
-             func_status "$STATUS"
-	     echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: removed $REPO_NAME repo " 1>>$LOG_FILE.log 2>&1
-	     echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: previous $REPO_NAME has been removed." 1>>$LOG_FILE.log 2>&1
-             echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: checking git status " 1>>$LOG_FILE.log 2>&1
-	     which  git 1>>$LOG_FILE.log 2>&1
-             STATUS=`echo $?`
-             func_status "$STATUS"
-	     echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: git running on server " 1>>$LOG_FILE.log 2>&1
-             echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: cloning repo $REPO_NAME " 1>>$LOG_FILE.log 2>&1
-             git clone $REPO_PATH/$REPO_NAME.git 1>>$LOG_FILE.log 2>&1
-	     STATUS=`echo $?`
-             func_status "$STATUS"
-             echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: cloning of  repo $REPO_NAME has been completed " 1>>$LOG_FILE.log 2>&1
-     	else
-             echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: checking git status " 1>>$LOG_FILE.log 2>&1
-             which  git 1>>$LOG_FILE.log 2>&1
-             STATUS=`echo $?`
-             func_status "$STATUS"
-             echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: git running on server " 1>>$LOG_FILE.log 2>&1
-             echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: cloning repo $REPO_NAME " 1>>$LOG_FILE.log 2>&1
-             git clone $REPO_PATH/$REPO_NAME.git 1>>$LOG_FILE.log 2>&1
-             STATUS=`echo $?`
-             func_status "$STATUS"
-             echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: cloning of  repo $REPO_NAME has been completed " 1>>$LOG_FILE.log 2>&1
-	fi
-        if [[ -f $VAR_DIRPATH/configuration.php ]]
-        then
-             echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: smarterspanel data files exists " 1>>$LOG_FILE.log 2>&1
-             echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: removing smarterspanel data files " 1>>$LOG_FILE.log 2>&1
-	     rm -rf $VAR_DIRPATH/* 1>>$LOG_FILE.log 2>&1
-	     STATUS=`echo $?`
-             func_status "$STATUS"
-             echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: old smarterspanel data files has been removed " 1>>$LOG_FILE.log 2>&1
-	     echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: creating directory $VAR_DIRPATH" 1>>$LOG_FILE.log 2>&1
-	     mkdir -p $VAR_DIRPATH 1>>$LOG_FILE.log 2>&1
-	     STATUS=`echo $?`
-	     func_status "$STATUS"
-             echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: directory $VAR_DIRPATH has been successfully created" 1>>$LOG_FILE.log 2>&1
-
-	     echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: copying smarterspanel new data files to $VAR_DIRPATH" 1>>$LOG_FILE.log 2>&1
-	     mv -f $REPO_NAME/* $VAR_DIRPATH 1>>$LOG_FILE.log 2>&1
-	     STATUS=`echo $?`
-             func_status "$STATUS"
-             echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: smarterspanel new data files has been copied to $VAR_DIRPATH" 1>>$LOG_FILE.log 2>&1
-	     echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: remove empty cloned repo $REPO_NAME" 1>>$LOG_FILE.log 2>&1
-             rm  -rf $REPO_NAME 1>>$LOG_FILE.log 2>&1
-             STATUS=`echo $?`
-             func_status "$STATUS"
-             echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: empty repo has been removed" 1>>$LOG_FILE.log 2>&1
-	else
-	     echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: creating directory $VAR_DIRPATH" 1>>$LOG_FILE.log 2>&1
-             mkdir -p $VAR_DIRPATH 1>>$LOG_FILE.log 2>&1
-             STATUS=`echo $?`
-             func_status "$STATUS"
-             echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: directory $VAR_DIRPATH has been successfully created" 1>>$LOG_FILE.log 2>&1
-echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: copying smarterspanel new data files to $VAR_DIRPATH" 1>>$LOG_FILE.log 2>&1
-             mv -f $REPO_NAME/* $VAR_DIRPATH 1>>$LOG_FILE.log 2>&1
-             STATUS=`echo $?`
-             func_status "$STATUS"
-             echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: smarterspanel new data files has been copied to $VAR_DIRPATH" 1>>$LOG_FILE.log 2>&1
-             echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: remove empty cloned repo $REPO_NAME" 1>>$LOG_FILE.log 2>&1
-             rm  -rf $REPO_NAME 1>>$LOG_FILE.log 2>&1
-             STATUS=`echo $?`
-             func_status "$STATUS"
-             echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: empty repo has been removed" 1>>$LOG_FILE.log 2>&1
-
-	fi
-        echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: repo $REPO_NAME has been cloned succesfully" 1>>$LOG_FILE.log 2>&1
-
-        }
-##############################################################################################################################################
-#Function information:
-#
-#
-##############################################################################################################################################
-
-func_install_zendioncube()
-        {
-	 #echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: zend and ioncube installation started" 1>>$LOG_FILE.log 2>&1
-        # echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: copying zendguard loader to $PHP_LIB_FOLDER" 1>>$LOG_FILE.log 2>&1
-	 #cp $VAR_DIRPATH/zend-loader/ZendGuardLoader.so $PHP_LIB_FOLDER 1>>$LOG_FILE.log 2>&1
-        # STATUS=`echo $?`
-        # func_status "$STATUS"
-         #echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: zendguard loader has been copied to $PHP_LIB_FOLDER" 1>>$LOG_FILE.log 2>&1
-	# echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: copying opcache to $PHP_LIB_FOLDER" 1>>$LOG_FILE.log 2>&1
-	# cp $VAR_DIRPATH/zend-loader/opcache.so $PHP_LIB_FOLDER 1>>$LOG_FILE.log 2>&1
-	 #STATUS=`echo $?`
-	 #func_status "$STATUS"
-	 #echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: opcache has been copied to $PHP_LIB_FOLDER" 1>>$LOG_FILE.log 2>&1
-         echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: copying ioncube loader to $PHP_LIB_FOLDER" 1>>$LOG_FILE.log 2>&1
-	 cp $VAR_DIRPATH/ioncube/ioncube_loader_lin_7.2.so $PHP_LIB_FOLDER 1>>$LOG_FILE.log 2>&1
-	 STATUS=`echo $?`
-	 func_status "$STATUS"
-	 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: ioncube loader has been copied to $PHP_LIB_FOLDER" 1>>$LOG_FILE.log 2>&1
-
-	 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: adding zend extension directory to $PHP_APACHE2_INI" 1>>$LOG_FILE.log 2>&1
-	 COUNT=`cat $PHP_APACHE2_INI | grep "Smarters VPN Panel Installation"|wc -l`
-	 if [[ $COUNT == 0 ]]
-         then
-             echo "; Smarters VPN Panel Installation" >> $PHP_APACHE2_INI
-             echo "zend_extension = $PHP_LIB_FOLDER/ioncube_loader_lin_7.2.so" >> $PHP_APACHE2_INI
-	     echo "zend_extension = $PHP_LIB_FOLDER/ZendGuardLoader.so" >> $PHP_APACHE2_INI
-	     echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: added zend extension directory to $PHP_APACHE2_INI" 1>>$LOG_FILE.log 2>&1
-	 fi
-         echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: adding zend extension directory to $PHP_CLI_INI" 1>>$LOG_FILE.log 2>&1
-         COUNT=`cat $PHP_CLI_INI | grep "Smarters VPN Panel Installation"|wc -l`
-	 if [[ $COUNT == 0 ]]
-         then
-	     echo "; Smarters VPN Panel Installation" >> $PHP_CLI_INI
-	     echo "zend_extension = $PHP_LIB_FOLDER/ioncube_loader_lin_7.2.so" >> $PHP_CLI_INI
-	     #echo "zend_extension = $PHP_LIB_FOLDER/ZendGuardLoader.so" >> $PHP_CLI_INI
-	     echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: added zend extension directory to $PHP_CLI_INI" 1>>$LOG_FILE.log 2>&1
-	 fi
-	 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: zend and ioncube installation has been completed successfully" 1>>$LOG_FILE.log 2>&1
-         echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: restarting apache2 server" 1>>$LOG_FILE.log 2>&1
-	 $SERVICE_CMD apache2 restart 1>>$LOG_FILE.log 2>&1
-	 STATUS=`echo $?`
-	 func_status "$STATUS"
-	 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: apache2 server has been successfully restarted." 1>>$LOG_FILE.log 2>&1
-
-        }
-##############################################################################################################################################
-#Function information:
-#
-#
-##############################################################################################################################################
-
-func_cronjob()
-        {
-	 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: setting cron for panel automation" 1>>$LOG_FILE.log 2>&1
-	 echo "#*/5 * * * * /usr/bin/php -q $VAR_DIRPATH/crons/cron.php" >> /etc/crontab
-         STATUS=`echo $?`
-	 func_status "$STATUS"
-	 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: cronjob has been added for panel automation" 1>>$LOG_FILE.log 2>&1
-        }
-##############################################################################################################################################
-#Function information:
-#
-#
-##############################################################################################################################################
-
-func_mysqldb_create()
-        {
-         if [[ -f ~/.my.cnf ]]
-         then
-                echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: removing ~/.my.cnf configuration file " 1>>$LOG_FILE.log 2>&1
-                rm -f ~/.my.cnf 1>>$LOG_FILE.log 2>&1
-                STATUS=`echo $?`
-                func_status "$STATUS"
-                echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: ~/.my.cnf configuration file has been removed" 1>>$LOG_FILE.log 2>&1
-         fi
-         echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: creating mysql database" 1>>$LOG_FILE.log 2>&1
-         $MYSQL_CMD -u root -e "create database $MYSQLDB" 1>>$LOG_FILE.log 2>&1
-	 STATUS=`echo $?`
-	 func_status "$STATUS"
-	 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: mysql database $MYSQLDB has been created" 1>>$LOG_FILE.log 2>&1
-	 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: import data into database $MYSQLDB" 1>>$LOG_FILE.log 2>&1
-	 $MYSQL_CMD -u root $MYSQLDB < $VAR_DIRPATH/sqldump/vpn_billing.sql 1>>$LOG_FILE.log 2>&1
-	 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: data has been successfully imported into database $MYSQLDB" 1>>$LOG_FILE.log 2>&1
-	 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: creating mysql username and password for application" 1>>$LOG_FILE.log 2>&1
-	 $MYSQL_CMD -u root -e "CREATE USER '$MYSQLUSER'@'localhost' IDENTIFIED BY '$MYSQLPASS'" 1>>$LOG_FILE.log 2>&1 
-	 STATUS=`echo $?`
-	 func_status "$STATUS"
-	 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: mysql user has been created" 1>>$LOG_FILE.log 2>&1
-	 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: grant privileges to mysql user" 1>>$LOG_FILE.log 2>&1
-         $MYSQL_CMD -u root -e "GRANT ALL PRIVILEGES ON * . * TO '$MYSQLUSER'@'localhost'" 1>>$LOG_FILE.log 2>&1
-	 STATUS=`echo $?`
-	 func_status "$STATUS"
-	 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: privileges have been granted to mysql user" 1>>$LOG_FILE.log 2>&1
-	 if [[ $VAR_COUNT -ne 9 ]]
-         then
-               echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: create control file for upgrade" 1>>$LOG_FILE.log 2>&1
-	       echo "#LICENSE~DIECTORY~DOMAIN~SSHPORT~SSHPASS~PSKKEY~WHMLICENSE~MYSQLUSER~MYSQLPASS~MYSQLDB" > upgrade.txt
-	       echo "$VAR_PREV~$MYSQLUSER~$MYSQLPASS~$MYSQLDB" >> upgrade.txt 
-	       STATUS=`echo $?`
-	       func_status "$STATUS" 
-	       echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: control file upgrade.txt has been created for upgrade" 1>>$LOG_FILE.log 2>&1
-	 fi
-        }
-##############################################################################################################################################
-#Function information:
-#
-#
-##############################################################################################################################################
-
-func_config()
-        {
-	 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: updating configuration file $VAR_DIRPATH/configuration.php" 1>>$LOG_FILE.log 2>&1
-	 if [[ -f $VAR_DIRPATH/configuration.php ]]
-         then
-	     echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: configuration file $VAR_DIRPATH/configuration.php available" 1>>$LOG_FILE.log 2>&1
-	     echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: removing configuration file $VAR_DIRPATH/configuration.php " 1>>$LOG_FILE.log 2>&1
-	     rm -f $VAR_DIRPATH/configuration.php 1>>$LOG_FILE.log 2>&1
-             STATUS=`echo $?`
-	     func_status "$STATUS"
-	     echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: removed configuration file $VAR_DIRPATH/configuration.php " 1>>$LOG_FILE.log 2>&1
-	     echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: updating configuration file $VAR_DIRPATH/configuration.php " 1>>$LOG_FILE.log 2>&1
-	     echo "<?php" > $VAR_DIRPATH/configuration.php
-	     echo "\$license = '$VAR_WHMLICENSE';" >> $VAR_DIRPATH/configuration.php
-	     echo "\$db_host = 'localhost';" >> $VAR_DIRPATH/configuration.php
-	     echo "\$db_username = '$MYSQLUSER';" >> $VAR_DIRPATH/configuration.php
-	     echo "\$db_password = '$MYSQLPASS';" >> $VAR_DIRPATH/configuration.php
-	     echo "\$db_name = '$MYSQLDB';" >> $VAR_DIRPATH/configuration.php
-	     echo "\$cc_encryption_hash = '$VAR_ENCRYPTION_HASH';" >> $VAR_DIRPATH/configuration.php
-	     echo "\$templates_compiledir = 'templates_c';" >> $VAR_DIRPATH/configuration.php
-	     echo "\$mysql_charset = 'utf8';" >> $VAR_DIRPATH/configuration.php
-	     echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: configuration file $VAR_DIRPATH/configuration.php updated " 1>>$LOG_FILE.log 2>&1
-	 else
-             echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: updating configuration file $VAR_DIRPATH/configuration.php " 1>>$LOG_FILE.log 2>&1
-             echo "<?php" > $VAR_DIRPATH/configuration.php
-             echo "\$license = '$VAR_WHMLICENSE';" >> $VAR_DIRPATH/configuration.php
-             echo "\$db_host = 'localhost';" >> $VAR_DIRPATH/configuration.php
-             echo "\$db_username = '$MYSQLUSER';" >> $VAR_DIRPATH/configuration.php
-             echo "\$db_password = '$MYSQLPASS';" >> $VAR_DIRPATH/configuration.php
-             echo "\$db_name = '$MYSQLDB';" >> $VAR_DIRPATH/configuration.php
-             echo "\$cc_encryption_hash = '$VAR_ENCRYPTION_HASH';" >> $VAR_DIRPATH/configuration.php
-             echo "\$templates_compiledir = 'templates_c';" >> $VAR_DIRPATH/configuration.php
-             echo "\$mysql_charset = 'utf8';" >> $VAR_DIRPATH/configuration.php
-             echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: configuration file $VAR_DIRPATH/configuration.php updated " 1>>$LOG_FILE.log 2>&1   
-         fi
-	}
-##############################################################################################################################################
-#Function information:
-#
-#
-##############################################################################################################################################
-
-func_mysqlupdate()
-        {
-         echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: update domain in table tblconfiguration" 1>>$LOG_FILE.log 2>&1
-         echo "UPDATE tblconfiguration SET value = '$VAR_DOMAIN' WHERE setting = 'SystemURL';" > update.sql
-	 $MYSQL_CMD -u $MYSQLUSER $MYSQLDB < update.sql 1>>$LOG_FILE.log 2>&1
-         STATUS=`echo $?`
-         func_status "$STATUS"
-	 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: domain has been updated in table tblconfiguration" 1>>$LOG_FILE.log 2>&1
-         echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: update domain in table tblconfiguration" 1>>$LOG_FILE.log 2>&1
-	 echo "UPDATE tblconfiguration SET value = '$VAR_DOMAIN' WHERE setting = 'Domain';" > update.sql
-	 $MYSQL_CMD -u $MYSQLUSER $MYSQLDB < update.sql 1>>$LOG_FILE.log 2>&1
-	 STATUS=`echo $?`
-	 func_status "$STATUS"
-	 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: domain has been updated in table tblconfiguration" 1>>$LOG_FILE.log 2>&1
-	 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: update license in table tbladdonmodules" 1>>$LOG_FILE.log 2>&1
-         echo "UPDATE tbladdonmodules SET value = '$VAR_LICENSE'  WHERE module = 'vpnpanel' AND setting = 'license';" > update.sql
-	 $MYSQL_CMD -u $MYSQLUSER $MYSQLDB < update.sql 1>>$LOG_FILE.log 2>&1
-	 STATUS=`echo $?`
-	 func_status "$STATUS"
-	 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: license has been updated in table tbladdonmodules" 1>>$LOG_FILE.log 2>&1
-	 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: update localkey in table tbladdonmodules" 1>>$LOG_FILE.log 2>&1
-	 echo "UPDATE tbladdonmodules SET value = ''  WHERE module = 'vpnpanel' AND setting = 'localkey';" > update.sql
-	 $MYSQL_CMD -u $MYSQLUSER $MYSQLDB < update.sql 1>>$LOG_FILE.log 2>&1
-	 STATUS=`echo $?`
-	 func_status "$STATUS"
-	 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: localkey has been updated in table tbladdonmodules" 1>>$LOG_FILE.log 2>&1
-	 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: update table server_list" 1>>$LOG_FILE.log 2>&1
-	 echo "UPDATE server_list SET mainserver = 0 WHERE 1;" > update.sql
-	 $MYSQL_CMD -u $MYSQLUSER $MYSQLDB < update.sql 1>>$LOG_FILE.log 2>&1
-	 STATUS=`echo $?`
-	 func_status "$STATUS"
-	 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: table server_list has been updated" 1>>$LOG_FILE.log 2>&1
-         echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: delete public ip from table server_list" 1>>$LOG_FILE.log 2>&1
-         echo "DELETE FROM server_list WHERE server_ip = '$SERVER_PUB_IP';" > update.sql
-	 $MYSQL_CMD -u $MYSQLUSER $MYSQLDB < update.sql 1>>$LOG_FILE.log 2>&1
-	 STATUS=`echo $?`
-	 func_status "$STATUS"
-	 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: public ip has been deleted from table server_list" 1>>$LOG_FILE.log 2>&1
-	 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: add/update server details to table server_list" 1>>$LOG_FILE.log 2>&1
-	 echo "INSERT INTO server_list(server_name, flag, server_ip, server_category, sshport, server_port, pskkey, mainserver, sshpass, status,createdUploaded, server_group) VALUES ('Main Server','$VAR_DOMAIN/modules/addons/vpnpanel/assets/flags/png/no_flag.png','$SERVER_PUB_IP','openvpn','$VAR_SSHPORT','$VPN_PORT','$VAR_SERVICEID',1,'$VAR_SSHPASS',1,'Created','All');" > update.sql
-	 $MYSQL_CMD -u $MYSQLUSER $MYSQLDB < update.sql 1>>$LOG_FILE.log 2>&1
-	 STATUS=`echo $?`
-	 func_status "$STATUS"
-	 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: server details has been added/updated to table server_list" 1>>$LOG_FILE.log 2>&1
-	 if [[ -f update.sql ]]
-         then
-	       echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: removing file created by function" 1>>$LOG_FILE.log 2>&1
-	       rm -f update.sql 1>>$LOG_FILE.log 2>&1
-	       STATUS=`echo $?`
-	       func_status "$STATUS"
-	       echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: files createdfrom function has been removed" 1>>$LOG_FILE.log 2>&1
-
-	 fi
+        
         }
 ##############################################################################################################################################
 #Function information:
@@ -558,7 +177,6 @@ func_permission()
  	}
 ##############################################################################################################################################
 #Function information:
-#
 #
 ##############################################################################################################################################
 
@@ -834,7 +452,7 @@ func_defaultrun()
          if [[ $SCRIPT_VERSION ]]
          then
              printf "$SCRIPT_VERSION \n"
-             printf "Copyright (c) 2020, WHMCSSMARTERS and/or its affiliates. All Rights Reserved.\n"
+             printf "Copyright (c) 2020, SMARTERS VPN PANEL and/or its affiliates. All Rights Reserved.\n"
              func_usage
          fi
         }
@@ -866,22 +484,6 @@ func_status()
                exit
          fi
         }
-##############################################################################################################################################
-#Function information:
-#
-#
-##############################################################################################################################################
-
-func_returnstatus()
-        {
-         echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: INFO: vpnpanel return status information" 1>>$LOG_FILE.log 2>&1
-	 echo VAR_DOMAIN : $VAR_DOMAIN
-	 echo VAR_SERVICEID : $VAR_SERVICEID
-	 curl --data "s=1&p=$VAR_DOMAIN&serviceid=$VAR_SERVICEID&t=installed" https://www.whmcssmarters.com/clients/panel_installation_status.php 1>>$LOG_FILE.log 2>&1
-         STATUS=`echo $?`
-         #func_status "$STATUS"
-        }
-
 
 ##############################################################################################################################################
 #Function information:
