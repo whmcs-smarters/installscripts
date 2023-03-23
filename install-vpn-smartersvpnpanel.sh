@@ -48,8 +48,6 @@ case "${arg}" in
     ;;
     y) DNS2=${OPTARG}
     ;;
-    a) APIKEY=${OPTARG}
-    ;;
     m) YOUR_RADIUS_SERVER_IP=${OPTARG}
     ;;
     s) RADIUS_SECRET=${OPTARG}
@@ -111,14 +109,12 @@ colorecho "VPN Server Installation Started...." 1>>$LOG_FILE.log 2>&1
 
 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` VPN Server Setup: INFO: Printing Variables." 1>>$LOG_FILE.log 2>&1
 
-[[ ! -z $PANELURL ]] && echo "${bold}PANELURL:${normal}" $PANELURL 1>>$LOG_FILE.log 2>&1
 [[ ! -z $PORT ]] && echo "${bold}PORT:${normal}" $PORT 1>>$LOG_FILE.log 2>&1
 [[ ! -z $PROTOCOL ]] && echo "${bold}PROTOCOL:${normal}" $PROTOCOL 1>>$LOG_FILE.log 2>&1
 [[ ! -z $IPV6_SUPPORT ]] && echo "${bold}IPV6_SUPPORT:${normal}" $PROTOCOL 1>>$LOG_FILE.log 2>&1
 [[ ! -z $DNS ]] && echo "${bold}DNS:${normal}" $DNS 1>>$LOG_FILE.log 2>&1
 [[ ! -z $DNS1 ]] && echo "${bold}DNS1:${normal}" $DNS1 1>>$LOG_FILE.log 2>&1
 [[ ! -z $DNS2 ]] && echo "${bold}DNS2:${normal}" $DNS2 1>>$LOG_FILE.log 2>&1
-[[ ! -z $APIKEY ]] && echo "${bold}APIKEY:${normal}" $APIKEY 1>>$LOG_FILE.log 2>&1
 [[ ! -z $YOUR_RADIUS_SERVER_IP ]] && echo "${bold}YOUR_RADIUS_SERVER_IP:${normal}" $YOUR_RADIUS_SERVER_IP 1>>$LOG_FILE.log 2>&1
 [[ ! -z $RADIUS_SECRET ]] && echo "${bold}RADIUS_SECRET:${normal}" $RADIUS_SECRET 1>>$LOG_FILE.log 2>&1
 [[ ! -z $VPNTYPE ]] && echo "${bold}VPNTYPE:${normal}" $VPNTYPE 1>>$LOG_FILE.log 2>&1
@@ -773,28 +769,6 @@ account sufficient pam_radius_auth.so
 EOF
 service danted restart
 ##### Socks5 Installation Done ########
-if [ -z "$APIKEY" ]
-      then
-
-      bigecho "API Key Not Found! It seems the script runs directory on the server"
-
-      else
-    
-      bigecho "Sending Server Status after installation succesfully"
-    if [ -z "$CLIENTHOSTNAME" ]
-        then
-            return_status=$(curl --data "api=$APIKEY&status=1&ip=$PUBLIC_IP&v=$VPNTYPE" $PANELURL/includes/vpnapi/serverstatus.php);
-        else
-            return_status=$(curl --data "api=$APIKEY&status=1&ip=$CLIENTHOSTNAME&v=$VPNTYPE&VPNSERVERIP=$PUBLIC_IP&speed1=$speed1&speed2=$speed2" $PANELURL/includes/vpnapi/serverstatus.php);
-    fi
-      if [ "$return_status" == "1" ]; then
-      echo "Return Status : "$return_status
-      echo " Ack Done for Status Updation on Panel Side"
-else
-      bigecho "Seems Server not updated on Panel Side"
-      bigecho "Return Message:" $return_status
-      fi
-      fi
     
     #  cleaning files
     rm /root/checkServerCompatibility.sh
