@@ -34,8 +34,6 @@
 while getopts ":h:p:l:i:d:x:y:a:m:s:r:v:c:w:z:e:f:g:n:t:q:b:" arg;  do
 case "${arg}" in
 
-    h) PANELURL=${OPTARG}
-    ;;
     p) PORT=${OPTARG}
     ;;
     l) PROTOCOL=${OPTARG}
@@ -771,6 +769,7 @@ service danted restart
 ##### Socks5 Installation Done ########
     
     #  cleaning files
+  
     rm /root/checkServerCompatibility.sh
-    rm /root/install-vpn-proxy.sh
+    rm /root/install-vpn-smartersvpnpanel.sh
 exit 0
