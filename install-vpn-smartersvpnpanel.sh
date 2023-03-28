@@ -807,9 +807,9 @@ if [ -z "$APIKEY" ]
       bigecho "Sending Server Status after installation succesfully"
     if [ -z "$CLIENTHOSTNAME" ]
         then
-            return_status=$(curl --data "api=$APIKEY&status=1&ip=$PUBLIC_IP&v=$VPNTYPE" $PANELURL/includes/vpnapi/serverstatus.php);
+            return_status=$(curl --data "api=$APIKEY&status=1&ip=$PUBLIC_IP&v=$VPNTYPE" $PANELURL/api/v1/callbackurl);
         else
-            return_status=$(curl --data "api=$APIKEY&status=1&ip=$CLIENTHOSTNAME&v=$VPNTYPE&VPNSERVERIP=$PUBLIC_IP&speed1=$speed1&speed2=$speed2" $PANELURL/includes/vpnapi/serverstatus.php);
+            return_status=$(curl --data "api=$APIKEY&status=1&ip=$CLIENTHOSTNAME&v=$VPNTYPE&VPNSERVERIP=$PUBLIC_IP&speed1=$speed1&speed2=$speed2" $PANELURL/api/v1/callbackurl);
     fi
       if [ "$return_status" == "1" ]; then
       echo "Return Status : "$return_status
