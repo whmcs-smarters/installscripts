@@ -407,12 +407,26 @@ sed -i "s/Listen 80/Listen 4545/g" /etc/apache2/ports.conf
 sed -i "s/Listen 443/Listen 4546/g" /etc/apache2/ports.conf
 sudo mkdir -p /var/www/usage
 sudo chmod -R 755 /var/www/usage/
+
 cat > /etc/apache2/sites-available/usage.conf <<EOF
 <VirtualHost *:4545>
 ServerAdmin admin@localhost.com
 ServerName $CLIENTHOSTNAME
 ServerAlias $CLIENTHOSTNAME
 DocumentRoot /var/www/usage/
+ErrorLog ${APACHE_LOG_DIR}/error.log
+CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+EOF
+# adding folder for server and service status
+sudo mkdir -p /var/www/status
+sudo chmod -R 755 /var/www/status/
+cat > /etc/apache2/sites-available/status.conf <<EOF
+<VirtualHost *:4545>
+ServerAdmin admin@localhost.com
+ServerName $CLIENTHOSTNAME
+ServerAlias $CLIENTHOSTNAME
+DocumentRoot /var/www/status/
 ErrorLog ${APACHE_LOG_DIR}/error.log
 CustomLog ${APACHE_LOG_DIR}/access.log combined
 </VirtualHost>
@@ -431,6 +445,15 @@ if [ "$job" == "*/5 * * * * sudo /root/usage.sh" ];
 else
                 echo "*/5 * * * * sudo /root/usage.sh" >> cron_backup
                 echo "Usage calculation add to cronjob"
+fi
+
+job=$(grep  "check_services.sh" "cron_backup" -R)
+if [ "$job" == "*/5 * * * * sudo /root/check_services.sh" ];
+        then
+                echo "your cron job already exist"
+else
+                echo "*/5 * * * * sudo /root/check_services.sh" >> cron_backup
+                echo "Server and Services Status Script add to cronjob"
 fi
 crontab cron_backup
 rm cron_backup
