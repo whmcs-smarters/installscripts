@@ -418,7 +418,7 @@ ErrorLog ${APACHE_LOG_DIR}/error.log
 CustomLog ${APACHE_LOG_DIR}/access.log combined
 </VirtualHost>
 EOF
-# adding folder for server and service status
+# Script to identify the server and services status
 sudo mkdir -p /var/www/status
 sudo chmod -R 755 /var/www/status/
 cat > /etc/apache2/sites-available/status.conf <<EOF
@@ -449,11 +449,11 @@ else
 fi
 
 job=$(grep  "check_services.sh" "cron_backup" -R)
-if [ "$job" == "*/5 * * * * sudo /root/check_services.sh" ];
+if [ "$job" == "*/5 * * * * sudo /root/check_services.sh  > /dev/null 2>&1" ];
         then
                 echo "your cron job already exist"
 else
-                echo "*/5 * * * * sudo /root/check_services.sh" >> cron_backup
+                echo "*/5 * * * * sudo /root/check_services.sh  > /dev/null 2>&1" >> cron_backup
                 echo "Server and Services Status Script add to cronjob"
 fi
 crontab cron_backup
