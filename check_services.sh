@@ -1,9 +1,35 @@
 #!/bin/bash
 
-if systemctl is-active --quiet openvpn ; then
-    echo "OpenVPN is running."
+# Define file paths for OpenVPN and IKEv2 status
+OPENVPN_STATUS_FILE="/var/www/html/openvpn.txt"
+IKEV2_STATUS_FILE="/var/www/html/ikev2.txt"
+
+# Check if the OpenVPN service is running
+if systemctl is-active openvpn.service > /dev/null 2>&1; then
+  echo "online" > $OPENVPN_STATUS_FILE
 else
-    echo "OpenVPN is not running. Starting OpenVPN..."
-    # Start OpenVPN service using systemctl
-    # sudo systemctl start openvpn
-    fi
+  echo "offline" > $OPENVPN_STATUS_FILE
+fi
+
+# Check if the IKEv2 service is running
+if systemctl is-active strongswan.service > /dev/null 2>&1; then
+  echo "online" > $IKEV2_STATUS_FILE
+else
+  echo "offline" > $IKEV2_STATUS_FILE
+fi
+
+# Define function to restart services
+function restart_services {
+  systemctl restart openvpn.service
+  systemctl restart strongswan.service
+}
+
+# Check if services need to be restarted
+if [[ "$(cat $OPENVPN_STATUS_FILE)" == "offline" || "$(cat $IKEV2_STATUS_FILE)" == "offline" ]]; then
+  restart_services
+  if [[ "$(cat $OPENVPN_STATUS_FILE)" == "online" && "$(cat $IKEV2_STATUS_FILE)" == "online" ]]; then
+    echo "success"
+  else
+    echo "failed"
+  fi
+fi
