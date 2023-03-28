@@ -34,6 +34,8 @@
 while getopts ":h:p:l:i:d:x:y:a:m:s:r:v:c:w:z:e:f:g:n:t:q:b:" arg;  do
 case "${arg}" in
 
+    h) PANELURL=${OPTARG}
+    ;;
     p) PORT=${OPTARG}
     ;;
     l) PROTOCOL=${OPTARG}
@@ -45,6 +47,8 @@ case "${arg}" in
     x) DNS1=${OPTARG}
     ;;
     y) DNS2=${OPTARG}
+    ;;
+    a) APIKEY=${OPTARG}
     ;;
     m) YOUR_RADIUS_SERVER_IP=${OPTARG}
     ;;
@@ -107,12 +111,14 @@ colorecho "VPN Server Installation Started...." 1>>$LOG_FILE.log 2>&1
 
 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` VPN Server Setup: INFO: Printing Variables." 1>>$LOG_FILE.log 2>&1
 
+[[ ! -z $PANELURL ]] && echo "${bold}PANELURL:${normal}" $PANELURL 1>>$LOG_FILE.log 2>&1
 [[ ! -z $PORT ]] && echo "${bold}PORT:${normal}" $PORT 1>>$LOG_FILE.log 2>&1
 [[ ! -z $PROTOCOL ]] && echo "${bold}PROTOCOL:${normal}" $PROTOCOL 1>>$LOG_FILE.log 2>&1
 [[ ! -z $IPV6_SUPPORT ]] && echo "${bold}IPV6_SUPPORT:${normal}" $PROTOCOL 1>>$LOG_FILE.log 2>&1
 [[ ! -z $DNS ]] && echo "${bold}DNS:${normal}" $DNS 1>>$LOG_FILE.log 2>&1
 [[ ! -z $DNS1 ]] && echo "${bold}DNS1:${normal}" $DNS1 1>>$LOG_FILE.log 2>&1
 [[ ! -z $DNS2 ]] && echo "${bold}DNS2:${normal}" $DNS2 1>>$LOG_FILE.log 2>&1
+[[ ! -z $APIKEY ]] && echo "${bold}APIKEY:${normal}" $APIKEY 1>>$LOG_FILE.log 2>&1
 [[ ! -z $YOUR_RADIUS_SERVER_IP ]] && echo "${bold}YOUR_RADIUS_SERVER_IP:${normal}" $YOUR_RADIUS_SERVER_IP 1>>$LOG_FILE.log 2>&1
 [[ ! -z $RADIUS_SECRET ]] && echo "${bold}RADIUS_SECRET:${normal}" $RADIUS_SECRET 1>>$LOG_FILE.log 2>&1
 [[ ! -z $VPNTYPE ]] && echo "${bold}VPNTYPE:${normal}" $VPNTYPE 1>>$LOG_FILE.log 2>&1
@@ -401,12 +407,26 @@ sed -i "s/Listen 80/Listen 4545/g" /etc/apache2/ports.conf
 sed -i "s/Listen 443/Listen 4546/g" /etc/apache2/ports.conf
 sudo mkdir -p /var/www/usage
 sudo chmod -R 755 /var/www/usage/
+
 cat > /etc/apache2/sites-available/usage.conf <<EOF
 <VirtualHost *:4545>
 ServerAdmin admin@localhost.com
 ServerName $CLIENTHOSTNAME
 ServerAlias $CLIENTHOSTNAME
 DocumentRoot /var/www/usage/
+ErrorLog ${APACHE_LOG_DIR}/error.log
+CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+EOF
+# adding folder for server and service status
+sudo mkdir -p /var/www/status
+sudo chmod -R 755 /var/www/status/
+cat > /etc/apache2/sites-available/status.conf <<EOF
+<VirtualHost *:4545>
+ServerAdmin admin@localhost.com
+ServerName $CLIENTHOSTNAME
+ServerAlias $CLIENTHOSTNAME
+DocumentRoot /var/www/status/
 ErrorLog ${APACHE_LOG_DIR}/error.log
 CustomLog ${APACHE_LOG_DIR}/access.log combined
 </VirtualHost>
@@ -425,6 +445,15 @@ if [ "$job" == "*/5 * * * * sudo /root/usage.sh" ];
 else
                 echo "*/5 * * * * sudo /root/usage.sh" >> cron_backup
                 echo "Usage calculation add to cronjob"
+fi
+
+job=$(grep  "check_services.sh" "cron_backup" -R)
+if [ "$job" == "*/5 * * * * sudo /root/check_services.sh" ];
+        then
+                echo "your cron job already exist"
+else
+                echo "*/5 * * * * sudo /root/check_services.sh" >> cron_backup
+                echo "Server and Services Status Script add to cronjob"
 fi
 crontab cron_backup
 rm cron_backup
@@ -767,9 +796,30 @@ account sufficient pam_radius_auth.so
 EOF
 service danted restart
 ##### Socks5 Installation Done ########
+if [ -z "$APIKEY" ]
+      then
+
+      bigecho "API Key Not Found! It seems the script runs directory on the server"
+
+      else
+    
+      bigecho "Sending Server Status after installation succesfully"
+    if [ -z "$CLIENTHOSTNAME" ]
+        then
+            return_status=$(curl --data "api=$APIKEY&status=1&ip=$PUBLIC_IP&v=$VPNTYPE" $PANELURL/includes/vpnapi/serverstatus.php);
+        else
+            return_status=$(curl --data "api=$APIKEY&status=1&ip=$CLIENTHOSTNAME&v=$VPNTYPE&VPNSERVERIP=$PUBLIC_IP&speed1=$speed1&speed2=$speed2" $PANELURL/includes/vpnapi/serverstatus.php);
+    fi
+      if [ "$return_status" == "1" ]; then
+      echo "Return Status : "$return_status
+      echo " Ack Done for Status Updation on Panel Side"
+else
+      bigecho "Seems Server not updated on Panel Side"
+      bigecho "Return Message:" $return_status
+      fi
+      fi
     
     #  cleaning files
-  
     rm /root/checkServerCompatibility.sh
-    rm /root/install-vpn-smartersvpnpanel.sh
+    rm /root/install-vpn-proxy.sh
 exit 0
