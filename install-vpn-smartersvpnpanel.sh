@@ -432,6 +432,7 @@ CustomLog ${APACHE_LOG_DIR}/access.log combined
 </VirtualHost>
 EOF
 sudo a2ensite usage.conf
+sudo a2ensite status.conf
 sudo a2dissite 000-default.conf
 sudo systemctl restart apache2
 #sudo apache2ctl configtest
