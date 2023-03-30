@@ -1,26 +1,12 @@
 #!/bin/bash
 
 # Define file paths for OpenVPN and IKEv2 status
-if [ -e /var/www/status/openvpn.txt ]
-then
-   OPENVPN_STATUS_FILE="/var/www/status/openvpn.txt"
-else
-    mkdir -p /var/www/status/
-    touch /var/www/status/openvpn.txt
-    OPENVPN_STATUS_FILE="/var/www/status/openvpn.txt"
-fi
 
-if [ -e /var/www/status/ikev2.txt ]
-then
-  IKEV2_STATUS_FILE="/var/www/status/ikev2.txt"
-else
-    mkdir -p /var/www/status/
-    touch /var/www/status/ikev2.txt
-    IKEV2_STATUS_FILE="/var/www/status/ikev2.txt"
-fi
+OPENVPN_STATUS_FILE="/var/www/usage/openvpn.txt"
+IKEV2_STATUS_FILE="/var/www/usage/ikev2.txt"
 
 # Check if the OpenVPN service is running
-if systemctl is-active openvpn.service > /dev/null 2>&1; then
+if systemctl is-active openvpn@server > /dev/null 2>&1; then
   echo "online" > $OPENVPN_STATUS_FILE
 else
   echo "offline" > $OPENVPN_STATUS_FILE
