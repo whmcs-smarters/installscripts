@@ -14,11 +14,10 @@ function tunAvailable () {
 # checking operating system before the proceeding
 
 function checkOS () {
-
- # if ! grep -qs "Ubuntu 18.04" /etc/os-release; then
- # echo "Installation Failed ! Your OS is not supported as it supports only Ubuntu 18.04 "
-      #    exit
- # fi
+ if ! grep -qs "Ubuntu 18.04" /etc/os-release; then
+  echo "Installation Failed ! Your OS is not supported as it supports only Ubuntu 18.04 "
+         exit
+  fi
 }
 
 function initialCheck () {
@@ -30,7 +29,7 @@ function initialCheck () {
         echo "TUN is not available"
         exit 1
     fi
-    checkOS
+   # checkOS
 }
 # Check for root, TUN, OS...
 initialCheck
