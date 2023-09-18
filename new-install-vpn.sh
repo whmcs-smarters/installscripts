@@ -136,7 +136,7 @@ echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` VPN Server Setup: INFO: Printing Varia
 
 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` VPN Server Setup: INFO: Detecting Server IP Address." 1>>$LOG_FILE.log 2>&1
 
-if ! PUBLIC_IP=$(curl ipinfo.io/ip)
+if ! PUBLIC_IP=$(curl -s http://checkip.amazonaws.com)
 then
 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` VPN Server Setup: Failed: Server IP Address Not Found !!." 1>>$LOG_FILE.log 2>&1
 exit
