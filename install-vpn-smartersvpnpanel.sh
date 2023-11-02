@@ -442,7 +442,7 @@ crontab -l > cron_backup
 job=$(grep  "usage.sh" "cron_backup" -R)
 if [ "$job" == "*/5 * * * * sudo /root/usage.sh" ];
         then
-                echo "your cron job already exist"
+                echo "Your cron job already exists"
 else
                 echo "*/5 * * * * sudo /root/usage.sh" >> cron_backup
                 echo "Usage calculation add to cronjob"
@@ -451,7 +451,7 @@ fi
 job=$(grep  "check_services.sh" "cron_backup" -R)
 if [ "$job" == "*/5 * * * * sudo /root/check_services.sh  > /dev/null 2>&1" ];
         then
-                echo "your cron job already exist"
+                echo "Your cron job already exists"
 else
                 echo "*/5 * * * * sudo /root/check_services.sh  > /dev/null 2>&1" >> cron_backup
                 echo "Server and Services Status Script add to cronjob"
@@ -461,6 +461,7 @@ rm cron_backup
 service cron restart
 #########End Cron job########################################
 echo "Calculating Download and Upload Speed on Server"
+apt install python -y
 curl -s https://raw.githubusercontent.com/sivel/speedtest-cli/master/speedtest.py | python -  >> /tmp/speed.txt
 speed1=$(cat /tmp/speed.txt | grep -i "Download:")
 speed2=$(cat /tmp/speed.txt |grep -i "Upload:")
@@ -474,12 +475,12 @@ COR2='\033[1;32m'
 COR3='\033[1;34m'
 
 echo -e "${COR}Openvpn server configuration beginning please wait"
-#removing previous log 
+#removing the previous log 
 rm /root/openvpn_*
 log=/root/openvpn_log_file.txt
-echo Openvpn server configuration start on $(date) >> $log
+echo OpenVPN server configuration start on $(date) >> $log
 {
-echo checking openvpn server install or not >> $log 
+echo checking OpenVPN server install or not >> $log 
 vpn1=$(ifconfig)
 if [[ $vpn1 == *tun* || -e "/etc/openvpn/server.conf" ]]; then
 echo Openvpn server sever running and removing everything openvpn relate >> $log
