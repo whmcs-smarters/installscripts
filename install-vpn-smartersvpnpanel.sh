@@ -515,10 +515,8 @@ fi
 #install OpenVPN server with certicate 
 echo "Openvpn server instalation start" >> $log
 apt-get install -y openvpn iptables openssl wget ca-certificates curl >> $log
-#create server certicate and client certificate
-local version="3.1.2"
-wget -O ~/easy-rsa.tgz https://github.com/OpenVPN/easy-rsa/releases/download/v${version}/EasyRSA-${version}.tgz
-#sudo wget -O ~/easy-rsa.tgz https://github.com/OpenVPN/easy-rsa/releases/download/v3.0.7/EasyRSA-3.0.7.tgz >> $log
+#create server certicate and client certicate
+sudo wget -O ~/easy-rsa.tgz https://github.com/OpenVPN/easy-rsa/releases/download/v3.0.7/EasyRSA-3.0.7.tgz >> $log
 mkdir -p /etc/openvpn/easy-rsa >> $log 
 tar xzf ~/easy-rsa.tgz --strip-components=1 --directory /etc/openvpn/easy-rsa >> $log
 rm -f ~/easy-rsa.tgz >> $log
