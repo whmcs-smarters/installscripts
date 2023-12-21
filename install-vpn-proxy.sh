@@ -1422,6 +1422,7 @@ bigecho "RadiusClient Installation Started..."
 
 
 apt-get -y install libgcrypt11-dev build-essential
+apt-get -y install libgcrypt20-dev build-essential
 
 apt-get -y install wget
 
