@@ -160,7 +160,8 @@ echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` VPN Server Setup: INFO: ikev2 VPN Inst
 if [ -e "/etc/ipsec.conf" ] || [ -d "/etc/ipsec.d/" ]
 then
     echo "${bold}VPN Server Setup: INFO:Found Strongswan Installed. Started removing it...${normal}" 1>>$LOG_FILE.log 2>&1
-    apt-get remove strongswan strongswan-pki libcharon-standard-plugins libstrongswan libstrongswan-standard-plugins strongswan-charon strongswan-libcharon strongswan-starter -yq 1>>$LOG_FILE.log 2>&1
+    #apt-get remove strongswan strongswan-pki libcharon-standard-plugins libstrongswan libstrongswan-standard-plugins strongswan-charon strongswan-libcharon strongswan-starter -yq 1>>$LOG_FILE.log 2>&1
+    apt remove strongswan strongswan-pki libcharon-extra-plugins libcharon-extauth-plugins libstrongswan-extra-plugins -yq 1>>$LOG_FILE.log 2>&1
     apt-get autoremove -yq 1>>$LOG_FILE.log 2>&1
     apt-get purge strongswan -yq 1>>$LOG_FILE.log 2>&1
 
@@ -228,15 +229,35 @@ apt purge certbot -yq 1>>$LOG_FILE.log 2>&1 # this removes certbot completely ot
 rm -rf /etc/letsencrypt/
 rm -rf /var/lib/letsencrypt/
 rm -rf /var/log/letsencrypt/
-echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` Removed Certbot and its folders/files completely  " 1>>$LOG_FILE.log 2>&1
+echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` Removed Certbot and its folders/files completely " 1>>$LOG_FILE.log 2>&1
 
 fi
 
-
+## Checking Ubuntu Version 
+echo "##### checking Ubuntu Version ######"  1>>$LOG_FILE.log 2>&1
+# Check if the lsb_release command is available
+if ! command -v lsb_release &>/dev/null; then
+  echo "lsb_release command not found. Please install the lsb-release package."  1>>$LOG_FILE.log 2>&1
+  exit 1
+fi
+ # Get the Ubuntu version information
+ubuntu_version=$(lsb_release -rs)  1>>$LOG_FILE.log 2>&1
+# Check if the version is retrieved successfully
+if [ -n "$ubuntu_version" ]; then
+  echo "Ubuntu version: $ubuntu_version" 1>>$LOG_FILE.log 2>&1
+else
+  echo "Failed to detect Ubuntu version."  1>>$LOG_FILE.log 2>&1
+  exit 1
+fi
 
 #### Time to install strongswan and certbot
-
+if [[ "$ubuntu_version" == "20.04" || "$ubuntu_version" == "22.04" ]]; then
+sudo apt install strongswan strongswan-pki libcharon-extra-plugins libcharon-extauth-plugins libstrongswan-extra-plugins moreutils certbot net-tools moreutils vnstat python3 -yq 1>>$LOG_FILE.log 2>&1
+else
 sudo apt-get install strongswan strongswan-pki libstrongswan-standard-plugins strongswan-libcharon libcharon-standard-plugins libcharon-extra-plugins moreutils certbot net-tools moreutils vnstat python3 -yq 1>>$LOG_FILE.log 2>&1
+fi
+
+
 STATUS=`echo $?`
 func_status "$STATUS"
 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` VPN Server Setup: Success: Strongswan && Certbot Installed" 1>>$LOG_FILE.log 2>&1
@@ -407,7 +428,6 @@ sed -i "s/Listen 80/Listen 4545/g" /etc/apache2/ports.conf
 sed -i "s/Listen 443/Listen 4546/g" /etc/apache2/ports.conf
 sudo mkdir -p /var/www/usage
 sudo chmod -R 755 /var/www/usage/
-
 cat > /etc/apache2/sites-available/usage.conf <<EOF
 <VirtualHost *:4545>
 ServerAdmin admin@localhost.com
@@ -540,6 +560,7 @@ ca ca.crt
 cert $SERVER_NAME.crt
 key $SERVER_NAME.key
 auth $HMAC_ALG
+reneg-sec 0
 cipher $CIPHER
 tls-server
 tls-version-min 1.2
@@ -575,7 +596,6 @@ cipher $CIPHER
 tls-client
 tls-version-min 1.2
 tls-cipher $CCCIPHER
-reneg-sec 0
 ignore-unknown-option block-outside-dns
 setenv opt block-outside-dns # Prevent Windows 10 DNS leak
 verb 3">> /etc/openvpn/client-template.txt
@@ -601,17 +621,37 @@ echo OVPN file created on root home folder  >> $log
 cd || return
 #RadiusClient Installation Started
 echo "#######Radius Client Installation Started#########" >> $log  
-apt-get -y install libgcrypt11-dev build-essential  # install dependencies for radius client
-
-	
-
+echo "##### checking Ubuntu Version ######" >> $log
+# Check if the lsb_release command is available
+if ! command -v lsb_release &>/dev/null; then
+  echo "lsb_release command not found. Please install the lsb-release package." >> $log
+  exit 1
+fi
+ # Get the Ubuntu version information
+ubuntu_version=$(lsb_release -rs) >> $log       
+# Check if the version is retrieved successfully
+if [ -n "$ubuntu_version" ]; then
+  echo "Ubuntu version: $ubuntu_version" >> $log
+else
+  echo "Failed to detect Ubuntu version." >> $log
+  exit 1
+fi
 if [ -d "/root/radiusplugin_v2.1a_beta1" ] || [ -d "/etc/openvpn/radius" ];then #remove existing radius file
 rm -r /root/radiusplugin_v2.1a_beta1* >> $log
 rm -r /etc/openvpn/radius >> $log
 fi
-wget http://www.nongnu.org/radiusplugin/radiusplugin_v2.1a_beta1.tar.gz  >> $log # download radius pacakge and install 
+## Download the Radius Plugin and install
+cd /root || return
+wget https://github.com/whmcs-smarters/usage-script/raw/main/radiusplugin_v2.1a_beta1.tar.gz >> $log # download radius package and install 
+#wget http://www.nongnu.org/radiusplugin/radiusplugin_v2.1a_beta1.tar.gz  >> $log # download radius package and install 
 tar xvf radiusplugin_v2.1a_beta1.tar.gz >> $log
 cd radiusplugin_v2.1a_beta1 >> $log
+# install dependencies for radius client
+if [[ "$ubuntu_version" == "20.04" || "$ubuntu_version" == "22.04" ]]; then
+   apt install -y libgcrypt20-dev build-essential >> $log
+else
+   apt-get -y install libgcrypt11-dev build-essential >> $log
+fi
 make >> $log
 sleep 3
 mkdir /etc/openvpn/radius >> $log
