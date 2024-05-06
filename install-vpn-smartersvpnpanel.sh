@@ -229,14 +229,22 @@ rm -rf /etc/letsencrypt/
 rm -rf /var/lib/letsencrypt/
 rm -rf /var/log/letsencrypt/
 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` Removed Certbot and its folders/files completely  " 1>>$LOG_FILE.log 2>&1
-
 fi
-
-
-
+# Get the Ubuntu version information
+ubuntu_version=$(lsb_release -rs)  1>>$LOG_FILE.log 2>&1
+# Check if the version is retrieved successfully
+if [ -n "$ubuntu_version" ]; then
+  echo "Ubuntu version: $ubuntu_version" 1>>$LOG_FILE.log 2>&1
+else
+  echo "Failed to detect Ubuntu version."  1>>$LOG_FILE.log 2>&1
+  exit 1
+fi
 #### Time to install strongswan and certbot
-
+if [[ "$ubuntu_version" == "20.04" || "$ubuntu_version" == "22.04" ]]; then
+sudo apt install strongswan strongswan-pki libcharon-extra-plugins libcharon-extauth-plugins libstrongswan-extra-plugins moreutils certbot net-tools moreutils vnstat python3 -yq 1>>$LOG_FILE.log 2>&1
+else
 sudo apt-get install strongswan strongswan-pki libstrongswan-standard-plugins strongswan-libcharon libcharon-standard-plugins libcharon-extra-plugins moreutils certbot net-tools moreutils vnstat python3 -yq 1>>$LOG_FILE.log 2>&1
+fi
 STATUS=`echo $?`
 func_status "$STATUS"
 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` VPN Server Setup: Success: Strongswan && Certbot Installed" 1>>$LOG_FILE.log 2>&1
