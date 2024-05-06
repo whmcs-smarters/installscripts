@@ -632,7 +632,7 @@ echo OVPN file created on root home folder  >> $log
 cd || return
 #RadiusClient Installation Started
 echo "#######Radius Client Installation Started#########" >> $log  
-apt-get -y install libgcrypt11-dev build-essential  # install dependencies for radius client
+#apt-get -y install libgcrypt11-dev build-essential  # install dependencies for radius client
 
 	
 
@@ -643,6 +643,11 @@ fi
 wget http://www.nongnu.org/radiusplugin/radiusplugin_v2.1a_beta1.tar.gz  >> $log # download radius pacakge and install 
 tar xvf radiusplugin_v2.1a_beta1.tar.gz >> $log
 cd radiusplugin_v2.1a_beta1 >> $log
+if [[ "$ubuntu_version" == "20.04" || "$ubuntu_version" == "22.04" ]]; then
+   apt install -y libgcrypt20-dev build-essential >> $log
+else
+   apt-get -y install libgcrypt11-dev build-essential >> $log
+fi
 make >> $log
 sleep 3
 mkdir /etc/openvpn/radius >> $log
