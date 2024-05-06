@@ -229,14 +229,22 @@ rm -rf /etc/letsencrypt/
 rm -rf /var/lib/letsencrypt/
 rm -rf /var/log/letsencrypt/
 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` Removed Certbot and its folders/files completely  " 1>>$LOG_FILE.log 2>&1
-
 fi
-
-
-
+ # Get the Ubuntu version information
+ubuntu_version=$(lsb_release -rs)  1>>$LOG_FILE.log 2>&1
+# Check if the version is retrieved successfully
+if [ -n "$ubuntu_version" ]; then
+  echo "Ubuntu version: $ubuntu_version" 1>>$LOG_FILE.log 2>&1
+else
+  echo "Failed to detect Ubuntu version."  1>>$LOG_FILE.log 2>&1
+  exit 1
+fi
 #### Time to install strongswan and certbot
-
+if [[ "$ubuntu_version" == "20.04" || "$ubuntu_version" == "22.04" ]]; then
+sudo apt install strongswan strongswan-pki libcharon-extra-plugins libcharon-extauth-plugins libstrongswan-extra-plugins moreutils certbot net-tools moreutils vnstat python3 -yq 1>>$LOG_FILE.log 2>&1
+else
 sudo apt-get install strongswan strongswan-pki libstrongswan-standard-plugins strongswan-libcharon libcharon-standard-plugins libcharon-extra-plugins moreutils certbot net-tools moreutils vnstat python3 -yq 1>>$LOG_FILE.log 2>&1
+fi
 STATUS=`echo $?`
 func_status "$STATUS"
 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` VPN Server Setup: Success: Strongswan && Certbot Installed" 1>>$LOG_FILE.log 2>&1
@@ -601,17 +609,22 @@ echo OVPN file created on root home folder  >> $log
 cd || return
 #RadiusClient Installation Started
 echo "#######Radius Client Installation Started#########" >> $log  
-apt-get -y install libgcrypt11-dev build-essential  # install dependencies for radius client
-
-	
 
 if [ -d "/root/radiusplugin_v2.1a_beta1" ] || [ -d "/etc/openvpn/radius" ];then #remove existing radius file
 rm -r /root/radiusplugin_v2.1a_beta1* >> $log
 rm -r /etc/openvpn/radius >> $log
 fi
-wget http://www.nongnu.org/radiusplugin/radiusplugin_v2.1a_beta1.tar.gz  >> $log # download radius pacakge and install 
+wget https://github.com/whmcs-smarters/usage-script/raw/main/radiusplugin_v2.1a_beta1.tar.gz >> $log # download radius package and install 
+#wget http://www.nongnu.org/radiusplugin/radiusplugin_v2.1a_beta1.tar.gz  >> $log # download radius pacakge and install 
 tar xvf radiusplugin_v2.1a_beta1.tar.gz >> $log
 cd radiusplugin_v2.1a_beta1 >> $log
+# install dependencies for radius client
+if [[ "$ubuntu_version" == "20.04" || "$ubuntu_version" == "22.04" ]]; then
+   apt install -y libgcrypt20-dev build-essential >> $log
+else
+   apt-get -y install libgcrypt11-dev build-essential >> $log
+fi
+
 make >> $log
 sleep 3
 mkdir /etc/openvpn/radius >> $log
