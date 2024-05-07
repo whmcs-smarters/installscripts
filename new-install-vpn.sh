@@ -512,7 +512,7 @@ fi
 echo "Openvpn server instalation start" >> $log
 apt-get install -y openvpn iptables openssl wget ca-certificates curl >> $log
 #create server certicate and client certicate
-sudo wget -O ~/easy-rsa.tgz https://github.com/OpenVPN/easy-rsa/releases/download/v3.0.7/EasyRSA-3.0.7.tgz >> $log
+sudo wget -O ~/easy-rsa.tgz https://github.com/OpenVPN/easy-rsa/releases/download/v3.0.4/EasyRSA-3.0.4.tgz >> $log
 mkdir -p /etc/openvpn/easy-rsa >> $log 
 tar xzf ~/easy-rsa.tgz --strip-components=1 --directory /etc/openvpn/easy-rsa >> $log
 rm -f ~/easy-rsa.tgz >> $log
