@@ -427,20 +427,20 @@ CustomLog ${APACHE_LOG_DIR}/access.log combined
 </VirtualHost>
 EOF
 # Script to identify the server and services status
-sudo mkdir -p /var/www/status
-sudo chmod -R 755 /var/www/status/
-cat > /etc/apache2/sites-available/status.conf <<EOF
-<VirtualHost *:4545>
-ServerAdmin admin@localhost.com
-ServerName $CLIENTHOSTNAME
-ServerAlias $CLIENTHOSTNAME
-DocumentRoot /var/www/status/
-ErrorLog ${APACHE_LOG_DIR}/error.log
-CustomLog ${APACHE_LOG_DIR}/access.log combined
-</VirtualHost>
-EOF
+#sudo mkdir -p /var/www/status
+#sudo chmod -R 755 /var/www/status/
+#cat > /etc/apache2/sites-available/status.conf <<EOF
+#<VirtualHost *:4545>
+#ServerAdmin admin@localhost.com
+#ServerName $CLIENTHOSTNAME
+#ServerAlias $CLIENTHOSTNAME
+#DocumentRoot /var/www/status/
+#ErrorLog ${APACHE_LOG_DIR}/error.log
+#CustomLog ${APACHE_LOG_DIR}/access.log combined
+#</VirtualHost>
+#EOF
 sudo a2ensite usage.conf
-sudo a2ensite status.conf
+#sudo a2ensite status.conf
 sudo a2dissite 000-default.conf
 sudo systemctl restart apache2
 #sudo apache2ctl configtest
