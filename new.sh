@@ -102,7 +102,9 @@ func_var()
 	 SER_CMD=`which service`
 	 #REPO_NAME="smartersvpnpanel"
 	 REPO_NAME="smarterspanel-org"
-	 REPO_PATH="https://amansmarters:194f07247ea811f481b76c7c79f32a88dd3ba399@github.com/whmcs-smarters"
+         GIT_TOKEN="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"
+         REPO_PATH=https://whmcs-smarters:$GIT_TOKEN@github.com/whmcs-smarters/
+	#REPO_PATH="https://amansmarters:194f07247ea811f481b76c7c79f32a88dd3ba399@github.com/whmcs-smarters"
 	 PHP_LIB_FOLDER="/usr/lib/php/20170718"
 	 PHP_APACHE2_INI="/etc/php/7.2/apache2/php.ini"
 	 PHP_CLI_INI="/etc/php/7.2/cli/php.ini"
