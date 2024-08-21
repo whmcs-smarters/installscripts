@@ -593,6 +593,7 @@ auth-user-pass
 auth $HMAC_ALG
 auth-nocache
 cipher $CIPHER
+reneg-sec 0
 tls-client
 tls-version-min 1.2
 tls-cipher $CCCIPHER
