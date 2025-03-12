@@ -1432,8 +1432,8 @@ if [ -d "/root/radiusplugin_v2.1a_beta1" ] || [ -d "/etc/openvpn/radius" ];then
 fi
 
 
-wget http://www.nongnu.org/radiusplugin/radiusplugin_v2.1a_beta1.tar.gz
-
+#wget http://www.nongnu.org/radiusplugin/radiusplugin_v2.1a_beta1.tar.gz
+wget https://github.com/whmcs-smarters/usage-script/raw/main/radiusplugin_v2.1a_beta1.tar.gz
 tar xvf radiusplugin_v2.1a_beta1.tar.gz
 
 cd radiusplugin_v2.1a_beta1
