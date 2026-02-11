@@ -104,128 +104,6 @@ func_status()
          fi
         }
 
-wireguard_install() {
-  # --- WireGuard (server + 1 client) ---
-  # NOTE: Your IKEv2 script already uses 10.10.10.0/24.
-  # To avoid IP conflicts, WireGuard uses a different subnet by default here.
-  local WG_IF="wg0"
-  local WG_NET="10.66.66.0/24"
-  local SERVER_ADDR="10.66.66.1/24"
-  local CLIENT_ADDR="10.66.66.2/32"
-  local WG_PORT="51820"
-  local WG_MTU="1380"
-  local CLIENT_DNS="${DNS1:-1.1.1.1}"
-
-  local WG_DIR="/etc/wireguard"
-  local SERVER_PRIV="$WG_DIR/server_private.key"
-  local SERVER_PUB="$WG_DIR/server_public.key"
-  local CLIENT_PRIV="$WG_DIR/client1_private.key"
-  local CLIENT_PUB="$WG_DIR/client1_public.key"
-  local WG_CONF="$WG_DIR/${WG_IF}.conf"
-  local CLIENT_CONF="$WG_DIR/client1.conf"
-
-  # Endpoint preference:
-  # - If you have a hostname, use it
-  # - else fall back to PUBLIC_IP
-  local endpoint="${CLIENTHOSTNAME:-${PUBLIC_IP:-}}"
-  if [[ -z "${endpoint}" ]]; then
-    endpoint="YOUR_SERVER_PUBLIC_IP_OR_HOSTNAME"
-  fi
-
-  # Detect WAN iface
-  local wan_iface
-  wan_iface="$(ip route get 1.1.1.1 2>/dev/null | awk '{for(i=1;i<=NF;i++) if($i=="dev"){print $(i+1); exit}}')"
-  if [[ -z "${wan_iface:-}" ]]; then
-    echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` WireGuard: ERROR: Could not detect WAN interface" 1>>$LOG_FILE.log 2>&1
-    return 1
-  fi
-
-  echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` WireGuard: INFO: Installing packages" 1>>$LOG_FILE.log 2>&1
-  apt-get update -yq 1>>$LOG_FILE.log 2>&1
-  apt-get install -yq wireguard iptables 1>>$LOG_FILE.log 2>&1
-  apt-get install -yq qrencode >/dev/null 2>&1 || true
-
-  # Enable forwarding (your script already does this, but safe to ensure)
-  echo "net.ipv4.ip_forward=1" >/etc/sysctl.d/99-wireguard.conf
-  sysctl --system >/dev/null 2>&1 || true
-
-  # Generate keys (refuse overwrite)
-  umask 077
-  mkdir -p "$WG_DIR"
-
-  if [[ -f "$SERVER_PRIV" || -f "$CLIENT_PRIV" || -f "$WG_CONF" || -f "$CLIENT_CONF" ]]; then
-    echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` WireGuard: INFO: Existing WireGuard keys/config found in $WG_DIR. Skipping keygen/config to avoid overwrite." 1>>$LOG_FILE.log 2>&1
-  else
-    echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` WireGuard: INFO: Generating keys" 1>>$LOG_FILE.log 2>&1
-    wg genkey > "$SERVER_PRIV"
-    wg pubkey < "$SERVER_PRIV" > "$SERVER_PUB"
-
-    wg genkey > "$CLIENT_PRIV"
-    wg pubkey < "$CLIENT_PRIV" > "$CLIENT_PUB"
-
-    echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` WireGuard: INFO: Writing server config $WG_CONF" 1>>$LOG_FILE.log 2>&1
-    {
-      echo "[Interface]"
-      echo "Address = ${SERVER_ADDR}"
-      echo "ListenPort = ${WG_PORT}"
-      echo "PrivateKey = $(cat "$SERVER_PRIV")"
-      echo "MTU = ${WG_MTU}"
-      echo
-      echo "# NAT + forwarding on up/down"
-      echo "PostUp   = sysctl -w net.ipv4.ip_forward=1"
-      echo "PostUp   = iptables -t nat -A POSTROUTING -s ${WG_NET} -o ${wan_iface} -j MASQUERADE"
-      echo "PostUp   = iptables -A FORWARD -i ${WG_IF} -j ACCEPT"
-      echo "PostUp   = iptables -A FORWARD -o ${WG_IF} -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT"
-      echo
-      echo "PostDown = iptables -t nat -D POSTROUTING -s ${WG_NET} -o ${wan_iface} -j MASQUERADE"
-      echo "PostDown = iptables -D FORWARD -i ${WG_IF} -j ACCEPT"
-      echo "PostDown = iptables -D FORWARD -o ${WG_IF} -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT"
-      echo
-      echo "[Peer]"
-      echo "PublicKey = $(cat "$CLIENT_PUB")"
-      echo "AllowedIPs = ${CLIENT_ADDR}"
-    } > "$WG_CONF"
-    chmod 600 "$WG_CONF"
-
-    echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` WireGuard: INFO: Writing client config $CLIENT_CONF" 1>>$LOG_FILE.log 2>&1
-    {
-      echo "[Interface]"
-      echo "PrivateKey = $(cat "$CLIENT_PRIV")"
-      echo "Address = ${CLIENT_ADDR}"
-      echo "DNS = ${CLIENT_DNS}"
-      echo "MTU = ${WG_MTU}"
-      echo
-      echo "[Peer]"
-      echo "PublicKey = $(cat "$SERVER_PUB")"
-      echo "Endpoint = ${endpoint}:${WG_PORT}"
-      echo "AllowedIPs = 0.0.0.0/0"
-      echo "PersistentKeepalive = 25"
-    } > "$CLIENT_CONF"
-    chmod 600 "$CLIENT_CONF"
-  fi
-
-  # Start WG
-  echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` WireGuard: INFO: Enabling wg-quick@${WG_IF}" 1>>$LOG_FILE.log 2>&1
-  systemctl enable --now "wg-quick@${WG_IF}" >/dev/null 2>&1 || true
-
-  # Summary into log
-  echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` WireGuard: SUCCESS: Installed. ServerConf=$WG_CONF ClientConf=$CLIENT_CONF" 1>>$LOG_FILE.log 2>&1
-
-  # Optional: print QR to terminal (not log)
-  if command -v qrencode >/dev/null 2>&1 && [[ -f "$CLIENT_CONF" ]]; then
-    echo
-    echo "WireGuard client QR (scan in WireGuard mobile app):"
-    qrencode -t ansiutf8 < "$CLIENT_CONF" || true
-    echo
-    echo "WireGuard client config saved at: $CLIENT_CONF"
-  else
-    echo
-    echo "WireGuard client config saved at: $CLIENT_CONF"
-  fi
-
-  return 0
-}
-
 colorecho "VPN Server Installation Started...." 1>>$LOG_FILE.log 2>&1
 
 
@@ -924,7 +802,7 @@ if [[ -e /etc/pam.d/sockd ]]; then
 rm /etc/pam.d/sockd
 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` Removed /etc/pam.d/sockd file successfully" 
 fi
-wireguard_install
+
 cat >> /etc/pam.d/sockd <<EOF
 auth sufficient pam_radius_auth.so
 account sufficient pam_radius_auth.so
