@@ -241,7 +241,7 @@ if ! command -v lsb_release &>/dev/null; then
   exit 1
 fi
  # Get the Ubuntu version information
-ubuntu_version=$(lsb_release -rs)  1>>$LOG_FILE.log 2>&1
+ubuntu_version=$(lsb_release -rs | tr -d '[:space:]')  1>>$LOG_FILE.log 2>&1
 # Check if the version is retrieved successfully
 if [ -n "$ubuntu_version" ]; then
   echo "Ubuntu version: $ubuntu_version" 1>>$LOG_FILE.log 2>&1
