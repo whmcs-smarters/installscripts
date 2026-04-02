@@ -251,7 +251,7 @@ else
 fi
 
 #### Time to install strongswan and certbot
-if [[ "$ubuntu_version" == "20.04" || "$ubuntu_version" == "22.04" ]]; then
+if [[ "$ubuntu_version" == "20.04" || "$ubuntu_version" == "22.04" || "$ubuntu_version" == "24.04" ]]; then
 sudo apt install strongswan strongswan-pki libcharon-extra-plugins libcharon-extauth-plugins libstrongswan-extra-plugins moreutils certbot net-tools moreutils vnstat python3 -yq 1>>$LOG_FILE.log 2>&1
 else
 sudo apt-get install strongswan strongswan-pki libstrongswan-standard-plugins strongswan-libcharon libcharon-standard-plugins libcharon-extra-plugins moreutils certbot net-tools moreutils vnstat python3 -yq 1>>$LOG_FILE.log 2>&1
