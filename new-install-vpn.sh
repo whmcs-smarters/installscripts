@@ -648,7 +648,7 @@ wget https://github.com/whmcs-smarters/usage-script/raw/main/radiusplugin_v2.1a_
 tar xvf radiusplugin_v2.1a_beta1.tar.gz >> $log
 cd radiusplugin_v2.1a_beta1 >> $log
 # install dependencies for radius client
-if [[ "$ubuntu_version" == "20.04" || "$ubuntu_version" == "22.04" ]]; then
+if [[ "$ubuntu_version" == "20.04" || "$ubuntu_version" == "22.04" || "$ubuntu_version" == "24.04" ]]; then
    apt install -y libgcrypt20-dev build-essential >> $log
 else
    apt-get -y install libgcrypt11-dev build-essential >> $log
