@@ -83,7 +83,7 @@ export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 SYS_DT=$(date +%F-%T)
 
 exiterr()  { echo "Error: $1" >&2; exit 1; }
-exiterr2() { exiterr "'apt-ge	t install' failed."; }
+exiterr2() { exiterr "'apt-ge    t install' failed."; }
 conf_bk() { /bin/cp -f "$1" "$1.old-$SYS_DT" 2>/dev/null; }
 bigecho() { echo; echo "## $1"; echo; }
 colorecho() { echo; echo -e "\x1b[32;40m \e[32;1m ##"$1"\x1b[m"; echo; }
@@ -99,7 +99,7 @@ func_status()
         {
          if [[ $1 != 0 ]]
          then
-               echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: ERROR: failed." 
+               echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: ERROR: failed."
                exit
          fi
         }
@@ -193,7 +193,7 @@ echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` VPN Server Setup: INFO: ikev2/Strongsw
 fi
 
 
-## Removing Certbot and existings certs if exists 
+## Removing Certbot and existings certs if exists
 
 if [ -d "/etc/letsencrypt/" ] # first checking if letsencrypt folder there
 then
@@ -202,7 +202,7 @@ echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` VPN Server Setup: Info: Found Certbot 
 if [ -d "/etc/letsencrypt/live" ] #before getting the sub-directories (domain name directories), we haev to chedck if main directory(live) exits
 then
 
-if [ $(ls -A "/etc/letsencrypt/live") ] # it returns the directories names 
+if [ $(ls -A "/etc/letsencrypt/live") ] # it returns the directories names
 
 then
 
@@ -223,7 +223,7 @@ fi
 echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` starting removing certbot and cleaning it completely " 1>>$LOG_FILE.log 2>&1
 
 apt-get remove certbot -yq 1>>$LOG_FILE.log 2>&1
-apt autoremove -yq 1>>$LOG_FILE.log 2>&1 # it removes the un-neccessary dependencies 
+apt autoremove -yq 1>>$LOG_FILE.log 2>&1 # it removes the un-neccessary dependencies
 apt purge certbot -yq 1>>$LOG_FILE.log 2>&1 # this removes certbot completely otherwise, you can check dpkg -l *certbot*
 
 rm -rf /etc/letsencrypt/
@@ -233,7 +233,7 @@ echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` Removed Certbot and its folders/files 
 
 fi
 
-## Checking Ubuntu Version 
+## Checking Ubuntu Version
 echo "##### checking Ubuntu Version ######"  1>>$LOG_FILE.log 2>&1
 # Check if the lsb_release command is available
 if ! command -v lsb_release &>/dev/null; then
@@ -274,7 +274,7 @@ while fuser "$APT_LK" "$PKG_LK" >/dev/null 2>&1 \
   sleep 3
 done
 
-sleep 120 # giving time to domain to be propagated 
+sleep 120 # giving time to domain to be propagated
 
 
 sudo certbot certonly --standalone --agree-tos --register-unsafely-without-email -d $CLIENTHOSTNAME 1>>$LOG_FILE.log 2>&1
@@ -287,15 +287,15 @@ sudo chmod 755 /etc/letsencrypt/live/$CLIENTHOSTNAME/fullchain.pem 1>>$LOG_FILE.
 sudo chmod 755 /etc/letsencrypt/live/$CLIENTHOSTNAME/privkey.pem 1>>$LOG_FILE.log 2>&1
 sudo chmod 755 /etc/letsencrypt/live/$CLIENTHOSTNAME/chain.pem 1>>$LOG_FILE.log 2>&1
 
-#######renew script start ##############################    
-cat >> /etc/letsencrypt/renewal-hooks/deploy/renewal.sh <<EOF   
+#######renew script start ##############################
+cat >> /etc/letsencrypt/renewal-hooks/deploy/renewal.sh <<EOF
 #!/bin/sh
 ipsec restart
 EOF
 chmod +x /etc/letsencrypt/renewal-hooks/deploy/renewal.sh 1>>$LOG_FILE.log 2>&1
 #######renew script End ##############################
 
-# creating ipsec.conf file 
+# creating ipsec.conf file
 cat >> /etc/ipsec.conf <<EOF
 config setup
         strictcrlpolicy=yes
@@ -359,8 +359,8 @@ cat /etc/strongswan.conf 1>>$LOG_FILE.log 2>&1
 
 
 ETH0ORSIMILAR=$(ip route get 1.1.1.1 | awk -- '{printf $5}')
-echo iptables-persistent iptables-persistent/autosave_v4 boolean true | sudo debconf-set-selections 
-echo iptables-persistent iptables-persistent/autosave_v6 boolean true | sudo debconf-set-selections 
+echo iptables-persistent iptables-persistent/autosave_v4 boolean true | sudo debconf-set-selections
+echo iptables-persistent iptables-persistent/autosave_v6 boolean true | sudo debconf-set-selections
 sudo apt-get -yq install iptables-persistent 1>>$LOG_FILE.log 2>&1
 
 iptables -P INPUT   ACCEPT
@@ -471,12 +471,12 @@ COR2='\033[1;32m'
 COR3='\033[1;34m'
 
 echo -e "${COR}Openvpn server configuration beginning please wait"
-#removing previous log 
+#removing previous log
 rm /root/openvpn_*
 log=/root/openvpn_log_file.txt
 echo Openvpn server configuration start on $(date) >> $log
 {
-echo checking openvpn server install or not >> $log 
+echo checking openvpn server install or not >> $log
 vpn1=$(ifconfig)
 if [[ $vpn1 == *tun* || -e "/etc/openvpn/server.conf" ]]; then
 echo Openvpn server sever running and removing everything openvpn relate >> $log
@@ -487,14 +487,14 @@ rm /etc/systemd/system/openvpn\@.servic >> $log
 # Remove the iptables rules related to the script
 systemctl stop iptables-openvpn >> $log
 # Cleanup openvpn service with iptables rules
-systemctl disable iptables-openvpn >> $log	
-rm /etc/systemd/system/iptables-openvpn.service	>> $log
-systemctl daemon-reload	>> $log
-rm /etc/iptables/add-openvpn-rules.sh >> $log	
-rm /etc/iptables/rm-openvpn-rules.sh >> $log	
-rm /etc/sysctl.d/20-openvpn.conf >> $log	
-#Remove openvpn pacakge 
-apt-get remove --purge -y openvpn >> $log	
+systemctl disable iptables-openvpn >> $log
+rm /etc/systemd/system/iptables-openvpn.service    >> $log
+systemctl daemon-reload    >> $log
+rm /etc/iptables/add-openvpn-rules.sh >> $log
+rm /etc/iptables/rm-openvpn-rules.sh >> $log
+rm /etc/sysctl.d/20-openvpn.conf >> $log
+#Remove openvpn pacakge
+apt-get remove --purge -y openvpn >> $log
 # Cleanup openvpn conf files and log files
 rm -Rf /root/openvpnserver_instalation.log >> $log
 rm -Rf /root/openvpn_server_start.log >> $log
@@ -504,39 +504,39 @@ rm -rf /etc/openvpn >> $log
 rm -rf /usr/share/doc/openvpn* >> $log
 rm -f /etc/sysctl.d/99-openvpn.conf >> $log
 rm -rf /var/log/openvpn >> $log
-echo "####Openvpn server sever fully removed#####" >> $log	
+echo "####Openvpn server sever fully removed#####" >> $log
 else
        echo "Openvpn server is not running" >> $log
 fi
-#install OpenVPN server with certicate 
+#install OpenVPN server with certicate
 echo "Openvpn server instalation start" >> $log
 apt-get install -y openvpn iptables openssl wget ca-certificates curl >> $log
 #create server certicate and client certicate
 sudo wget -O ~/easy-rsa.tgz https://github.com/OpenVPN/easy-rsa/releases/download/v3.0.4/EasyRSA-3.0.4.tgz >> $log
-mkdir -p /etc/openvpn/easy-rsa >> $log 
+mkdir -p /etc/openvpn/easy-rsa >> $log
 tar xzf ~/easy-rsa.tgz --strip-components=1 --directory /etc/openvpn/easy-rsa >> $log
 rm -f ~/easy-rsa.tgz >> $log
 cd /etc/openvpn/easy-rsa/ || return >> $log
 echo "set_var EASYRSA_ALGO ec 
-set_var EASYRSA_CURVE prime256v1" >vars 
-SERVER_CN="cn_$(head /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1)" 
-echo "$SERVER_CN" >SERVER_CN_GENERATED 
+set_var EASYRSA_CURVE prime256v1" >vars
+SERVER_CN="cn_$(head /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1)"
+echo "$SERVER_CN" >SERVER_CN_GENERATED
 SERVER_NAME="server_$(head /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1)"
-echo "$SERVER_NAME" >SERVER_NAME_GENERATED 
-chmod +x vars  
-echo "$SERVER_CN" >SERVER_CN_GENERATED 
-echo "$SERVER_NAME" >SERVER_NAME_GENERATED 
-echo "set_var EASYRSA_REQ_CN $SERVER_CN" >>vars 
-echo VARS file successfully create for certicate >> $log 
+echo "$SERVER_NAME" >SERVER_NAME_GENERATED
+chmod +x vars
+echo "$SERVER_CN" >SERVER_CN_GENERATED
+echo "$SERVER_NAME" >SERVER_NAME_GENERATED
+echo "set_var EASYRSA_REQ_CN $SERVER_CN" >>vars
+echo VARS file successfully create for certicate >> $log
 cat  vars >> $log
 echo please wait for server and client certificates >> $log
 ./easyrsa init-pki >> $log
-./easyrsa --batch build-ca nopass #crete sever CA file 
+./easyrsa --batch build-ca nopass #crete sever CA file
 ./easyrsa build-server-full $SERVER_NAME nopass >> $log
 EASYRSA_CRL_DAYS=36500 ./easyrsa gen-crl >> $log
 openvpn --genkey --secret /etc/openvpn/tls-crypt.key
 echo successfully created tls-crypt.key >> $log
-cat /etc/openvpn/tls-crypt.key >> $log   
+cat /etc/openvpn/tls-crypt.key >> $log
 cp pki/ca.crt pki/private/ca.key "pki/issued/$SERVER_NAME.crt" "pki/private/$SERVER_NAME.key" /etc/openvpn/easy-rsa/pki/crl.pem /etc/openvpn >> $log
 #Create client certicate/client name = client01
 ./easyrsa build-client-full client01 nopass >> $log
@@ -574,9 +574,9 @@ push "dhcp-option DNS $DNS1"
 push "dhcp-option DNS $DNS2"
 push "redirect-gateway def1 bypass-dhcp"
 EOF
-echo "#########openvpn server conf################" >> $log 
+echo "#########openvpn server conf################" >> $log
 cat /etc/openvpn/server.conf >> $log
-echo "#########Checking client OVPN File############" >> $log 
+echo "#########Checking client OVPN File############" >> $log
 #create Client conf file
 echo "client
 proto $PROTOCOL
@@ -600,28 +600,28 @@ tls-cipher $CCCIPHER
 ignore-unknown-option block-outside-dns
 setenv opt block-outside-dns # Prevent Windows 10 DNS leak
 verb 3">> /etc/openvpn/client-template.txt
-touch /root/client.ovpn						
+touch /root/client.ovpn
 cp /etc/openvpn/client-template.txt "/root/client.ovpn"
-	{
-		echo "<ca>"
-		cat "/etc/openvpn/easy-rsa/pki/ca.crt"
-		echo "</ca>"
-		echo "<cert>"
-		awk '/BEGIN/,/END/' "/etc/openvpn/easy-rsa/pki/issued/client01.crt"
-		echo "</cert>"
-		echo "<key>"
-		cat "/etc/openvpn/easy-rsa/pki/private/client01.key"
-		echo "</key>"
-		echo "<tls-crypt>"
-		cat "/etc/openvpn/tls-crypt.key"
-		echo "</tls-crypt>"
-		
-	} >>"/root/client.ovpn"
+    {
+        echo "<ca>"
+        cat "/etc/openvpn/easy-rsa/pki/ca.crt"
+        echo "</ca>"
+        echo "<cert>"
+        awk '/BEGIN/,/END/' "/etc/openvpn/easy-rsa/pki/issued/client01.crt"
+        echo "</cert>"
+        echo "<key>"
+        cat "/etc/openvpn/easy-rsa/pki/private/client01.key"
+        echo "</key>"
+        echo "<tls-crypt>"
+        cat "/etc/openvpn/tls-crypt.key"
+        echo "</tls-crypt>"
+        
+    } >>"/root/client.ovpn"
 cat /root/client.ovpn >> $log
 echo OVPN file created on root home folder  >> $log
 cd || return
 #RadiusClient Installation Started
-echo "#######Radius Client Installation Started#########" >> $log  
+echo "#######Radius Client Installation Started#########" >> $log
 echo "##### checking Ubuntu Version ######" >> $log
 # Check if the lsb_release command is available
 if ! command -v lsb_release &>/dev/null; then
@@ -629,7 +629,7 @@ if ! command -v lsb_release &>/dev/null; then
   exit 1
 fi
  # Get the Ubuntu version information
-ubuntu_version=$(lsb_release -rs) >> $log       
+ubuntu_version=$(lsb_release -rs) >> $log
 # Check if the version is retrieved successfully
 if [ -n "$ubuntu_version" ]; then
   echo "Ubuntu version: $ubuntu_version" >> $log
@@ -643,8 +643,8 @@ rm -r /etc/openvpn/radius >> $log
 fi
 ## Download the Radius Plugin and install
 cd /root || return
-wget https://github.com/whmcs-smarters/usage-script/raw/main/radiusplugin_v2.1a_beta1.tar.gz >> $log # download radius package and install 
-#wget http://www.nongnu.org/radiusplugin/radiusplugin_v2.1a_beta1.tar.gz  >> $log # download radius package and install 
+wget https://github.com/whmcs-smarters/usage-script/raw/main/radiusplugin_v2.1a_beta1.tar.gz >> $log # download radius package and install
+#wget http://www.nongnu.org/radiusplugin/radiusplugin_v2.1a_beta1.tar.gz  >> $log # download radius package and install
 tar xvf radiusplugin_v2.1a_beta1.tar.gz >> $log
 cd radiusplugin_v2.1a_beta1 >> $log
 # install dependencies for radius client
@@ -656,8 +656,8 @@ fi
 make >> $log
 sleep 3
 mkdir /etc/openvpn/radius >> $log
-cp -r radiusplugin.so /etc/openvpn/radius >> $log 
-conf_bk "/etc/openvpn/radius/radius.cnf" >> $log 
+cp -r radiusplugin.so /etc/openvpn/radius >> $log
+conf_bk "/etc/openvpn/radius/radius.cnf" >> $log
 if [ -e "/etc/openvpn/radius/radius.cnf" ]; then
 rm /etc/openvpn/radius/radius.cnf >> $log
 fi
@@ -684,22 +684,22 @@ sharedsecret=$RADIUS_SECRET
 
 EOF
 echo "Radiusclient Installation Done" >> $log
-echo "#######Radius client configuration for Openvpn #########" >> $log  
-cat /etc/openvpn/radius/radius.cnf >> $log	
+echo "#######Radius client configuration for Openvpn #########" >> $log
+cat /etc/openvpn/radius/radius.cnf >> $log
 #Create IPv4 table rules and port forwarding on Sever
 echo "Create IPv4 table rules and port forwarding on Sever"
 # Create log dir
-mkdir -p /var/log/openvpn 
+mkdir -p /var/log/openvpn
 # Enable routing
-echo 'net.ipv4.ip_forward=1' >> /etc/sysctl.d/20-openvpn.conf 
+echo 'net.ipv4.ip_forward=1' >> /etc/sysctl.d/20-openvpn.conf
 ech "Enable routing" >> $log
 cat /etc/sysctl.d/20-openvpn.conf >> $log
 # Apply sysctl rules
-sysctl --system 
+sysctl --system
 
 NIC=$(ip route get 8.8.8.8 | awk -- '{printf $5}')
 # Add iptables rules in two scripts
-mkdir /etc/iptables 
+mkdir /etc/iptables
 
 # Script to add rules
 echo "#!/bin/sh
@@ -720,8 +720,8 @@ iptables -D INPUT -i $NIC -p $PROTOCOL --dport $PORT -j ACCEPT" > /etc/iptables/
 echo "Disable IPtable rules for openvpn connection"
 cat /etc/iptables/rm-openvpn-rules.sh >> $log
 
-chmod +x /etc/iptables/add-openvpn-rules.sh 
-chmod +x /etc/iptables/rm-openvpn-rules.sh  
+chmod +x /etc/iptables/add-openvpn-rules.sh
+chmod +x /etc/iptables/rm-openvpn-rules.sh
 
 # Handle the rules via a systemd script
 echo "#######Creating IPtable rules for openvpn as services#######" >> $log
@@ -742,21 +742,21 @@ WantedBy=multi-user.target" > /etc/systemd/system/iptables-openvpn.service
 cat /etc/systemd/system/iptables-openvpn.service >> $log
 
 # Enable service and apply rules
-systemctl daemon-reload 
-systemctl enable iptables-openvpn 
-systemctl start iptables-openvpn 
-	
+systemctl daemon-reload
+systemctl enable iptables-openvpn
+systemctl start iptables-openvpn
+    
 } &> /dev/null
 
 #configure openvpn service and add it bootup
 # Finally, restart and enable OpenVPN
-cp /lib/systemd/system/openvpn\@.service /etc/systemd/system/openvpn\@.service 
+cp /lib/systemd/system/openvpn\@.service /etc/systemd/system/openvpn\@.service
 
 # Workaround to fix OpenVPN service on OpenVZ
-sed -i 's|LimitNPROC|#LimitNPROC|' /etc/systemd/system/openvpn\@.service 
+sed -i 's|LimitNPROC|#LimitNPROC|' /etc/systemd/system/openvpn\@.service
 
 # Another workaround to keep using /etc/openvpn/
-sed -i 's|/etc/openvpn/server|/etc/openvpn|' /etc/systemd/system/openvpn\@.service 
+sed -i 's|/etc/openvpn/server|/etc/openvpn|' /etc/systemd/system/openvpn\@.service
 
 systemctl start openvpn@server
 sleep 20
@@ -766,13 +766,14 @@ echo -e "${COR2}Openvpn server start successfully"
 cat /var/log/openvpn/openvpn.log 1>>/root/openvpn_server_start.log 2>&1
 echo -e "${COR3}Save sart logs in root/openvpn_server_start.log file  "
 
-	else
+    else
 echo -e "${COR2}Openvpn server start not successfully"
 cat /var/log/openvpn/openvpn.log 1>>openvpn_server_fail.log 2>&1
 echo -e "${COR3}Save fail logs in root/openvpn_server_fail.log file  "
 fi
  # Sending back the status of instllation
-  
+##log wireguard is started
+echo "WireGuard: INFO: WireGuard installation started" 1>>$LOG_FILE.log 2>&1
 
 ### Installing WireGuard Now
 wireguard_install() {
@@ -909,11 +910,13 @@ wireguard_install() {
 
   return 0
 }
-echo "Calling WireGuard Install Function" >> $log
+echo "Calling WireGuard Install Function" >> $LOG_FILE.log
 wireguard_install
 
+echo "WireGuard: INFO: WireGuard installation complete" 1>>$LOG_FILE.log 2>&1
 
-  ###### Socks5 Installation using Dante-server #### 
+
+  ###### Socks5 Installation using Dante-server ####
 sudo apt install dante-server -y
 rm /etc/danted.conf
  
@@ -939,7 +942,7 @@ socks pass {
     from: 0.0.0.0/0 to: 0.0.0.0/0
 }
 EOF
-# Start installation for pam radius 
+# Start installation for pam radius
 apt-get install libpam-radius-auth libpam0g-dev gcc -y
 rm  /etc/pam_radius_auth.conf
 cat >> /etc/pam_radius_auth.conf <<EOF
@@ -947,7 +950,7 @@ $YOUR_RADIUS_SERVER_IP         $RADIUS_SECRET      1
 EOF
 if [[ -e /etc/pam.d/sockd ]]; then
 rm /etc/pam.d/sockd
-echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` Removed /etc/pam.d/sockd file successfully" 
+echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` Removed /etc/pam.d/sockd file successfully"
 fi
 
 cat >> /etc/pam.d/sockd <<EOF
