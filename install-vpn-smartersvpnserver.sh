@@ -497,7 +497,7 @@ fi
 # echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` Removed /root/check_services.sh file successfully" 1>>$LOG_FILE.log 2>&1
 # fi
 
-wget -P /root https://raw.githubusercontent.com/whmcs-smarters/usage-script/main/usage-script.sh 1>>$LOG_FILE.log 2>&1
+wget -P /root https://raw.githubusercontent.com/whmcs-smarters/installscripts/main/usage-script.sh 1>>$LOG_FILE.log 2>&1
 # wget -P /root https://raw.githubusercontent.com/whmcs-smarters/usage-script/main/check_services.sh 1>>$LOG_FILE.log 2>&1
 # chmod +x /root/check_services.sh 1>>$LOG_FILE.log 2>&1
 chmod +x /root/usage-script.sh 1>>$LOG_FILE.log 2>&1
