@@ -94,30 +94,167 @@ INSTALLATION_SCRIPT=`basename $0 ".sh"`
 OS="ubuntu"
 export DEBIAN_FRONTEND=noninteractive
 # remove old log file if exists
-if [[ -e /root/install-vpn-smartersvpnpanel.log ]]; then
+if [[ -e /root/install-vpn-smartersvpnserver.log ]]; then
 
-rm /root/install-vpn-smartersvpnpanel.log 1>>$LOG_FILE.log 2>&1
+rm /root/install-vpn-smartersvpnserver.log 1>>$LOG_FILE.log 2>&1
 
 fi
 
 TOTAL_PARTS=14
-log_progress() { echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` [PROGRESS] Part $1/$TOTAL_PARTS ($2%) - $3" 1>>$LOG_FILE.log 2>&1; }
+log_progress() { echo "[PROGRESS] Part $1/$TOTAL_PARTS ($2%) - $3" 1>>$LOG_FILE.log 2>&1; }
 
 #### Defining Functions for VPN Setup ########
 func_status()
-        {
-         if [[ $1 != 0 ]]
-         then
-               echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: ERROR: failed." 
-               exit
-         fi
-        }
+{
+  if [[ $1 != 0 ]]
+  then
+        echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` vpnpanel setup: ERROR: failed." 
+        exit
+  fi
+}
+
+
+### Installing WireGuard Now
+wireguard_install() {
+  # --- WireGuard (server + 1 client) ---
+  # NOTE: Your IKEv2 script already uses 10.10.10.0/24.
+  # To avoid IP conflicts, WireGuard uses a different subnet by default here.
+  local WG_IF="wg0"
+  local WG_NET="10.66.66.0/24"
+  local SERVER_ADDR="10.66.66.1/24"
+  local CLIENT_ADDR="10.66.66.2/32"
+  local WG_PORT="51820"
+  local WG_MTU="1380"
+  local CLIENT_DNS="${DNS1:-1.1.1.1}"
+
+  local WG_DIR="/etc/wireguard"
+  local SERVER_PRIV="$WG_DIR/server_private.key"
+  local SERVER_PUB="$WG_DIR/server_public.key"
+  local CLIENT_PRIV="$WG_DIR/client1_private.key"
+  local CLIENT_PUB="$WG_DIR/client1_public.key"
+  local WG_CONF="$WG_DIR/${WG_IF}.conf"
+  local CLIENT_CONF="$WG_DIR/client1.conf"
+
+  # Endpoint preference:
+  # - If you have a hostname, use it
+  # - else fall back to PUBLIC_IP
+  local endpoint="${CLIENTHOSTNAME:-${PUBLIC_IP:-}}"
+  if [[ -z "${endpoint}" ]]; then
+    endpoint="YOUR_SERVER_PUBLIC_IP_OR_HOSTNAME"
+  fi
+
+  # Check if WireGuard is already installed
+  if dpkg-query -W -f='${Status}' wireguard 2>/dev/null | grep -q "install ok installed"; then
+    echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` WireGuard: INFO: WireGuard already installed. Cleaning old install/config and reinstalling..." 1>>$LOG_FILE.log 2>&1
+
+    # Tear down running interface if present
+    systemctl disable --now "wg-quick@${WG_IF}" >/dev/null 2>&1 || true
+    ip link show "${WG_IF}" >/dev/null 2>&1 && ip link delete "${WG_IF}" >/dev/null 2>&1 || true
+
+    # Remove previous config and key material
+    rm -rf "${WG_DIR}" 1>>$LOG_FILE.log 2>&1 || true
+
+    # Remove existing package before reinstall
+    apt-get purge -y wireguard wireguard-tools iptables 1>>$LOG_FILE.log 2>&1
+    apt-get autoremove -y 1>>$LOG_FILE.log 2>&1
+  fi
+
+  # Detect WAN iface
+  local wan_iface
+  wan_iface="$(ip route get 1.1.1.1 2>/dev/null | awk '{for(i=1;i<=NF;i++) if($i=="dev"){print $(i+1); exit}}')"
+  if [[ -z "${wan_iface:-}" ]]; then
+    echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` WireGuard: ERROR: Could not detect WAN interface" 1>>$LOG_FILE.log 2>&1
+    return 1
+  fi
+
+  echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` WireGuard: INFO: Installing packages" 1>>$LOG_FILE.log 2>&1
+  apt-get update -yq 1>>$LOG_FILE.log 2>&1
+  apt-get install -yq wireguard iptables 1>>$LOG_FILE.log 2>&1
+  apt-get install -yq qrencode >/dev/null 2>&1 || true
+
+  # Enable forwarding (your script already does this, but safe to ensure)
+  echo "net.ipv4.ip_forward=1" >/etc/sysctl.d/99-wireguard.conf
+  sysctl --system >/dev/null 2>&1 || true
+
+  # Generate fresh keys/config every run
+  umask 077
+  mkdir -p "$WG_DIR"
+  rm -f "$SERVER_PRIV" "$SERVER_PUB" "$CLIENT_PRIV" "$CLIENT_PUB" "$WG_CONF" "$CLIENT_CONF" 1>>$LOG_FILE.log 2>&1 || true
+
+  echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` WireGuard: INFO: Generating new keys" 1>>$LOG_FILE.log 2>&1
+  wg genkey > "$SERVER_PRIV"
+  wg pubkey < "$SERVER_PRIV" > "$SERVER_PUB"
+
+  wg genkey > "$CLIENT_PRIV"
+  wg pubkey < "$CLIENT_PRIV" > "$CLIENT_PUB"
+
+  echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` WireGuard: INFO: Writing server config $WG_CONF" 1>>$LOG_FILE.log 2>&1
+  {
+    echo "[Interface]"
+    echo "Address = ${SERVER_ADDR}"
+    echo "ListenPort = ${WG_PORT}"
+    echo "PrivateKey = $(cat "$SERVER_PRIV")"
+    echo "MTU = ${WG_MTU}"
+    echo
+    echo "# NAT + forwarding on up/down"
+    echo "PostUp   = sysctl -w net.ipv4.ip_forward=1"
+    echo "PostUp   = iptables -t nat -A POSTROUTING -s ${WG_NET} -o ${wan_iface} -j MASQUERADE"
+    echo "PostUp   = iptables -A FORWARD -i ${WG_IF} -j ACCEPT"
+    echo "PostUp   = iptables -A FORWARD -o ${WG_IF} -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT"
+    echo
+    echo "PostDown = iptables -t nat -D POSTROUTING -s ${WG_NET} -o ${wan_iface} -j MASQUERADE"
+    echo "PostDown = iptables -D FORWARD -i ${WG_IF} -j ACCEPT"
+    echo "PostDown = iptables -D FORWARD -o ${WG_IF} -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT"
+    echo
+    echo "[Peer]"
+    echo "PublicKey = $(cat "$CLIENT_PUB")"
+    echo "AllowedIPs = ${CLIENT_ADDR}"
+  } > "$WG_CONF"
+  chmod 600 "$WG_CONF"
+
+  echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` WireGuard: INFO: Writing client config $CLIENT_CONF" 1>>$LOG_FILE.log 2>&1
+  {
+    echo "[Interface]"
+    echo "PrivateKey = $(cat "$CLIENT_PRIV")"
+    echo "Address = ${CLIENT_ADDR}"
+    echo "DNS = ${CLIENT_DNS}"
+    echo "MTU = ${WG_MTU}"
+    echo
+    echo "[Peer]"
+    echo "PublicKey = $(cat "$SERVER_PUB")"
+    echo "Endpoint = ${endpoint}:${WG_PORT}"
+    echo "AllowedIPs = 0.0.0.0/0"
+    echo "PersistentKeepalive = 25"
+  } > "$CLIENT_CONF"
+  chmod 600 "$CLIENT_CONF"
+
+  # Start WG
+  echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` WireGuard: INFO: Enabling wg-quick@${WG_IF}" 1>>$LOG_FILE.log 2>&1
+  systemctl enable --now "wg-quick@${WG_IF}" >/dev/null 2>&1 || true
+
+  # Summary into log
+  echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` WireGuard: SUCCESS: Installed. ServerConf=$WG_CONF ClientConf=$CLIENT_CONF" 1>>$LOG_FILE.log 2>&1
+
+  # Optional: print QR to terminal (not log)
+  if command -v qrencode >/dev/null 2>&1 && [[ -f "$CLIENT_CONF" ]]; then
+    echo
+    echo "WireGuard client QR (scan in WireGuard mobile app):"
+    qrencode -t ansiutf8 < "$CLIENT_CONF" || true
+    echo
+    echo "WireGuard client config saved at: $CLIENT_CONF"
+  else
+    echo
+    echo "WireGuard client config saved at: $CLIENT_CONF"
+  fi
+
+  return 0
+}
 
 colorecho "VPN Server Installation Started...." 1>>$LOG_FILE.log 2>&1
 log_progress 1 5 "Initialization - Printing Variables"
 
 
-echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` VPN Server Setup: INFO: Printing Variables." 1>>$LOG_FILE.log 2>&1
+echo "VPN Server Setup: INFO: Printing Variables." 1>>$LOG_FILE.log 2>&1
 
 [[ ! -z $PANELURL ]] && echo "${bold}PANELURL:${normal}" $PANELURL 1>>$LOG_FILE.log 2>&1
 [[ ! -z $PORT ]] && echo "${bold}PORT:${normal}" $PORT 1>>$LOG_FILE.log 2>&1
@@ -497,8 +634,8 @@ fi
 # echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` Removed /root/check_services.sh file successfully" 1>>$LOG_FILE.log 2>&1
 # fi
 
-wget -P /root https://raw.githubusercontent.com/whmcs-smarters/installscripts/main/usage-script.sh 1>>$LOG_FILE.log 2>&1
-# wget -P /root https://raw.githubusercontent.com/whmcs-smarters/usage-script/main/check_services.sh 1>>$LOG_FILE.log 2>&1
+wget -P /root https://raw.githubusercontent.com/whmcs-smarters/vpn-scripts/refs/heads/main/usage-script.sh 1>>$LOG_FILE.log 2>&1
+# wget -P /root https://raw.githubusercontent.com/whmcs-smarters/vpn-scripts/refs/heads/main/check_services.sh 1>>$LOG_FILE.log 2>&1
 # chmod +x /root/check_services.sh 1>>$LOG_FILE.log 2>&1
 chmod +x /root/usage-script.sh 1>>$LOG_FILE.log 2>&1
 apt-get install -y apache2 1>>$LOG_FILE.log 2>&1
@@ -549,9 +686,9 @@ rm cron_backup 1>>$LOG_FILE.log 2>&1
 service cron restart 1>>$LOG_FILE.log 2>&1
 #########End Cron job########################################
 echo "Calculating Download and Upload Speed on Server"  1>>$LOG_FILE.log 2>&1
-#apt install python -y // Depreciated command 
-apt install 2to3 python2-minimal python2 dh-python python-is-python3 -y
-curl -s https://raw.githubusercontent.com/sivel/speedtest-cli/master/speedtest.py | python -  >> /tmp/speed.txt
+#apt install python -y // Depreciated command
+apt install -y python3 python3-pip 1>>$LOG_FILE.log 2>&1
+curl -s https://raw.githubusercontent.com/sivel/speedtest-cli/master/speedtest.py | python3 -  >> /tmp/speed.txt
 speed1=$(cat /tmp/speed.txt | grep -i "Download:")
 speed2=$(cat /tmp/speed.txt |grep -i "Upload:")
 echo $speed1 > /var/www/usage/speed1.txt 
@@ -566,7 +703,7 @@ echo "Read root/openvpn_log_file.txt for more details" 1>>$LOG_FILE.log 2>&1
 
 #log=/root/openvpn_log_file.txt
 log_progress 11 78 "OpenVPN Setup - Install and Configure"
-log=/root/install-vpn-smartersvpnpanel.log
+log=/root/install-vpn-smartersvpnserver.log
 echo Openvpn server configuration start on $(date) >> $log
 rm /root/openvpn_* >> $log
 {
@@ -735,7 +872,7 @@ cp /etc/openvpn/client-template.txt "/root/client.ovpn"
 cat /root/client.ovpn >> $log
 echo OVPN file created on root home folder  >> $log
 cd || return
-echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` [PROGRESS] Part 12/$TOTAL_PARTS (86%) - RADIUS Client Setup" 1>>$LOG_FILE.log 2>&1
+log_progress 12 85 "Radius Client Installation and Configuration"
 #RadiusClient Installation Started
 echo "#######Radius Client Installation Started#########" >> $log  
 echo "##### checking Ubuntu Version ######" >> $log
@@ -917,148 +1054,26 @@ else
 echo "offline" > $IKEV2_STATUS_FILE
 IKEV2_STATUS="offline"
 fi
+
 echo "#### Service Status for OpenVPN and Ikev2 ####" >> $log
 echo "OpenVPN Status: $OPENVPN_STATUS" >> $log
 echo "IKEv2 Status: $IKEV2_STATUS" >> $log
 
-### Installing WireGuard Now
-wireguard_install() {
-  # --- WireGuard (server + 1 client) ---
-  # NOTE: Your IKEv2 script already uses 10.10.10.0/24.
-  # To avoid IP conflicts, WireGuard uses a different subnet by default here.
-  local WG_IF="wg0"
-  local WG_NET="10.66.66.0/24"
-  local SERVER_ADDR="10.66.66.1/24"
-  local CLIENT_ADDR="10.66.66.2/32"
-  local WG_PORT="51820"
-  local WG_MTU="1380"
-  local CLIENT_DNS="${DNS1:-1.1.1.1}"
+# log_progress 13 92 "WireGuard Setup - Install and Configure"
+echo "[PROGRESS] Part 13/14 (92%) WireGuard Setup - Install and Configure" >> $log
 
-  local WG_DIR="/etc/wireguard"
-  local SERVER_PRIV="$WG_DIR/server_private.key"
-  local SERVER_PUB="$WG_DIR/server_public.key"
-  local CLIENT_PRIV="$WG_DIR/client1_private.key"
-  local CLIENT_PUB="$WG_DIR/client1_public.key"
-  local WG_CONF="$WG_DIR/${WG_IF}.conf"
-  local CLIENT_CONF="$WG_DIR/client1.conf"
-
-  # Endpoint preference:
-  # - If you have a hostname, use it
-  # - else fall back to PUBLIC_IP
-  local endpoint="${CLIENTHOSTNAME:-${PUBLIC_IP:-}}"
-  if [[ -z "${endpoint}" ]]; then
-    endpoint="YOUR_SERVER_PUBLIC_IP_OR_HOSTNAME"
-  fi
-
-  # Check if WireGuard is already installed
-  if dpkg-query -W -f='${Status}' wireguard 2>/dev/null | grep -q "install ok installed"; then
-    echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` WireGuard: INFO: WireGuard already installed. Cleaning old install/config and reinstalling..." 1>>$LOG_FILE.log 2>&1
-
-    # Tear down running interface if present
-    systemctl disable --now "wg-quick@${WG_IF}" >/dev/null 2>&1 || true
-    ip link show "${WG_IF}" >/dev/null 2>&1 && ip link delete "${WG_IF}" >/dev/null 2>&1 || true
-
-    # Remove previous config and key material
-    rm -rf "${WG_DIR}" 1>>$LOG_FILE.log 2>&1 || true
-
-    # Remove existing package before reinstall
-    apt-get purge -y wireguard wireguard-tools iptables 1>>$LOG_FILE.log 2>&1
-    apt-get autoremove -y 1>>$LOG_FILE.log 2>&1
-  fi
-
-  # Detect WAN iface
-  local wan_iface
-  wan_iface="$(ip route get 1.1.1.1 2>/dev/null | awk '{for(i=1;i<=NF;i++) if($i=="dev"){print $(i+1); exit}}')"
-  if [[ -z "${wan_iface:-}" ]]; then
-    echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` WireGuard: ERROR: Could not detect WAN interface" 1>>$LOG_FILE.log 2>&1
-    return 1
-  fi
-
-  echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` WireGuard: INFO: Installing packages" 1>>$LOG_FILE.log 2>&1
-  apt-get update -yq 1>>$LOG_FILE.log 2>&1
-  apt-get install -yq wireguard iptables 1>>$LOG_FILE.log 2>&1
-  apt-get install -yq qrencode >/dev/null 2>&1 || true
-
-  # Enable forwarding (your script already does this, but safe to ensure)
-  echo "net.ipv4.ip_forward=1" >/etc/sysctl.d/99-wireguard.conf
-  sysctl --system >/dev/null 2>&1 || true
-
-  # Generate fresh keys/config every run
-  umask 077
-  mkdir -p "$WG_DIR"
-  rm -f "$SERVER_PRIV" "$SERVER_PUB" "$CLIENT_PRIV" "$CLIENT_PUB" "$WG_CONF" "$CLIENT_CONF" 1>>$LOG_FILE.log 2>&1 || true
-
-  echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` WireGuard: INFO: Generating new keys" 1>>$LOG_FILE.log 2>&1
-  wg genkey > "$SERVER_PRIV"
-  wg pubkey < "$SERVER_PRIV" > "$SERVER_PUB"
-
-  wg genkey > "$CLIENT_PRIV"
-  wg pubkey < "$CLIENT_PRIV" > "$CLIENT_PUB"
-
-  echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` WireGuard: INFO: Writing server config $WG_CONF" 1>>$LOG_FILE.log 2>&1
-  {
-    echo "[Interface]"
-    echo "Address = ${SERVER_ADDR}"
-    echo "ListenPort = ${WG_PORT}"
-    echo "PrivateKey = $(cat "$SERVER_PRIV")"
-    echo "MTU = ${WG_MTU}"
-    echo
-    echo "# NAT + forwarding on up/down"
-    echo "PostUp   = sysctl -w net.ipv4.ip_forward=1"
-    echo "PostUp   = iptables -t nat -A POSTROUTING -s ${WG_NET} -o ${wan_iface} -j MASQUERADE"
-    echo "PostUp   = iptables -A FORWARD -i ${WG_IF} -j ACCEPT"
-    echo "PostUp   = iptables -A FORWARD -o ${WG_IF} -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT"
-    echo
-    echo "PostDown = iptables -t nat -D POSTROUTING -s ${WG_NET} -o ${wan_iface} -j MASQUERADE"
-    echo "PostDown = iptables -D FORWARD -i ${WG_IF} -j ACCEPT"
-    echo "PostDown = iptables -D FORWARD -o ${WG_IF} -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT"
-    echo
-    echo "[Peer]"
-    echo "PublicKey = $(cat "$CLIENT_PUB")"
-    echo "AllowedIPs = ${CLIENT_ADDR}"
-  } > "$WG_CONF"
-  chmod 600 "$WG_CONF"
-
-  echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` WireGuard: INFO: Writing client config $CLIENT_CONF" 1>>$LOG_FILE.log 2>&1
-  {
-    echo "[Interface]"
-    echo "PrivateKey = $(cat "$CLIENT_PRIV")"
-    echo "Address = ${CLIENT_ADDR}"
-    echo "DNS = ${CLIENT_DNS}"
-    echo "MTU = ${WG_MTU}"
-    echo
-    echo "[Peer]"
-    echo "PublicKey = $(cat "$SERVER_PUB")"
-    echo "Endpoint = ${endpoint}:${WG_PORT}"
-    echo "AllowedIPs = 0.0.0.0/0"
-    echo "PersistentKeepalive = 25"
-  } > "$CLIENT_CONF"
-  chmod 600 "$CLIENT_CONF"
-
-  # Start WG
-  echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` WireGuard: INFO: Enabling wg-quick@${WG_IF}" 1>>$LOG_FILE.log 2>&1
-  systemctl enable --now "wg-quick@${WG_IF}" >/dev/null 2>&1 || true
-
-  # Summary into log
-  echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` WireGuard: SUCCESS: Installed. ServerConf=$WG_CONF ClientConf=$CLIENT_CONF" 1>>$LOG_FILE.log 2>&1
-
-  # Optional: print QR to terminal (not log)
-  if command -v qrencode >/dev/null 2>&1 && [[ -f "$CLIENT_CONF" ]]; then
-    echo
-    echo "WireGuard client QR (scan in WireGuard mobile app):"
-    qrencode -t ansiutf8 < "$CLIENT_CONF" || true
-    echo
-    echo "WireGuard client config saved at: $CLIENT_CONF"
-  else
-    echo
-    echo "WireGuard client config saved at: $CLIENT_CONF"
-  fi
-
-  return 0
-}
-echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` [PROGRESS] Part 13/$TOTAL_PARTS (93%) - WireGuard Installation" 1>>$LOG_FILE.log 2>&1
 echo "Calling WireGuard Install Function" >> $log
 wireguard_install
+echo "WireGuard Installation Completed" >> $log
+INTERFACE="wg0"
+
+if sudo wg show "$INTERFACE" > /dev/null 2>&1; then
+    WIREGUARD_STATUS="online"
+else
+    WIREGUARD_STATUS="offline"
+fi
+
+echo "WireGuard: $WIREGUARD_STATUS" >> $log
 
 #  Sending back the status of installation
 echo " Sending back the status of installation" >> $log
@@ -1066,8 +1081,10 @@ echo " Sending back the status of installation" >> $log
 return_status=$(curl --data "api=$APIKEY&status=1&ip=$CLIENTHOSTNAME&services_status_openvpn=$OPENVPN_STATUS&service_status_ikev2=$IKEV2_STATUS&v=$VPNTYPE&VPNSERVERIP=$PUBLIC_IP&speed1=$speed1&speed2=$speed2" $PANELURL/api/v1/vpncallbackurl); 1>>$LOG_FILE.log 2>&1
 
 echo $return_status >> $log
-log_progress 14 100 "Installation Complete"
 #cleaning files
 rm /root/checkServerCompatibility.sh >> $log
-rm /root/install-vpn-smartersvpnpanel.sh >> $log
+rm /root/install-vpn-smartersvpnserver.sh >> $log
+
+echo "[PROGRESS] Part 14/14 (100%) Installation Completed - Sending callback to panel" >> $log
+
 exit 0
