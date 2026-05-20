@@ -1587,6 +1587,7 @@ openvpnrestart
   ##log wireguard is started
 echo "WireGuard: INFO: WireGuard installation started" 1>>$LOG_FILE.log 2>&1
 
+
 ### Installing WireGuard Now
 wireguard_install() {
   # --- WireGuard (server + 1 client) ---
@@ -1594,11 +1595,14 @@ wireguard_install() {
   # To avoid IP conflicts, WireGuard uses a different subnet by default here.
   local WG_IF="wg0"
   local WG_NET="10.66.66.0/24"
-  local SERVER_ADDR="10.66.66.1/24"
-  local CLIENT_ADDR="10.66.66.2/32"
+  local WG_NET6="fd42:42:42::/64"
+  local SERVER_ADDR="10.66.66.1/24, fd42:42:42::1/64"
+  local SERVER_ADDR4="10.66.66.1"
+  local SERVER_ADDR6="fd42:42:42::1"
+  local CLIENT_ADDR="10.66.66.2/32, fd42:42:42::2/128"
   local WG_PORT="51820"
   local WG_MTU="1380"
-  local CLIENT_DNS="${DNS1:-1.1.1.1}"
+  local CLIENT_DNS="${SERVER_ADDR4}, ${SERVER_ADDR6}"
 
   local WG_DIR="/etc/wireguard"
   local SERVER_PRIV="$WG_DIR/server_private.key"
@@ -1645,8 +1649,12 @@ wireguard_install() {
   apt-get install -yq wireguard iptables 1>>$LOG_FILE.log 2>&1
   apt-get install -yq qrencode >/dev/null 2>&1 || true
 
-  # Enable forwarding (your script already does this, but safe to ensure)
+  # Enable IPv4 and IPv6 forwarding for WireGuard
+  # Note: overrides the global disable_ipv6=1 set by IKEv2 section above
   echo "net.ipv4.ip_forward=1" >/etc/sysctl.d/99-wireguard.conf
+  echo "net.ipv6.conf.all.forwarding=1" >>/etc/sysctl.d/99-wireguard.conf
+  echo "net.ipv6.conf.all.disable_ipv6=0" >>/etc/sysctl.d/99-wireguard.conf
+  echo "net.ipv6.conf.default.disable_ipv6=0" >>/etc/sysctl.d/99-wireguard.conf
   sysctl --system >/dev/null 2>&1 || true
 
   # Generate fresh keys/config every run
@@ -1671,32 +1679,52 @@ wireguard_install() {
     echo
     echo "# NAT + forwarding on up/down"
     echo "PostUp   = sysctl -w net.ipv4.ip_forward=1"
+    echo "PostUp   = sysctl -w net.ipv6.conf.all.forwarding=1"
     echo "PostUp   = iptables -t nat -A POSTROUTING -s ${WG_NET} -o ${wan_iface} -j MASQUERADE"
     echo "PostUp   = iptables -A FORWARD -i ${WG_IF} -j ACCEPT"
     echo "PostUp   = iptables -A FORWARD -o ${WG_IF} -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT"
+    echo "PostUp   = ip6tables -t nat -A POSTROUTING -s ${WG_NET6} -o ${wan_iface} -j MASQUERADE"
+    echo "PostUp   = ip6tables -A FORWARD -i ${WG_IF} -j ACCEPT"
+    echo "PostUp   = ip6tables -A FORWARD -o ${WG_IF} -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT"
     echo
     echo "PostDown = iptables -t nat -D POSTROUTING -s ${WG_NET} -o ${wan_iface} -j MASQUERADE"
     echo "PostDown = iptables -D FORWARD -i ${WG_IF} -j ACCEPT"
     echo "PostDown = iptables -D FORWARD -o ${WG_IF} -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT"
+    echo "PostDown = ip6tables -t nat -D POSTROUTING -s ${WG_NET6} -o ${wan_iface} -j MASQUERADE"
+    echo "PostDown = ip6tables -D FORWARD -i ${WG_IF} -j ACCEPT"
+    echo "PostDown = ip6tables -D FORWARD -o ${WG_IF} -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT"
     echo
     echo "[Peer]"
     echo "PublicKey = $(cat "$CLIENT_PUB")"
-    echo "AllowedIPs = ${CLIENT_ADDR}"
+    echo "AllowedIPs = 10.66.66.2/32, fd42:42:42::2/128"
   } > "$WG_CONF"
   chmod 600 "$WG_CONF"
 
   echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` WireGuard: INFO: Writing client config $CLIENT_CONF" 1>>$LOG_FILE.log 2>&1
+  # Get server public IPv6 for the commented endpoint hint
+  local server_pub_ipv6
+  server_pub_ipv6="$(ip -6 addr show scope global 2>/dev/null \
+    | grep -oP '(?<=inet6 )[0-9a-fA-F:]+(?=/)' \
+    | grep -v '^fe80\|^::1\|^fd' \
+    | head -1)"
+
   {
     echo "[Interface]"
+    echo "# Bouncing = 2"
     echo "PrivateKey = $(cat "$CLIENT_PRIV")"
     echo "Address = ${CLIENT_ADDR}"
     echo "DNS = ${CLIENT_DNS}"
-    echo "MTU = ${WG_MTU}"
     echo
     echo "[Peer]"
+    echo "# ${CLIENTHOSTNAME:-VPN Server}"
     echo "PublicKey = $(cat "$SERVER_PUB")"
+    echo "AllowedIPs = 0.0.0.0/0, ::/0"
     echo "Endpoint = ${endpoint}:${WG_PORT}"
-    echo "AllowedIPs = 0.0.0.0/0"
+    if [[ -n "${server_pub_ipv6}" ]]; then
+      echo
+      echo "# Uncomment the following line (delete the # symbol) to connect using IPv6."
+      echo "# Endpoint = [${server_pub_ipv6}]:${WG_PORT}"
+    fi
     echo "PersistentKeepalive = 25"
   } > "$CLIENT_CONF"
   chmod 600 "$CLIENT_CONF"
@@ -1722,7 +1750,8 @@ wireguard_install() {
 
   return 0
 }
-echo "Calling WireGuard Install Function" >> $LOG_FILE.log
+echo "`date +"%Y%m%d"` `date +"%H:%M:%S"` [PROGRESS] Part 13/$TOTAL_PARTS (93%) - WireGuard Installation" 1>>$LOG_FILE.log 2>&1
+echo "Calling WireGuard Install Function" >> $log
 wireguard_install
 
 echo "WireGuard: INFO: WireGuard installation complete" 1>>$LOG_FILE.log 2>&1
